@@ -10,3 +10,11 @@ This project contains source code and supporting files for a serverless applicat
 ## Deploy the sample application
 
 To build and deploy your application for the first time, run the following in your shell:
+
+create servantCenterLambdaRole and attach three Policies
+- servantCenterCognitoAccess
+- servantCenterDynamodbAccess
+- servantCenterS3Access
+create servantCenterCloudFormationRole and attach following Policies
+- AWSLambdaExecute
+- servantCenterCFlambdaPipelinePolicy
