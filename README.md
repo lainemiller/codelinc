@@ -15,6 +15,7 @@ create servantCenterLambdaRole and attach three Policies
 - servantCenterCognitoAccess
 - servantCenterDynamodbAccess
 - servantCenterS3Access
+
 create servantCenterCloudFormationRole and attach following Policies
 - AWSLambdaExecute
 - servantCenterCFlambdaPipelinePolicy
