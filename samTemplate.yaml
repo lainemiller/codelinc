@@ -16,7 +16,7 @@ Resources:
       CodeUri: hello-world/
       Handler: app.lambdaHandler
       Runtime: nodejs14.x
-      Role: 'arn:aws:iam::638049176984:role/codeLincLambdaRole'
+      Role: 'arn:aws:iam::188718293417:role/servantCenterLambdaRole'
       Events:
         HelloWorld:
           Type: Api
