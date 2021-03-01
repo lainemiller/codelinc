@@ -1,0 +1,86 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  codelinc
+
+  Sample SAM Template for codelinc
+
+Globals:
+  Function:
+    Timeout: 3
+
+Resources:
+  HelloWorldFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: hello-world/
+      Handler: app.lambdaHandler
+      Runtime: nodejs14.x
+      Role: 'arn:aws:iam::638049176984:role/codeLincLambdaRole'
+      Events:
+        HelloWorld:
+          Type: Api
+          Properties:
+            Path: /hello
+            Method: get
+      Environment:
+        Variables:
+          REGION: us-east-1
+  AddNameFunction:
+      Type: AWS::Serverless::Function
+      Properties:
+        CodeUri: hello-world/
+        Handler: app.addName
+        Runtime: nodejs14.x
+        Policies:
+          - DynamoDBCrudPolicy:
+              TableName: !Ref NamesTable
+        Events:
+          HelloWorld:
+            Type: Api
+            Properties:
+              Path: /add-name
+              Method: post
+        Environment:
+          Variables:
+            REGION: us-east-1
+  NamesTable:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      TableName: Names
+      PrimaryKey:
+        Name: id
+        Type: String
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      SSESpecification:
+        SSEEnabled: true
+  GreetNamesFunction:
+      Type: AWS::Serverless::Function
+      Properties:
+        CodeUri: hello-world/
+        Handler: app.greetNames
+        Runtime: nodejs14.x
+        Policies:
+          - DynamoDBCrudPolicy:
+              TableName: !Ref NamesTable
+        Events:
+          HelloWorld:
+            Type: Api
+            Properties:
+              Path: /greet-names
+              Method: get
+        Environment:
+          Variables:
+            REGION: us-east-1
+Outputs:
+  HelloWorldApi:
+    Description: "API Gateway endpoint URL for Prod stage for Hello World function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
+  GreetNamesApi:
+      Description: "API Gateway endpoint URL for Prod stage for Greet Names function"
+      Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/greet-names/"
+  AddNameApi:
+      Description: "API Gateway endpoint URL for Prod stage for Add Name function"
+      Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/add-name/"
