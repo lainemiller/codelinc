@@ -99,3 +99,32 @@ const data=JSON.stringify(names);
 
     return response;
 }
+
+exports.testEvents = async (event, context) => {
+    let response;
+
+console.log('-------entered testEvents function');
+    try {
+        const names = (await db.scan({ TableName: 'Names' }).promise())
+            .Items.map((item) => item.name);
+console.log('-------names map----' ,JSON.stringify(names));
+
+const data=JSON.stringify(names);
+
+        response = {
+            statusCode: 200,
+            body: JSON.stringify({
+              message: `hello Me changed`+data
+            })
+        };
+    } catch (err) {
+        response = {
+            statusCode: 500,
+            body: JSON.stringify({
+                message: err.message,
+            })
+        }
+    }
+
+    return response;
+}
