@@ -2,7 +2,7 @@ version: 0.1
 phases:
   install:
     commands:
-      - aws cloudformation package --template-file samTemplate.yaml --s3-bucket servantcenter-serverless-pipeline --output-template-file outputSamTemplate.yaml
+      - npm run setup
 artifacts:
   type: zip
   files:

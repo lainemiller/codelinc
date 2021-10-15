@@ -1,9 +1,9 @@
 
 "use strict";
-const AWS = require('aws-sdk');
+// const AWS = require('aws-sdk');
 
-const db = new AWS.DynamoDB.DocumentClient();
-let response;
+// const db = new AWS.DynamoDB.DocumentClient();
+// let response;
 /**
  *
  * Event doc: https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html#api-gateway-simple-proxy-for-lambda-input-format
@@ -33,69 +33,72 @@ exports.lambdaHandler = async (event, context) => {
 
     return response
 };
-exports.addName = async (event, context) => {
-    let response;
-
-    const id= new Date().getTime()+'x';
 
 
-   const name  = JSON.parse(event.body); // fetch name property from POST request body
-   console.log('------Name='+name );
+
+// exports.addName = async (event, context) => {
+//     let response;
+
+//     const id= new Date().getTime()+'x';
 
 
-  console.log('------id='+id );
+//    const name  = JSON.parse(event.body); // fetch name property from POST request body
+//    console.log('------Name='+name );
 
-    const params = {
-        TableName: 'Names',
-        Item: {
-            id,
-            name
-        }
-    };
 
-    try {
-        await db.put(params).promise();
-        response = {
-            statusCode: 201,
-        };
-    } catch (err) {
-        response = {
-            statusCode: 500,
-            body: JSON.stringify({ message: err.message })
-        };
-    }
+//   console.log('------id='+id );
 
-    response = {
-            statusCode: 201,
-        };
+//     const params = {
+//         TableName: 'Names',
+//         Item: {
+//             id,
+//             name
+//         }
+//     };
 
-    return response;
-}
-exports.greetNames = async (event, context) => {
-    let response;
+//     try {
+//         await db.put(params).promise();
+//         response = {
+//             statusCode: 201,
+//         };
+//     } catch (err) {
+//         response = {
+//             statusCode: 500,
+//             body: JSON.stringify({ message: err.message })
+//         };
+//     }
 
-console.log('-------entere dgreetNames function');
-    try {
-        const names = (await db.scan({ TableName: 'Names' }).promise())
-            .Items.map((item) => item.name);
-console.log('-------names map----' ,JSON.stringify(names));
+//     response = {
+//             statusCode: 201,
+//         };
 
-const data=JSON.stringify(names);
+//     return response;
+// }
+// exports.greetNames = async (event, context) => {
+//     let response;
 
-        response = {
-            statusCode: 200,
-            body: JSON.stringify({
-              message: `hello Me changed`+data
-            })
-        };
-    } catch (err) {
-        response = {
-            statusCode: 500,
-            body: JSON.stringify({
-                message: err.message,
-            })
-        }
-    }
+// console.log('-------entere dgreetNames function');
+//     try {
+//         const names = (await db.scan({ TableName: 'Names' }).promise())
+//             .Items.map((item) => item.name);
+// console.log('-------names map----' ,JSON.stringify(names));
 
-    return response;
-}
+// const data=JSON.stringify(names);
+
+//         response = {
+//             statusCode: 200,
+//             body: JSON.stringify({
+//               message: `hello Me changed`+data
+//             })
+//         };
+//     } catch (err) {
+//         response = {
+//             statusCode: 500,
+//             body: JSON.stringify({
+//                 message: err.message,
+//             })
+//         }
+//     }
+
+//     return response;
+// }
