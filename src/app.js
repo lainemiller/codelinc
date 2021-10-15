@@ -39,11 +39,21 @@ router.get('/', (req, res) => {
 })
 
 router.get('/vendia', (req, res) => {
+  const query = req.query;
+  // res.
   res.sendFile(path.join(__dirname, 'vendia-logo.png'))
 })
 
 router.get('/users', (req, res) => {
   res.json(users)
+})
+
+router.get('/queryString', (req, res) => {
+  const query = req.query;
+  res.json({
+    qs: query,
+    congratulate: true
+  })
 })
 
 router.get('/users/:userId', (req, res) => {
@@ -86,6 +96,42 @@ router.get('/cookie', (req, res) => {
   res.cookie('Fizz', 'buzz')
   res.json({})
 })
+
+router.get('/consentForm/getUserDetails/:veteranId', (req, res) => {
+  const vet = req.params.veteranId;
+
+  const returnObj
+
+  if (vet === '1111') {
+    returnObj = veteran1;
+  }
+
+  res.json(returnObj);
+
+})
+
+router.post('/updateTreatmentPlan', (req, res) => {
+  const requestObj = {
+    veteran_id: req.body.veteran_id,
+
+  }
+
+  if (true) {
+    res.status(500).json({
+      error: 'You did something wrong'
+    })
+  }
+
+
+  res.status(201).json({});
+})
+
+const veteran1 = {
+  first_name: 'John',
+  last_name: 'Smith',
+  email: 'some@example.com',
+  consent_received: true
+}
 
 const getUser = (userId) => users.find(u => u.id === parseInt(userId))
 const getUserIndex = (userId) => users.findIndex(u => u.id === parseInt(userId))
