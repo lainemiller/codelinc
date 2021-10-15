@@ -4,7 +4,7 @@
   "description": "This project contains source code and supporting files for a serverless application that you can deploy with the AWS codePipeline  It includes the following files and folders.",
   "main": "index.js",
   "config": {
-    "s3BucketName": "servantcenter-serverless-pipeline-test",
+    "s3BucketName": "servantcenter-serverless-pipeline",
     "region": "us-east-1",
     "cloudFormationStackName": "ServantcenterServerlessExpressStackTest",
     "functionName": "",
