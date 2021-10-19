@@ -8,6 +8,17 @@ const ejs = require('ejs').__express
 const app = express()
 const router = express.Router()
 
+var constants = require('./constants');
+
+const { Pool } = require('pg');
+const pool = new Pool({
+  host: constants.HOST,
+  user: constants.USER,
+  password: constants.PASSWORD,
+  database: constants.DATABASE,
+  port: constants.PORT
+})
+
 app.set('view engine', 'ejs')
 app.engine('.ejs', ejs)
 
@@ -124,6 +135,24 @@ router.post('/updateTreatmentPlan', (req, res) => {
 
 
   res.status(201).json({});
+})
+
+// Case Manager GetTreatmentPlanDetails
+router.get('getTreatmentPlanDetails', (req, res) => {
+  const params = {
+    veteran_id: req.body.veteran_id,
+  }
+
+  const text = "from TreatmentPlanDetails get X,Y,Z"
+
+  ;(async () => {
+    const { rows } = await pool.query(text, params)
+    console.log('user:', rows[0])
+  })().catch(err =>
+    setImmediate(() => {
+      throw err
+    })
+  )
 })
 
 const veteran1 = {
