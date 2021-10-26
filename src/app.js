@@ -11,6 +11,7 @@ const router = express.Router()
 var constants = require('./constants');
 
 const { Pool } = require('pg');
+const { QUERIES } = require('./constants')
 const pool = new Pool({
   host: constants.HOST,
   user: constants.USER,
@@ -108,52 +109,215 @@ router.get('/cookie', (req, res) => {
   res.json({})
 })
 
+// Endpoint 4
 router.get('/consentForm/getUserDetails/:veteranId', (req, res) => {
   const vet = req.params.veteranId;
-
   const returnObj
 
-  if (vet === '1111') {
-    returnObj = veteran1;
-  }
+  pool
+  .query(QUERIES.ConsentForm.GetUserDetails, vet)
+  .then(res => returnObj = res.rows)
+  .catch(err => console.error('Error executing query', err.stack))
 
   res.json(returnObj);
 
 })
 
-router.post('/updateTreatmentPlan', (req, res) => {
-  const requestObj = {
-    veteran_id: req.body.veteran_id,
+// Endpoint 5
+router.put('/consentForm/acceptContent/:veteranId', (req, res) => {
+  const vet = req.params.veteranId;
+  const returnStatus
 
-  }
+  pool
+  .query(QUERIES.ConsentForm.AcceptContent, vet)
+  .then(res => returnStatus = res.status)
+  .catch(err => console.error('Error executing query', err.stack))
 
-  if (true) {
-    res.status(500).json({
-      error: 'You did something wrong'
-    })
-  }
+  res.status(returnStatus);
 
-
-  res.status(201).json({});
 })
 
+// Endpoint 6
+router.get('/uiLayout/getUserDetails/:veteranId', (req, res) => {
+  const vet = req.params.veteranId;
+  const returnObj
+
+  pool
+  .query(QUERIES.ConsentForm.GetUserDetails, vet)
+  .then(res => returnObj = res.rows)
+  .catch(err => console.error('Error executing query', err.stack))
+
+  res.json(returnObj);
+
+})
+
+// Endpoint 7
+router.get('/getGoals/:veteranId', (req, res) => {
+  const vet = req.params.veteranId;
+  const returnObj
+
+  pool
+  .query(QUERIES.ProgressNotes.GetGoals, vet)
+  .then(res => returnObj = res.rows)
+  .catch(err => console.error('Error executing query', err.stack))
+
+  res.json(returnObj);
+
+})
+
+// Endpoint 8
+router.post('addGoal', (req, res) => {
+  const goalId
+
+  const requestObj = {
+    status: req.body.status, 
+    title: req.body.title, 
+    description: req.body.description
+  }
+
+  pool
+  .query(QUERIES.ProgressNotes.AddGoal, requestObj)
+  .then(res => goalId = res.rows[0])
+  .catch(err => console.error('Error executing query', err.stack))
+
+  res.json(goalId);
+
+})
+
+// Endpoint 9
+router.post('addGoal', (req, res) => {
+  const goalId
+
+  const requestObj = {
+    goalId: req.body.goalId, 
+    status: req.body.status
+  }
+
+  pool
+  .query(QUERIES.ProgressNotes.UpdateGoalStatus, requestObj)
+  .then(res => goalId = res.rows[0])
+  .catch(err => console.error('Error executing query', err.stack))
+
+  res.json(goalId);
+
+})
+
+// Endpoint 11
+router.post('/userProfile/updateUserDetails/', (req, res) => {
+  const returnStatus
+
+  // same q as 15, do we just pass the body object or parse it?
+  const requestObj = {
+    veteran_id, 
+    photo, 
+    nick_name, 
+    address_main, 
+    address_line_2, 
+    city, 
+    state, 
+    country, 
+    zip_code, 
+    primary_phone, 
+    martial_status, 
+    contact_person, 
+    contact_person_relationship, 
+    contact_person_address, 
+    contact_person_phone
+  }
+
+  pool
+  .query(QUERIES.UserProfile.UpdateUserDetails, vet)
+  .then(res => returnStatus = res.status)
+  .catch(err => console.error('Error executing query', err.stack))
+
+  res.status(returnStatus);
+
+})
+
+// Endpoint 12
+router.get('/uiLayout/getUserDetails/:caseWorkerId', (req, res) => {
+  const caseWorker = req.params.caseWorkerId;
+  const returnObj
+
+  pool
+  .query(QUERIES.UiLayout.GetUserDetails, caseWorker)
+  .then(res => returnObj = res.rows)
+  .catch(err => console.error('Error executing query', err.stack))
+
+  res.json(returnObj);
+
+})
+
+// Endpoint 13
+router.get('getUnreadMessageCount', (req, res) => {
+  const returnObj
+
+  pool
+  .query(QUERIES.UiLayout.GetUnreadMessageCount)
+  .then(res => returnObj = res.rows)
+  .catch(err => console.error('Error executing query', err.stack))
+
+  res.json(returnObj);
+
+})
+
+// Endpoint 14
 // Case Manager GetTreatmentPlanDetails
 router.get('getTreatmentPlanDetails', (req, res) => {
   const params = {
     veteran_id: req.body.veteran_id,
   }
+  const returnObj
 
-  const text = "from TreatmentPlanDetails get X,Y,Z"
+    pool
+    .query(QUERIES.TreatmentPlan.GetTreatmentPlanDetails, params)
+    .then(res => returnObj = res.rows)
+    .catch(err => console.error('Error executing query', err.stack))
+    
+    res.json(returnObj);
 
-  ;(async () => {
-    const { rows } = await pool.query(text, params)
-    console.log('user:', rows[0])
-  })().catch(err =>
-    setImmediate(() => {
-      throw err
-    })
-  )
 })
+
+// Endpoint 15
+router.post('/updateTreatmentPlan', (req, res) => {
+  
+  // can we just take the body object or do we parse it?
+  const requestObj = {
+    veteran_id: req.body.veteran_id,
+    positives_in_year, 
+    challenges_in_year, 
+    immediate_concerns, 
+    short_term_goals, 
+    physical_health_goals, 
+    mental_health_goals, 
+    career_health_goals, 
+    family_goals, 
+    other_goals, 
+    strengths, 
+    reasons_admired, 
+    talents, 
+    people_important_to_me, 
+    people_seeing_me_as_important, 
+    activities_important_to_me, 
+    places_important_to_me, 
+    people_not_needed, 
+    things_not_needed, 
+    desired_life_changes, 
+    things_not_working, 
+    things_needed_for_community_activity, 
+    things_needed_for_health_and_safety, 
+    support_needed
+  }
+
+  pool
+  .query(QUERIES.TreatmentPlan.UpdateTreatmentPlanDetails, vet)
+  .then(res => returnStatus = res.status)
+  .catch(err => console.error('Error executing query', err.stack))
+
+  res.status(returnStatus);
+
+})
+
 
 const veteran1 = {
   first_name: 'John',
