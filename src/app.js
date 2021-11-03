@@ -112,7 +112,7 @@ router.get('/cookie', (req, res) => {
 // Endpoint 4
 router.get('/consentForm/getUserDetails/:veteranId', (req, res) => {
   const vet = req.params.veteranId;
-  const returnObj
+  const returnObj = null
 
   pool
   .query(QUERIES.ConsentForm.GetUserDetails, vet)
@@ -126,7 +126,7 @@ router.get('/consentForm/getUserDetails/:veteranId', (req, res) => {
 // Endpoint 5
 router.put('/consentForm/acceptContent/:veteranId', (req, res) => {
   const vet = req.params.veteranId;
-  const returnStatus
+  const returnStatus = null
 
   pool
   .query(QUERIES.ConsentForm.AcceptContent, vet)
@@ -140,7 +140,7 @@ router.put('/consentForm/acceptContent/:veteranId', (req, res) => {
 // Endpoint 6
 router.get('/uiLayout/getUserDetails/:veteranId', (req, res) => {
   const vet = req.params.veteranId;
-  const returnObj
+  const returnObj = null
 
   pool
   .query(QUERIES.ConsentForm.GetUserDetails, vet)
@@ -154,7 +154,7 @@ router.get('/uiLayout/getUserDetails/:veteranId', (req, res) => {
 // Endpoint 7
 router.get('/getGoals/:veteranId', (req, res) => {
   const vet = req.params.veteranId;
-  const returnObj
+  const returnObj = null
 
   pool
   .query(QUERIES.ProgressNotes.GetGoals, vet)
@@ -167,7 +167,7 @@ router.get('/getGoals/:veteranId', (req, res) => {
 
 // Endpoint 8
 router.post('addGoal', (req, res) => {
-  const goalId
+  const goalId = null
 
   const requestObj = {
     status: req.body.status, 
@@ -186,7 +186,7 @@ router.post('addGoal', (req, res) => {
 
 // Endpoint 9
 router.post('addGoal', (req, res) => {
-  const goalId
+  const goalId = null
 
   const requestObj = {
     goalId: req.body.goalId, 
@@ -204,7 +204,7 @@ router.post('addGoal', (req, res) => {
 
 // Endpoint 11
 router.post('/userProfile/updateUserDetails/', (req, res) => {
-  const returnStatus
+  const returnStatus = null
 
   // same q as 15, do we just pass the body object or parse it?
   const requestObj = {
@@ -237,7 +237,7 @@ router.post('/userProfile/updateUserDetails/', (req, res) => {
 // Endpoint 12
 router.get('/uiLayout/getUserDetails/:caseWorkerId', (req, res) => {
   const caseWorker = req.params.caseWorkerId;
-  const returnObj
+  const returnObj = null
 
   pool
   .query(QUERIES.UiLayout.GetUserDetails, caseWorker)
@@ -250,7 +250,7 @@ router.get('/uiLayout/getUserDetails/:caseWorkerId', (req, res) => {
 
 // Endpoint 13
 router.get('getUnreadMessageCount', (req, res) => {
-  const returnObj
+  const returnObj = null
 
   pool
   .query(QUERIES.UiLayout.GetUnreadMessageCount)
@@ -267,7 +267,7 @@ router.get('getTreatmentPlanDetails', (req, res) => {
   const params = {
     veteran_id: req.body.veteran_id,
   }
-  const returnObj
+  const returnObj = null
 
     pool
     .query(QUERIES.TreatmentPlan.GetTreatmentPlanDetails, params)
