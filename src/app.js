@@ -166,7 +166,7 @@ router.get('/getGoals/:veteranId', (req, res) => {
 })
 
 // Endpoint 8
-router.post('addGoal', (req, res) => {
+router.post('/progressNotes/addGoal/', (req, res) => {
   const goalId = null
 
   const requestObj = {
@@ -185,7 +185,7 @@ router.post('addGoal', (req, res) => {
 })
 
 // Endpoint 9
-router.post('addGoal', (req, res) => {
+router.post('/progressNotes/updateGoalStatus/', (req, res) => {
   const goalId = null
 
   const requestObj = {
@@ -200,6 +200,21 @@ router.post('addGoal', (req, res) => {
 
   res.json(goalId);
 
+})
+
+// Endpoint 10
+router.get('/userProfile/getUserDetails', (req, res) => {
+  const params = {
+    veteran_id: req.body.veteran_id
+  }
+  const returnObj = null
+
+  pool
+  .query(QUERIES.UserProfile.GetUserDetails, params)
+  .then(res => returnObj = res.rows)
+  .catch(err => console.error('Error executing query', err.stack))
+
+  res.json(returnObj)
 })
 
 // Endpoint 11
@@ -317,6 +332,39 @@ router.post('/updateTreatmentPlan', (req, res) => {
   res.status(returnStatus);
 
 })
+
+// Endpoint 16
+router.get('/transportationForm/getTransportationRequests', (req, res) => {
+  const returnObj = null
+
+  pool
+  .query(QUERIES.TransportationRequest.GetTransportationRequests)
+  .then(res => returnObj = res.rows)
+  .catch(err => console.error('Error executing query', err.stack))
+
+  res.json(returnObj)
+})
+
+// Endpoint 17
+router.post('/transportationForm/approveTransportationRequests', (req, res) => {
+
+  //not 100% on the purpose of this one so I will just leave it as a POST
+  const requestObj = {
+    veteran_id: req.body.veteran_id,
+    approved_date,
+    transportation_coordinator,
+    nursing_notified,
+    approved_by,
+    approved_date
+  }
+
+  pool
+  .query(QUERIES.TransportationRequest.ApproveTransportationRequests)
+  .then(res => returnStatus = res.status)
+  .catch(err => console.error('Error executing query', err.stack))
+
+  res.status(returnStatus)
+}) 
 
 
 const veteran1 = {
