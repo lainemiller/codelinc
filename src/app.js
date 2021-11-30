@@ -220,24 +220,24 @@ router.get('/userProfile/getUserDetails', (req, res) => {
 // Endpoint 11
 router.post('/userProfile/updateUserDetails/', (req, res) => {
   const returnStatus = null
+  console.log("incoming req: ", req)
 
-  // same q as 15, do we just pass the body object or parse it?
   const requestObj = {
-    veteran_id, 
-    photo, 
-    nick_name, 
-    address_main, 
-    address_line_2, 
-    city, 
-    state, 
-    country, 
-    zip_code, 
-    primary_phone, 
-    martial_status, 
-    contact_person, 
-    contact_person_relationship, 
-    contact_person_address, 
-    contact_person_phone
+    veteran_id: req.params.veteran_id, 
+    photo: req.params.photo, 
+    nick_name: req.params.nick_name, 
+    address_main: req.params.address_main, 
+    address_line_2: req.params.address_line_2, 
+    city: req.params.city, 
+    state: req.params.state, 
+    country: req.params.country, 
+    zip_code: req.params.zip_code, 
+    primary_phone: req.params.primary_phone, 
+    martial_status: req.params.martial_status, 
+    contact_person: req.params.contact_person, 
+    contact_person_relationship: req.params.contact_person_relationship, 
+    contact_person_address: req.params.contact_person_address, 
+    contact_person_phone: req.params.contact_person_phone
   }
 
   pool
@@ -296,7 +296,6 @@ router.get('getTreatmentPlanDetails', (req, res) => {
 // Endpoint 15
 router.post('/updateTreatmentPlan', (req, res) => {
   
-  // can we just take the body object or do we parse it?
   const requestObj = {
     veteran_id: req.body.veteran_id,
     positives_in_year, 
