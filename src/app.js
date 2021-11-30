@@ -241,7 +241,7 @@ router.post('/userProfile/updateUserDetails/', (req, res) => {
   }
 
   pool
-  .query(QUERIES.UserProfile.UpdateUserDetails, vet)
+  .query(QUERIES.UserProfile.UpdateUserDetails, requestObj)
   .then(res => returnStatus = res.status)
   .catch(err => console.error('Error executing query', err.stack))
 
