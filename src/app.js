@@ -10,14 +10,16 @@ const router = express.Router()
 
 var constants = require('./constants');
 
+const secrets = require('./secret');
+
 const { Pool } = require('pg')
 const { QUERIES } = require('./constants')
 const pool = new Pool({
-  host: constants.HOST,
-  user: constants.USER,
-  password: constants.PASSWORD,
-  database: constants.DATABASE,
-  port: constants.PORT
+  host: secrets.HOST,
+  user: secrets.USER,
+  password: secrets.PASSWORD,
+  database: secrets.DATABASE,
+  port: secrets.PORT
 })
 
 
