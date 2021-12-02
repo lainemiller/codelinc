@@ -19,7 +19,7 @@ Resources:
   ExpressApi:
     Type: AWS::Serverless::Api
     Properties:
-      StageName: prod
+      StageName: test_v1
       BinaryMediaTypes: ['*/*']
 
   ExpressLambdaFunction:
@@ -69,7 +69,7 @@ Resources:
       RestApiId: !Ref ExpressApi
       DomainName: !Ref MyApiDomainName
       BasePath: '(none)'
-      Stage: prod
+      Stage: test_v1
   
   Route53HostedZone:
     Type: AWS::Route53::HostedZone
@@ -97,12 +97,12 @@ Outputs:
 
   ApiGatewayApiConsoleUrl:
     Description: Console URL for the API Gateway API's Stage.
-    Value: !Sub https://${AWS::Region}.console.aws.amazon.com/apigateway/home?region=${AWS::Region}#/apis/${ExpressApi}/stages/prod
+    Value: !Sub https://${AWS::Region}.console.aws.amazon.com/apigateway/home?region=${AWS::Region}#/apis/${ExpressApi}/stages/test_v1
 
   ApiUrl:
     Description: Invoke URL for your API. Clicking this link will perform a GET request
       on the root resource of your API.
-    Value: !Sub https://${ExpressApi}.execute-api.${AWS::Region}.amazonaws.com/prod/
+    Value: !Sub https://${ExpressApi}.execute-api.${AWS::Region}.amazonaws.com/test_v1/
 
   LambdaFunctionName:
     Description: Name of the Serverless Express Lambda Function

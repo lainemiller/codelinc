@@ -10,7 +10,7 @@ const router = express.Router()
 
 var constants = require('./constants');
 
-const { Pool } = require('pg');
+const { Pool } = require('pg')
 const { QUERIES } = require('./constants')
 const pool = new Pool({
   host: constants.HOST,
@@ -19,6 +19,11 @@ const pool = new Pool({
   database: constants.DATABASE,
   port: constants.PORT
 })
+
+
+pool.on('error', (err, client) => {
+  console.error('unexpected error in postress conection pool', err);
+});
 
 app.set('view engine', 'ejs')
 app.engine('.ejs', ejs)
@@ -29,31 +34,9 @@ router.use(cors())
 router.use(bodyParser.json())
 router.use(bodyParser.urlencoded({ extended: true }))
 
-// NOTE: tests can't find the views directory without this
-app.set('views', path.join(__dirname, 'views'))
 
 router.get('/', (req, res) => {
-  const currentInvoke = getCurrentInvoke()
-  const { event = {} } = currentInvoke
-  const {
-    requestContext = {},
-    multiValueHeaders = {}
-  } = event
-  const { stage = '' } = requestContext
-  const {
-    Host = ['localhost:3000']
-  } = multiValueHeaders
-  const apiUrl = `https://${Host[0]}/${stage}`
-  res.render('index', {
-    apiUrl,
-    stage
-  })
-})
-
-router.get('/vendia', (req, res) => {
-  const query = req.query;
-  // res.
-  res.sendFile(path.join(__dirname, 'vendia-logo.png'))
+  res.json({answer: 'success'});
 })
 
 router.get('/users', (req, res) => {
@@ -203,18 +186,18 @@ router.post('/progressNotes/updateGoalStatus/', (req, res) => {
 })
 
 // Endpoint 10
-router.get('/userProfile/getUserDetails', (req, res) => {
-  const params = {
-    veteran_id: req.body.veteran_id
-  }
-  const returnObj = null
+router.get('/userProfile/getUserDetails/:veteranID', (req, res) => {
 
   pool
-  .query(QUERIES.UserProfile.GetUserDetails, params)
-  .then(res => returnObj = res.rows)
-  .catch(err => console.error('Error executing query', err.stack))
-
-  res.json(returnObj)
+    .query(QUERIES.UserProfile.GetUserDetails, [req.params.veteranID])
+    .then(resp => {
+      console.log('success on endpoint 10: ', resp)
+      res.json({vetID: req.params.veteranID, result: resp.rows})
+    })
+    .catch(err => {
+      console.error('Error executing query', err.stack)
+      res.status(501).json({err});
+    })
 })
 
 // Endpoint 11

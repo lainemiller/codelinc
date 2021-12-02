@@ -1,5 +1,6 @@
 const path = require('path')
 const CopyPlugin = require('copy-webpack-plugin')
+const webpack = require('webpack')
 
 module.exports = {
   entry: './src/lambda.js',
@@ -13,11 +14,12 @@ module.exports = {
     libraryTarget: 'commonjs2'
   },
   plugins: [
-    new CopyPlugin({
-      patterns: [
-        { from: './src/views', to: 'views' },
-        { from: './src/vendia-logo.png' }
-      ]
-    })
+    // new CopyPlugin({
+    //   patterns: [
+    //     // { from: './src/views', to: 'views' },
+    //     // { from: './src/vendia-logo.png' }
+    //   ]
+    // })
+    new webpack.IgnorePlugin({ resourceRegExp: /^pg-native$/ })
   ]
 }
