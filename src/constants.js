@@ -1,7 +1,7 @@
 module.exports = Object.freeze({
     QUERIES: {
         ConsentForm: {
-            GetUserDetails: "",
+            GetUserDetails: "select * from codelinc.veteran_pi where veteran_id = $1",
             AcceptContent: ""
         },
         ProgressNotes: {
