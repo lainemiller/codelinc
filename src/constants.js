@@ -1,8 +1,8 @@
 module.exports = Object.freeze({
     QUERIES: {
         ConsentForm: {
-            GetUserDetails: "select * from codelinc.veteran_pi where veteran_id = $1",
-            AcceptContent: ""
+            GetUserDetails: "SELECT first_name, last_name, consent_status FROM codelinc.veteran_pi WHERE veteran_id = $1",
+            AcceptConsent: "UPDATE codelinc.veteran_pi SET consent_status = true WHERE veteran_id = $1"
         },
         ProgressNotes: {
             GetGoals: "",

@@ -10,22 +10,17 @@ const router = express.Router()
 
 var constants = require('./constants');
 
-const secrets = require('./secret');
-
-const { Pool } = require('pg')
+const { Pool } = require('pg');
 const { QUERIES } = require('./constants')
 const pool = new Pool({
-  host: secrets.HOST,
-  user: secrets.USER,
-  password: secrets.PASSWORD,
-  database: secrets.DATABASE,
-  port: secrets.PORT
+  host: constants.HOST,
+  user: constants.USER,
+  password: constants.PASSWORD,
+  database: constants.DATABASE,
+  port: constants.PORT
 })
 
-
-pool.on('error', (err, client) => {
-  console.error('unexpected error in postress conection pool', err);
-});
+pool.connect()
 
 app.set('view engine', 'ejs')
 app.engine('.ejs', ejs)
@@ -36,9 +31,31 @@ router.use(cors())
 router.use(bodyParser.json())
 router.use(bodyParser.urlencoded({ extended: true }))
 
+// NOTE: tests can't find the views directory without this
+app.set('views', path.join(__dirname, 'views'))
 
 router.get('/', (req, res) => {
-  res.json({answer: 'success'});
+  const currentInvoke = getCurrentInvoke()
+  const { event = {} } = currentInvoke
+  const {
+    requestContext = {},
+    multiValueHeaders = {}
+  } = event
+  const { stage = '' } = requestContext
+  const {
+    Host = ['localhost:3000']
+  } = multiValueHeaders
+  const apiUrl = `https://${Host[0]}/${stage}`
+  res.render('index', {
+    apiUrl,
+    stage
+  })
+})
+
+router.get('/vendia', (req, res) => {
+  const query = req.query;
+  // res.
+  res.sendFile(path.join(__dirname, 'vendia-logo.png'))
 })
 
 router.get('/users', (req, res) => {
@@ -96,34 +113,29 @@ router.get('/cookie', (req, res) => {
 
 // Endpoint 4
 router.get('/consentForm/getUserDetails/:veteranId', (req, res) => {
-  
+  const vet = req.params.veteranId;
+  const returnObj = null
+
   pool
-  .query(QUERIES.ConsentForm.GetUserDetails, [req.params.veteranId])
-  .then(resp => {
-    console.log('success on endpoint 4: ', resp)
-    res.json({vetID: req.params.veteranId, result: resp.rows})
-  })
-  .catch(err => {
-    console.error('Error executing query', err.stack)
-    res.status(501).json({err});
-  })
+  .query(QUERIES.ConsentForm.GetUserDetails, vet)
+  .then(res => returnObj = res.rows)
+  .catch(err => console.error('Error executing query', err.stack))
+
+  res.json(returnObj);
 
 })
 
 // Endpoint 5
-router.post('/consentForm/acceptConsent/:veteranId', (req, res) => {
+router.put('/consentForm/acceptContent/:veteranId', (req, res) => {
+  const vet = req.params.veteranId;
+  const returnStatus = null
 
   pool
-  .query(QUERIES.ConsentForm.AcceptConsent, [req.params.veteranId])
-  .then(resp => {
-    console.log('success on endpoint 5: ', resp)
-    res.json({vetID: req.params.veteranId, result: 'Successfully updated consent status'})
-  })
-  .catch(err => {
-    console.error('Error executing query', err.stack)
-    res.status(501).json({err});
-  })
+  .query(QUERIES.ConsentForm.AcceptContent, vet)
+  .then(res => returnStatus = res.status)
+  .catch(err => console.error('Error executing query', err.stack))
 
+  res.status(returnStatus);
 
 })
 
@@ -193,45 +205,45 @@ router.post('/progressNotes/updateGoalStatus/', (req, res) => {
 })
 
 // Endpoint 10
-router.get('/userProfile/getUserDetails/:veteranID', (req, res) => {
+router.get('/userProfile/getUserDetails', (req, res) => {
+  const params = {
+    veteran_id: req.body.veteran_id
+  }
+  const returnObj = null
 
   pool
-    .query(QUERIES.UserProfile.GetUserDetails, [req.params.veteranID])
-    .then(resp => {
-      console.log('success on endpoint 10: ', resp)
-      res.json({vetID: req.params.veteranID, result: resp.rows})
-    })
-    .catch(err => {
-      console.error('Error executing query', err.stack)
-      res.status(501).json({err});
-    })
+  .query(QUERIES.UserProfile.GetUserDetails, params)
+  .then(res => returnObj = res.rows)
+  .catch(err => console.error('Error executing query', err.stack))
+
+  res.json(returnObj)
 })
 
 // Endpoint 11
 router.post('/userProfile/updateUserDetails/', (req, res) => {
   const returnStatus = null
-  console.log("incoming req: ", req)
 
+  // same q as 15, do we just pass the body object or parse it?
   const requestObj = {
-    veteran_id: req.params.veteran_id, 
-    photo: req.params.photo, 
-    nick_name: req.params.nick_name, 
-    address_main: req.params.address_main, 
-    address_line_2: req.params.address_line_2, 
-    city: req.params.city, 
-    state: req.params.state, 
-    country: req.params.country, 
-    zip_code: req.params.zip_code, 
-    primary_phone: req.params.primary_phone, 
-    martial_status: req.params.martial_status, 
-    contact_person: req.params.contact_person, 
-    contact_person_relationship: req.params.contact_person_relationship, 
-    contact_person_address: req.params.contact_person_address, 
-    contact_person_phone: req.params.contact_person_phone
+    veteran_id, 
+    photo, 
+    nick_name, 
+    address_main, 
+    address_line_2, 
+    city, 
+    state, 
+    country, 
+    zip_code, 
+    primary_phone, 
+    martial_status, 
+    contact_person, 
+    contact_person_relationship, 
+    contact_person_address, 
+    contact_person_phone
   }
 
   pool
-  .query(QUERIES.UserProfile.UpdateUserDetails, requestObj)
+  .query(QUERIES.UserProfile.UpdateUserDetails, vet)
   .then(res => returnStatus = res.status)
   .catch(err => console.error('Error executing query', err.stack))
 
@@ -286,6 +298,7 @@ router.get('getTreatmentPlanDetails', (req, res) => {
 // Endpoint 15
 router.post('/updateTreatmentPlan', (req, res) => {
   
+  // can we just take the body object or do we parse it?
   const requestObj = {
     veteran_id: req.body.veteran_id,
     positives_in_year, 
