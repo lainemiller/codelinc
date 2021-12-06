@@ -129,16 +129,17 @@ router.post('/consentForm/acceptConsent/:veteranId', (req, res) => {
 
 // Endpoint 6
 router.get('/uiLayout/getUserDetails/:veteranId', (req, res) => {
-  const vet = req.params.veteranId;
-  const returnObj = null
 
   pool
-  .query(QUERIES.ConsentForm.GetUserDetails, vet)
-  .then(res => returnObj = res.rows)
-  .catch(err => console.error('Error executing query', err.stack))
-
-  res.json(returnObj);
-
+    .query(QUERIES.UiLayout.GetUserDetails, [req.params.veteranId])
+    .then(resp => {
+      console.log('success on endpoint 6: ', resp)
+      res.json({veteranId: req.params.veteranId, result: resp.rows})
+    })
+    .catch(err => {
+      console.error('Error executing query', err.stack)
+      res.status(501).json({err});
+    })
 })
 
 // Endpoint 7
@@ -220,7 +221,7 @@ router.post('/userProfile/updateUserDetails/', (req, res) => {
     address_line_2: req.params.address_line_2, 
     city: req.params.city, 
     state: req.params.state, 
-    country: req.params.country, 
+    county: req.params.county, 
     zip_code: req.params.zip_code, 
     primary_phone: req.params.primary_phone, 
     martial_status: req.params.martial_status, 
@@ -232,25 +233,31 @@ router.post('/userProfile/updateUserDetails/', (req, res) => {
 
   pool
   .query(QUERIES.UserProfile.UpdateUserDetails, requestObj)
-  .then(res => returnStatus = res.status)
-  .catch(err => console.error('Error executing query', err.stack))
-
-  res.status(returnStatus);
-
+  .then(resp => {
+    console.log('success on endpoint 11: ', resp)
+    //returnStatus = resp.status
+    res.status(resp.status);
+  })
+  .catch(err => {
+    console.error('Error executing query', err.stack)
+    res.status(501).json({err});
+  })
+ 
 })
 
 // Endpoint 12
-router.get('/uiLayout/getUserDetails/:caseWorkerId', (req, res) => {
-  const caseWorker = req.params.caseWorkerId;
-  const returnObj = null
+router.get('/uiLayout/getCaseWorkerDetails/:caseWorkerId', (req, res) => {
 
   pool
-  .query(QUERIES.UiLayout.GetUserDetails, caseWorker)
-  .then(res => returnObj = res.rows)
-  .catch(err => console.error('Error executing query', err.stack))
-
-  res.json(returnObj);
-
+    .query(QUERIES.UiLayout.GetCaseWorkerDetails, [req.params.caseWorkerId])
+    .then(resp => {
+      console.log('success on endpoint 12: ', resp)
+      res.json({caseWorkerID: req.params.caseWorkerId, result: resp.rows})
+    })
+    .catch(err => {
+      console.error('Error executing query', err.stack)
+      res.status(501).json({err});
+    })
 })
 
 // Endpoint 13

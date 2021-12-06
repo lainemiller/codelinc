@@ -22,7 +22,7 @@ Resources:
   ExpressLambdaFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://servantcenter-serverless-pipeline/2c9245e78f0b0c7a40d5c960d5d21350
+      CodeUri: s3://servantcenter-serverless-pipeline/54bd78ad9eb3e50d962859f2703ec535
       Handler: main.handler
       MemorySize: 1024
       Runtime: nodejs12.x

@@ -14,8 +14,8 @@ module.exports = Object.freeze({
             UpdateUserDetails: "UPDATE codelinc.veteran_pi SET photo = $1, nick_name =  $2, address_main = $3, address_line_2 =  $4, city =  $5, state = $6, county = $7, zip_code = $8, primary_phone =  $9, marital_status = $10, contact_person = $11, contact_person_relationship = $12, contact_person_address = $13, contact_person_phone = $14 WHERE veteran_id = 5"
         },
         UiLayout: {
-            GetUserDetailsForVet: "",
-            GetUserDetailsForCaseWorker: "SELECT c.photo, c.nick_name, w.last_login_date_time from codelinc.case_worker_info c JOIN codelinc.web_party_info w on c.case_worker_id = w.party_id where case_worker_id = $1",
+            GetUserDetails: "SELECT vet.photo, vet.nick_name, wpi.last_login_date_time from codelinc.veteran_pi vet join codelinc.web_party_info wpi on vet.veteran_id = wpi.party_id where vet.veteran_id = $1",
+            GetCaseWorkerDetails: "SELECT c.photo, c.nick_name, w.last_login_date_time from codelinc.case_worker_info c JOIN codelinc.web_party_info w on c.case_worker_id = w.party_id where case_worker_id = $1",
             GetUnreadMessageCount: ""
         },
         TreatmentPlan: {
