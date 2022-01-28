@@ -317,37 +317,67 @@ router.post('/updateTreatmentPlan', (req, res) => {
 
 })
 
-// Endpoint 16
-router.get('/transportationForm/getTransportationRequests', (req, res) => {
-  const returnObj = null
+//Endpoint 16
+router.post('/transportationForm/saveTransportationRequest/', (req, res) => {
+
+  const requestObj = [
+    req.body.veteranId,
+    req.body.appointmentDate,
+    req.body.appointmentTime,
+    req.body.reasonForRequest,
+    req.body.pickupAddress,
+    req.body.pickupCity,
+    req.body.pickupState,
+    req.body.pickupZipcode,
+    req.body.dateFilled
+  ]
 
   pool
-  .query(QUERIES.TransportationRequest.GetTransportationRequests)
-  .then(res => returnObj = res.rows)
-  .catch(err => console.error('Error executing query', err.stack))
-
-  res.json(returnObj)
+  .query(QUERIES.TransportationRequest.SaveTransportationDetails, requestObj)
+  .then(resp => {
+    console.log('success on endpoint SaveTransportationDetails')
+    res.json({vetID:req.body.veteranId, result: 'Successfully saved transportation request'})
+  })
+  .catch(err => {
+    console.error('Error executing query', err.stack)
+    res.status(501).json({err})
+  })
 })
 
 // Endpoint 17
-router.post('/transportationForm/approveTransportationRequests', (req, res) => {
-
-  //not 100% on the purpose of this one so I will just leave it as a POST
-  const requestObj = {
-    veteran_id: req.body.veteran_id,
-    approved_date,
-    transportation_coordinator,
-    nursing_notified,
-    approved_by,
-    approved_date
-  }
+router.get('/transportationForm/getTransportationRequests/:veteranId', (req, res) => {
+  const veteran = req.params.veteranId
 
   pool
-  .query(QUERIES.TransportationRequest.ApproveTransportationRequests)
-  .then(res => returnStatus = res.status)
-  .catch(err => console.error('Error executing query', err.stack))
+  .query(QUERIES.TransportationRequest.GetTransportationRequests, [veteran])
+  .then(resp => {
+    console.log('success on endpoint GetTransportationRequests')
+    res.json({veteranId: veteran, result: resp.rows})
+  })
+  .catch(err => {
+    console.error('Error exectuting query', err.stack)
+    res.status(501).json({err})
+  })
+})
 
-  res.status(returnStatus)
+// Endpoint 18
+router.post('/transportationForm/approveTransportationRequests', (req, res) => {
+
+  const requestObj = [
+    req.body.requestId,
+    req.body.transportCoordinator,
+    req.body.nursingNotified,
+    req.body.notifiedBy,
+    req.body.approvedDate
+  ]
+
+  pool
+  .query(QUERIES.TransportationRequest.ApproveTransportationRequests, requestObj)
+  .then(resp => {
+    console.log('success on endpoint ApproveTransportationDetails')
+    res.json({requestID:req.body.requestId, result: 'Successfully approved transportation request'})
+  })
+  .catch(err => console.error('Error executing query', err.stack))
 }) 
 
 
