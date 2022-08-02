@@ -1,8 +1,9 @@
 module.exports = Object.freeze({
     QUERIES: {
         ConsentForm: {
-            GetUserDetails: "",
-            AcceptContent: ""
+            GetUserDetails: "select vp.first_name,vp.last_name,vp.consent_status from codelinc.web_party_info wpi join codelinc.veteran_pi vp on wpi.party_id=vp.veteran_id where wpi.web_party_id=$1",
+            AcceptConsentStatus: "update codelinc.veteran_pi vp set consent_status=$2 from codelinc.web_party_info wpi where wpi.party_id=vp.veteran_id and wpi.party_id=$1",
+            AcceptedConsentDate: "update codelinc.web_party_info wpi set consent_received=$2 from codelinc.veteran_pi vp where wpi.party_id=vp.veteran_id and wpi.party_id=$1"
         },
         ProgressNotes: {
             GetGoals: "",
@@ -26,6 +27,11 @@ module.exports = Object.freeze({
             SaveTransportationDetails: "INSERT INTO codelinc.veteran_transport_request(veteran_id, appointment_date, appointment_time, reason_for_request, pick_up_address_main, pick_up_city, pick_up_state, pick_up_zip_code, date_filled) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)",
             GetTransportationRequests: "SELECT v.first_name, v.last_name, t.request_id, t.appointment_date, t.appointment_time, t.reason_for_request, t.transport_coordinator, t.nursing_notified, t.notified_by, t.pick_up_address_main, t.pick_up_city, t.pick_up_state, t.pick_up_zip_code, t.approved_date, t.date_filled FROM codelinc.veteran_pi v FULL OUTER JOIN codelinc.veteran_transport_request t ON v.veteran_id = t.veteran_id WHERE t.veteran_id = $1",
             ApproveTransportationRequests: "UPDATE codelinc.veteran_transport_request SET transport_coordinator = $2, nursing_notified = $3, notified_by = $4, approved_date = $5 WHERE request_id = $1"
+        },
+        HealthTracker:{
+            saveHealthTrackerRequest: "INSERT INTO codelinc.veteran_health_tracker(veteran_id,tracking_subject,note_date,measurement,tracking_comments) VALUES ($1, $2, $3, $4, $5)",
+            updateHealthTrackerRequest:"UPDATE codelinc.veteran_health_tracker SET note_date=$3, measurement=$4,tracking_comments=$5 WHERE veteran_id=$1 and tracking_subject=$2",
+            getHealthTracker:"select * from codelinc.veteran_health_tracker where veteran_id=$1"
         }
     }
 
