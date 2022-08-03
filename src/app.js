@@ -97,16 +97,123 @@ router.get('/cookie', (req, res) => {
 // Endpoint 4
 router.get('/consentForm/getUserDetails/:veteranId', (req, res) => {
   const vet = req.params.veteranId;
-  const returnObj = null
+  console.log(vet);
+  let returnObj = null
 
   pool
-  .query(QUERIES.ConsentForm.GetUserDetails, vet)
+  .query(QUERIES.ConsentForm.GetUserDetails, [vet])
   .then(res => returnObj = res.rows)
   .catch(err => console.error('Error executing query', err.stack))
 
   res.json(returnObj);
 
 })
+
+
+router.get('/allTables',(req,res)=>{
+  let returnObj = null;
+  pool
+  .query(QUERIES.UiLayout.getTableNames)
+  .then(res =>{ returnObj = res.rows;
+  console.log(res.rows);})
+  .catch(err => console.error('Error executing query', err.stack))
+
+  res.json(returnObj);
+})
+
+
+//pravin apis to get data from local mock files
+router.get('/userdetailsVeteran', (req, res) => {
+    const users = require(QUERIES.myApisJsonUrls.GetUserDetailsForVet)
+  // pool
+  // .query(QUERIES.UiLayout.GetUserDetailsForVet, [vet])
+  // .then(res => console.log(res))
+  // .catch(err => console.error('Error executing query', err.stack))
+
+  res.json(users);
+
+})
+router.get('/assessmentDetails', (req, res) => {
+ 
+  const users = require(QUERIES.myApisJsonUrls.GetUserAssessmentForVet)
+  
+  // pool
+  // .query(QUERIES.UiLayout.GetUserDetailsForVet, [vet])
+  // .then(res => console.log(res))
+  // .catch(err => console.error('Error executing query', err.stack))
+
+  res.json(users);
+
+})
+router.get('/calendarEvents', (req, res) => {
+ 
+  const users = require(QUERIES.myApisJsonUrls.getCalendarEvents)
+  // pool
+  // .query(QUERIES.UiLayout.GetUserDetailsForVet, [vet])
+  // .then(res => console.log(res))
+  // .catch(err => console.error('Error executing query', err.stack))
+
+  res.json(users);
+
+})
+router.get('/progressNotes', (req, res) => {
+ 
+  const users = require(QUERIES.myApisJsonUrls.getProgressNotes)
+  // pool
+  // .query(QUERIES.UiLayout.GetUserDetailsForVet, [vet])
+  // .then(res => console.log(res))
+  // .catch(err => console.error('Error executing query', err.stack))
+
+  res.json(users);
+
+})
+router.get('/resedentSearch', (req, res) => {
+ 
+  const users = require(QUERIES.myApisJsonUrls.getResedentData)
+  // pool
+  // .query(QUERIES.UiLayout.GetUserDetailsForVet, [vet])
+  // .then(res => console.log(res))
+  // .catch(err => console.error('Error executing query', err.stack))
+
+  res.json(users);
+
+})
+router.get('/consentData', (req, res) => {
+ 
+  const users = require(QUERIES.myApisJsonUrls.getConsentData)
+  // pool
+  // .query(QUERIES.UiLayout.GetUserDetailsForVet, [vet])
+  // .then(res => console.log(res))
+  // .catch(err => console.error('Error executing query', err.stack))
+
+  res.json(users);
+
+})
+router.get('/transportationRequestData', (req, res) => {
+ 
+  const users = require(QUERIES.myApisJsonUrls.GetTransportationData)
+  // pool
+  // .query(QUERIES.UiLayout.GetUserDetailsForVet, [vet])
+  // .then(res => console.log(res))
+  // .catch(err => console.error('Error executing query', err.stack))
+
+  res.json(users);
+
+})
+
+//column names
+router.get('/allTablesCol',(req,res)=>{
+  let returnObj = null;
+  pool
+  .query(QUERIES.UiLayout.getTableColumns)
+  .then(res =>{ returnObj = res.rows;
+  console.log(res.rows);})
+  .catch(err => console.error('Error executing query', err.stack))
+
+  res.json(returnObj);
+})
+
+
 
 // Endpoint 5
 router.put('/consentForm/acceptContent/:veteranId', (req, res) => {
@@ -203,31 +310,32 @@ router.get('/userProfile/getUserDetails/:veteranID', (req, res) => {
 })
 
 // Endpoint 11
-router.post('/userProfile/updateUserDetails/', (req, res) => {
-  const returnStatus = null
-  console.log("incoming req: ", req)
-
-  const requestObj = {
-    veteran_id: req.params.veteran_id, 
-    photo: req.params.photo, 
-    nick_name: req.params.nick_name, 
-    address_main: req.params.address_main, 
-    address_line_2: req.params.address_line_2, 
-    city: req.params.city, 
-    state: req.params.state, 
-    country: req.params.country, 
-    zip_code: req.params.zip_code, 
-    primary_phone: req.params.primary_phone, 
-    martial_status: req.params.martial_status, 
-    contact_person: req.params.contact_person, 
-    contact_person_relationship: req.params.contact_person_relationship, 
-    contact_person_address: req.params.contact_person_address, 
-    contact_person_phone: req.params.contact_person_phone
-  }
+router.put('/userProfile/updateUserDetails/', (req, res) => {
+  let returnStatus = null
+  console.log("incoming req: ", req.body)
+ let nick_name=req.body.nick_name;
+  // const requestObj = {
+  //   veteran_id: req.params.veteran_id, 
+  //   photo: req.params.photo, 
+  //   nick_name: req.params.nick_name, 
+  //   address_main: req.params.address_main, 
+  //   address_line_2: req.params.address_line_2, 
+  //   city: req.params.city, 
+  //   state: req.params.state, 
+  //   country: req.params.country, 
+  //   zip_code: req.params.zip_code, 
+  //   primary_phone: req.params.primary_phone, 
+  //   martial_status: req.params.martial_status, 
+  //   contact_person: req.params.contact_person, 
+  //   contact_person_relationship: req.params.contact_person_relationship, 
+  //   contact_person_address: req.params.contact_person_address, 
+  //   contact_person_phone: req.params.contact_person_phone
+  // }
 
   pool
-  .query(QUERIES.UserProfile.UpdateUserDetails, requestObj)
-  .then(res => returnStatus = res.status)
+  .query(QUERIES.UserProfile.UpdateUserDetails, [nick_name])
+  .then(res => {returnStatus = res.status
+  console.log(returnStatus);})
   .catch(err => console.error('Error executing query', err.stack))
 
   res.status(returnStatus);
@@ -319,24 +427,32 @@ router.post('/updateTreatmentPlan', (req, res) => {
 
 //Endpoint 16
 router.post('/transportationForm/saveTransportationRequest/', (req, res) => {
-
+	
+  //const veteran_id= null,
   const requestObj = [
-    req.body.veteranId,
+	
+    //req.body.veteran_id,
+     4,
     req.body.appointmentDate,
-    req.body.appointmentTime,
-    req.body.reasonForRequest,
-    req.body.pickupAddress,
-    req.body.pickupCity,
-    req.body.pickupState,
-    req.body.pickupZipcode,
-    req.body.dateFilled
+    req.body.time,
+    req.body.reason,
+    req.body.destinationAddress,
+	req.body.destinationAddress2,	
+    req.body.city,
+    req.body.selectedState,
+    req.body.zipcode,
+    req.body.dateRequested 
   ]
+  console.log("FormData ",req.body)
 
   pool
   .query(QUERIES.TransportationRequest.SaveTransportationDetails, requestObj)
   .then(resp => {
     console.log('success on endpoint SaveTransportationDetails')
-    res.json({vetID:req.body.veteranId, result: 'Successfully saved transportation request'})
+	
+	res.status(200).json({status:true,result:"Successfully saved transportation request" })
+
+    //res.json({vetID:req.body.veteran_id, result: 'Successfully saved transportation request'})
   })
   .catch(err => {
     console.error('Error executing query', err.stack)
@@ -345,37 +461,48 @@ router.post('/transportationForm/saveTransportationRequest/', (req, res) => {
 })
 
 // Endpoint 17
-router.get('/transportationForm/getTransportationRequests/:veteranId', (req, res) => {
-  const veteran = req.params.veteranId
+router.get('/transportationForm/getTransportationRequests/', (req, res) => {
+  //const veteran = req.params.veteranId
 
   pool
-  .query(QUERIES.TransportationRequest.GetTransportationRequests, [veteran])
+  .query(QUERIES.TransportationRequest.GetTransportationRequests)
+   //.query(QUERIES.TransportationRequest.GetTransportationRequests, [veteran])
   .then(resp => {
     console.log('success on endpoint GetTransportationRequests')
-    res.json({veteranId: veteran, result: resp.rows})
+	//res.json({veteranId: veteran, result: resp.rows})
+     // res.json({result:resp.rows})
+	  res.json(resp.rows)
+	 
+
   })
   .catch(err => {
     console.error('Error exectuting query', err.stack)
     res.status(501).json({err})
   })
+
+  
 })
 
 // Endpoint 18
 router.post('/transportationForm/approveTransportationRequests', (req, res) => {
 
   const requestObj = [
-    req.body.requestId,
-    req.body.transportCoordinator,
-    req.body.nursingNotified,
-    req.body.notifiedBy,
-    req.body.approvedDate
+    req.body.request_id,
+    req.body.coordinator,
+    req.body.nursing_notified,
+    req.body.notified_by,
+    req.body.approved_date,
+	req.body.date
   ]
+  
+console.log("FormData ",req.body)
 
   pool
   .query(QUERIES.TransportationRequest.ApproveTransportationRequests, requestObj)
   .then(resp => {
     console.log('success on endpoint ApproveTransportationDetails')
-    res.json({requestID:req.body.requestId, result: 'Successfully approved transportation request'})
+    //res.json('Successfully approved transportation request')
+	res.status(200).json({status:true,result:"Successfully approved transportation request" })
   })
   .catch(err => console.error('Error executing query', err.stack))
 }) 
