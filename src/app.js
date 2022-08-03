@@ -471,7 +471,7 @@ router.post('/transportationForm/saveTransportationRequest/', (req, res) => {
 
 // Endpoint 17
 router.get('/transportationForm/getTransportationRequests/', (req, res) => {
-  //const veteran = req.params.veteranId
+  //const veteran = req.params.veteranIdsh
 
   pool
   .query(QUERIES.TransportationRequest.GetTransportationRequests)
