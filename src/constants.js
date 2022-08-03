@@ -5,6 +5,11 @@ module.exports = Object.freeze({
             AcceptConsentStatus: "update codelinc.veteran_pi vp set consent_status=$2 from codelinc.web_party_info wpi where wpi.party_id=vp.veteran_id and wpi.party_id=$1",
             AcceptedConsentDate: "update codelinc.web_party_info wpi set consent_received=$2 from codelinc.veteran_pi vp where wpi.party_id=vp.veteran_id and wpi.party_id=$1"
         },
+        calendarAPis: {
+            getCalendarEventsForVeteran: "SELECT * FROM codelinc.tableName WHERE veteran_id = $1",
+            getCalendarEventsForCaseworker: "SELECT * FROM codelinc.tableName",
+            postEventsForCaseworker: "INSERT INTO codelinc.tableName(columns_name) VALUES()"
+        },
         ProgressNotes: {
             GetGoals: "SELECT * FROM codelinc.veteran_treatment_goals WHERE veteran_id = $1",
             AddGoal: "INSERT INTO codelinc.veteran_treatment_goals(veteran_id, goal_description, goal_type) VALUES($1, $2, $3)",

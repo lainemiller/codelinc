@@ -496,7 +496,7 @@ router.post('/transportationForm/approveTransportationRequests', (req, res) => {
     req.body.notified_by,
     req.body.approved_date
   ]
-
+console.log('requestObj',requestObj);
   pool
   .query(QUERIES.TransportationRequest.ApproveTransportationRequests, requestObj)
   .then(resp => {
