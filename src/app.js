@@ -110,20 +110,51 @@ router.get("/cookie", (req, res) => {
   res.cookie("Fizz", "buzz");
   res.json({});
 });
-// router.get('/transportationForm/getTransportationRequests/', (req, res) => {
+router.get('/transportationForm/getTransportationRequests/', (req, res) => {
 
-//   pool
-//   .query(QUERIES.TransportationRequest.GetTransportationRequests)
-//   .then(resp => {
-//     console.log('success on endpoint GetTransportationRequests')
-//       res.json(resp.rows)
-//   })
-//   .catch(err => {
-//     console.error('Error exectuting query', err.stack)
-//     res.status(501).json({err})
-//   })
-// })
+  pool
+  .query(QUERIES.TransportationRequest.GetTransportationRequests)
+  .then(resp => {
+    console.log('success on endpoint GetTransportationRequests')
+      res.json(resp.rows)
+  })
+  .catch(err => {
+    console.error('Error exectuting query', err.stack)
+    res.status(501).json({err})
+  })
+})
+router.get("/getCalendarEvents", (req, res) => {
+  // Get all the events between two dates
+  let returnObj = null;
 
+  const getEvents = async (dateTimeStart, dateTimeEnd) => {
+    try {
+      let response = await calendar.events.list({
+        auth: auth,
+        calendarId: calendarId,
+        // timeMin: dateTimeStart,
+        // timeMax: dateTimeEnd,
+        timeZone: "Asia/Kolkata",
+      });
+      let items = response["data"]["items"];
+      return items;
+    } catch (error) {
+      console.log(`Error at getEvents --> ${error}`);
+      return 0;
+    }
+  };
+  let start = "2022-07-20T00:00:00.000Z";
+  let end = "2022-07-28T00:00:00.000Z";
+  getEvents(start, end)
+    .then((res) => {
+      returnObj = res;
+      console.log("all events", returnObj);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  res.json(returnObj);
+});
 // Endpoint 4
 router.get("/consentForm/getUserDetails/:veteranId", (req, res) => {
   const vet = req.params.veteranId;
@@ -471,7 +502,7 @@ router.post('/transportationForm/saveTransportationRequest/', (req, res) => {
 
 // Endpoint 17
 router.get('/transportationForm/getTransportationRequests/', (req, res) => {
-  //const veteran = req.params.veteranIdsh
+  //const veteran = req.params.veteranId
 
   pool
   .query(QUERIES.TransportationRequest.GetTransportationRequests)
@@ -492,12 +523,11 @@ router.get('/transportationForm/getTransportationRequests/', (req, res) => {
 router.post('/transportationForm/approveTransportationRequests', (req, res) => {
 
   const requestObj = [
-    req.body.request_id,
-    req.body.coordinator,
+    req.body.veteran_id,
+    req.body.transport_coordinator,
     req.body.nursing_notified,
     req.body.notified_by,
-    req.body.approved_date,
-    req.body.date
+    req.body.approved_date
   ]
 console.log('requestObj',requestObj);
   pool

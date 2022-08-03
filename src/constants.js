@@ -29,7 +29,6 @@ module.exports = Object.freeze({
             GetTransportationData:'./assets/transportationData.json'
         },
         UiLayout: {
-            GetUserDetailsForVet: "SHOW tables",
             getTableNames: "SELECT table_name FROM codelinc",
             GetUserDetailsForCaseWorker: "SELECT c.photo, c.nick_name, w.last_login_date_time from codelinc.case_worker_info c JOIN codelinc.web_party_info w on c.case_worker_id = w.party_id where case_worker_id = $1",
             getTableColumns: "SELECT schema_name FROM information_schema.schemata"   
