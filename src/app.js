@@ -156,65 +156,18 @@ router.get("/getCalendarEvents", (req, res) => {
   res.json(returnObj);
 });
 // Endpoint 4
-router.get("/consentForm/getUserDetails/:veteranId", (req, res) => {
-  const vet = req.params.veteranId;
-  console.log(vet);
-  let returnObj = null;
+router.get('/consentForm/getUserDetails/:loginId', (req, res) => {
+  const loginId = req.params.loginId;
+  let returnObj=null;
 
   pool
-    .query(QUERIES.ConsentForm.GetUserDetails, [vet])
-    .then((res) => (returnObj = res.rows))
-    .catch((err) => console.error("Error executing query", err.stack));
-
-  res.json(returnObj);
-});
-
-router.get("/allTables", (req, res) => {
-  let returnObj = null;
-  pool
-    .query(QUERIES.UiLayout.getTableNames)
-    .then((res) => {
-      returnObj = res.rows;
-      console.log(res.rows);
+    .query(QUERIES.ConsentForm.GetUserDetails, [loginId])
+    .then(resp => {
+      returnObj = resp.rows;
+      res.status(200).json({status:true,loginID:loginId,
+        result:returnObj});
     })
-    .catch((err) => console.error("Error executing query", err.stack));
-
-  res.json(returnObj);
-});
-
-//pravin apis to get data from local mock files
-router.get("/userdetailsVeteran", (req, res) => {
-  const users = require(QUERIES.myApisJsonUrls.GetUserDetailsForVet);
-  // pool
-  // .query(QUERIES.UiLayout.GetUserDetailsForVet, [vet])
-  // .then(res => console.log(res))
-  // .catch(err => console.error('Error executing query', err.stack))
-
-  res.json(users);
-});
-router.get("/assessmentDetails", (req, res) => {
-  const users = require(QUERIES.myApisJsonUrls.GetUserAssessmentForVet);
-
-  // pool
-  // .query(QUERIES.UiLayout.GetUserDetailsForVet, [vet])
-  // .then(res => console.log(res))
-  // .catch(err => console.error('Error executing query', err.stack))
-
-  res.json(users);
-});
-
-
-
-//fetch assessment data from database
-router.get('/assessmentDetailsTest/:veteranID', (req, res) => {
-  const vet = req.params.veteranID;
-  pool
-  .query(QUERIES.UserProfile.UserAssessmentDetails, [vet])
-  .then((response) => { response.rows;
-  res.json(handler(response.rows));
-  })
-  .catch(err => {console.error('Error executing query', err.stack)
-  res.status(500).json({err});})
+    .catch(err => console.error('Error executing query', err.stack))
 })
 router.get("/calendarEvents", (req, res) => {
   const users = require(QUERIES.myApisJsonUrls.getCalendarEvents);
@@ -277,18 +230,32 @@ router.get("/allTablesCol", (req, res) => {
   res.json(returnObj);
 });
 
+
 // Endpoint 5
-router.put("/consentForm/acceptContent/:veteranId", (req, res) => {
-  const vet = req.params.veteranId;
-  const returnStatus = null;
+router.put('/consentForm/acceptConsent/:loginId', (req, res) => {
+  const currentDate=new Date;
+  const consentStatus=true;
+  const requestObjConsentStatus=[
+    req.params.loginId,
+    consentStatus
+  ]
+
+  const requestObjConsentDate=[
+    req.params.loginId,
+    currentDate
+  ]
 
   pool
-    .query(QUERIES.ConsentForm.AcceptContent, vet)
-    .then((res) => (returnStatus = res.status))
-    .catch((err) => console.error("Error executing query", err.stack));
+    .query(QUERIES.ConsentForm.AcceptConsentStatus, requestObjConsentStatus)
+    .then(console.log("Sucess on Consent status update"))
+    .catch(err => console.error('Error executing query', err.stack))
+  pool
+    .query(QUERIES.ConsentForm.AcceptedConsentDate, requestObjConsentDate)
+    .then(console.log("Sucess on Consent Date update"))
+    .catch(err => console.error('Error executing query', err.stack))
 
-  res.status(returnStatus);
-});
+  res.status(200).json({status:true,result:"Successfully Accepted Consent Form" })
+})
 
 // Endpoint 6
 router.get("/uiLayout/getUserDetails/:veteranId", (req, res) => {
@@ -539,6 +506,7 @@ router.post('/transportationForm/approveTransportationRequests', (req, res) => {
   .catch(err => console.error('Error executing query', err.stack))
 }) 
 
+//Endpoint 
 router.post('/healthTracker/saveHealthTrackerRequest/:veteranId', (req, res) => {
   const trackerReq = Object.values(req.body);
   for (var i = 0; i < trackerReq.length; i++) {
@@ -564,9 +532,11 @@ router.post('/healthTracker/saveHealthTrackerRequest/:veteranId', (req, res) => 
         .catch(err => console.error('Error executing query', err.stack))
     }
   }
-  res.json("Successfully saved Health Tracker request")
+  //handling status
+  res.status(200).json({status:true,result:"Successfully saved Health Tracker request" })
 })
 
+//Endpoint
 router.get('/healthTracker/getHealthTracker/:veteranId', (req, res) => {
   const requestObj = [req.params.veteranId];
   pool.query(QUERIES.HealthTracker.getHealthTracker, requestObj)
@@ -574,9 +544,12 @@ router.get('/healthTracker/getHealthTracker/:veteranId', (req, res) => {
       console.log("Sucess on get HealthTracker")
       res.json({ result: resp.rows })
     }).catch(err => console.error('Error executing query', err.stack))
-}
-
+  }
 )
+
+
+
+
 const veteran1 = {
   first_name: "John",
   last_name: "Smith",
