@@ -1,8 +1,14 @@
 module.exports = Object.freeze({
     QUERIES: {
         ConsentForm: {
-            GetUserDetails: "",
-            AcceptContent: ""
+            GetUserDetails: "select vp.first_name,vp.last_name,vp.consent_status from codelinc.web_party_info wpi join codelinc.veteran_pi vp on wpi.party_id=vp.veteran_id where wpi.web_party_id=$1",
+            AcceptConsentStatus: "update codelinc.veteran_pi vp set consent_status=$2 from codelinc.web_party_info wpi where wpi.party_id=vp.veteran_id and wpi.party_id=$1",
+            AcceptedConsentDate: "update codelinc.web_party_info wpi set consent_received=$2 from codelinc.veteran_pi vp where wpi.party_id=vp.veteran_id and wpi.party_id=$1"
+        },
+        calendarAPis: {
+            getCalendarEventsForVeteran: "SELECT * FROM codelinc.tableName WHERE veteran_id = $1",
+            getCalendarEventsForCaseworker: "SELECT * FROM codelinc.tableName",
+            postEventsForCaseworker: "INSERT INTO codelinc.tableName(columns_name) VALUES()"
         },
         ProgressNotes: {
             GetGoals: "SELECT * FROM codelinc.veteran_treatment_goals WHERE veteran_id = $1",
