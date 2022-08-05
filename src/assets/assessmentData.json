@@ -52,12 +52,20 @@
             "value": "English"
           },
           {
+            "key": "Contact Person",
+            "value": "Greg Smith"
+          },
+          {
+            "key": "Relationship",
+            "value": "Brother"
+          },
+          {
             "key": "Street Address",
             "value": "123 Main Street"
           },
           {
             "key": "City",
-            "value": "Madison"
+            "value": "Madison" 
           },
           {
             "key": "State",
@@ -70,14 +78,6 @@
           {
             "key": "Phone Number",
             "value": "888-777-7656"
-          },
-          {
-            "key": "Contact Person",
-            "value": "Greg Smith"
-          },
-          {
-            "key": "Relationship",
-            "value": "Brother"
           }
         ]
       },

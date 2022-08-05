@@ -13,12 +13,18 @@ module.exports = Object.freeze({
         ProgressNotes: {
             GetGoals: "SELECT * FROM codelinc.veteran_treatment_goals WHERE veteran_id = $1",
             AddGoal: "INSERT INTO codelinc.veteran_treatment_goals(veteran_id, goal_description, goal_type) VALUES($1, $2, $3)",
-            UpdateGoalStatus: "UPDATE codelinc.veteran_treatment_goals SET goal_status = $3 WHERE veteran_id = $1 AND goal_id = $2"
+            //UpdateGoalStatus: "INSERT INTO codelinc.veteran_treatment_goals(veteran_id, goal_id, goal_description) VALUES($1, $2, $3) ON CONFLICT (veteran_id) DO UPDATE SET goal_description = EXCLUDED.goal_description"
+              UpdateGoalStatus: "UPDATE codelinc.veteran_treatment_goals SET goal_status = $3 WHERE veteran_id = $1 AND goal_id = $2"
         },
         UserProfile: {
-            GetUserDetails: "SELECT photo, nick_name, address_main, address_line_2, city, state, county, zip_code, primary_phone, marital_status, contact_person, contact_person_relationship, contact_person_address, contact_person_phone from codelinc.veteran_pi where veteran_id = $1",
+            GetUserDetails: "SELECT photo, nick_name, address_main, address_line_2, city, state, county, zip_code, primary_phone, arital_status, contact_person, contact_person_relationship, contact_person_address, contact_person_phone from codelinc.veteran_pi where veteran_id = $1",
             UpdateUserDetails: "UPDATE codelinc.veteran_pi SET nick_name = $1 WHERE veteran_id = 5",
-            UserAssessmentDetails: "select * from codelinc.veteran_pi where veteran_id  = $1 "
+			//UserAssessmentDetails: "SELECT * FROM codelinc.veteran_pi WHERE veteran_id = $1",
+            UserAssessmentDetailsTable:"SELECT table_name as \"Personal Information\" FROM information_schema.tables where table_name like \'%pi\' ",
+            UserAssessmentDetails:'select first_name as "First Name", last_name as "Last Name", middle_initial  as "Middle Initial", nick_name as "Nickname", place_of_birth as "Place of Birth", ssn as "SSN#", gender as "Sex", marital_status  as "Marital Status", address_main as "Address", race as "Race", primary_language as "Primary Language", contact_person as "Contact Person", contact_person_relationship as "Relationship", contact_person_address as "Contact Person Address", contact_person_phone as "Contact Person Phone", city as "City", state as "State", zip_code as "Zip Code", city as "City" from codelinc.veteran_pi vpi where veteran_id = $1;',
+			UserAssessmentDetailsFinance: "select * from codelinc.veteran_finance where veteran_id = $1;",
+			UserAssessmentDetailsPI: "select * from codelinc.veteran_pi where veteran_id  = $1 ",
+            UserAssessmentDetailsFinanceTable: "SELECT table_name as \"Finance\" FROM information_schema.tables where table_name like \'%finance\' "
         },
         myApisJsonUrls:{
             GetUserDetailsForVet: "./assets/userData.json",
@@ -30,11 +36,11 @@ module.exports = Object.freeze({
             GetTransportationData:'./assets/transportationData.json'
         },
         UiLayout: {
-            getTableNames: "SELECT table_name FROM codelinc",
+            getTableNames: "SELECT table_name FROM information_schema.tables",
             GetUserDetailsForCaseWorker: "SELECT c.photo, c.nick_name, w.last_login_date_time from codelinc.case_worker_info c JOIN codelinc.web_party_info w on c.case_worker_id = w.party_id where case_worker_id = $1",
-            getTableColumns: "SELECT schema_name FROM information_schema.schemata"   
-
-            },
+            getTableColumns: "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'veteran_transport_request';",
+            getTableData: "SELECT * FROM codelinc.veteran_treatment_goals"				
+		},
         TreatmentPlan: {
             GetTreatmentPlanDetails: "",
             UpdateTreatmentPlanDetails: ""

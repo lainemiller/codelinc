@@ -8,10 +8,9 @@ const ejs = require("ejs").__express;
 const app = express();
 const router = express.Router();
 
-const handler = require ('../src/AssessmentHandler/assessment.js');
-var constants = require("./constants");
-
-const secrets = require("./secret");
+var constants = require('./constants');
+const sequentialQueries  = require ('../src/AssessmentHandler/assessment.js');
+const secrets = require('./secret');
 
 //Calendar events
 const { google } = require("googleapis");
@@ -231,6 +230,133 @@ router.get("/allTablesCol", (req, res) => {
 });
 
 
+router.get('/allTables',(req,res)=>{
+  let returnObj = null;
+  pool
+  .query(QUERIES.UiLayout.getTableNames)
+  .then(res =>{ returnObj = res.rows;
+  console.log(res.rows);})
+  .catch(err => console.error('Error executing query', err.stack))
+
+  res.json(returnObj);
+})
+
+//trying to get table data
+
+router.get('/tableData',(req,res)=>{
+  let returnObj = null;
+  pool
+  .query(QUERIES.UiLayout.getTableData)
+  .then(res =>{ returnObj = res.rows;
+  console.log(res.rows);})
+  .catch(err => console.error('Error executing query', err.stack))
+
+  res.json(returnObj);
+})
+
+//
+
+//query check
+
+router.get('/queryCheck',(req,res)=>{
+  let returnObj = null;
+  pool
+  .query(QUERIES.checkQuery.query)
+  .then(res =>{ returnObj = res.rows;
+  console.table(res.rows);})
+  .catch(err => console.error('Error executing query', err.stack))
+
+  res.json(returnObj);
+})
+
+//
+
+
+//pravin apis to get data from local mock files
+router.get('/userdetailsVeteran', (req, res) => {
+    const users = require(QUERIES.myApisJsonUrls.GetUserDetailsForVet)
+  // pool
+  // .query(QUERIES.UiLayout.GetUserDetailsForVet, [vet])
+  // .then(res => console.log(res))
+  // .catch(err => console.error('Error executing query', err.stack))
+
+  res.json(users);
+
+})
+
+router.get('/assessmentDetails/:veteranID', (req, res) => {
+  const vet = req.params.veteranID;
+
+  pool
+  .query(QUERIES.UserProfile.UserAssessmentDetailsFinance, [vet])
+  .then((response) => { response.rows; 
+  res.json({assessment_details:[{header:"personal information",data:response.rows}]});
+  })
+  .catch(err => {console.error('Error executing query', err.stack)
+  res.status(500).json({err});})
+})
+
+// assessment API testing
+router.get('/assessmentDetailsTest/:veteranID', (req, res) => {
+  const vet = req.params.veteranID;
+
+  //  pool.query(QUERIES.UserProfile.UserAssessmentDetails, [vet])
+  // .then((PIResponse, FinanceResponse) => { //response.rows; 
+  //   console.log('pi response', PIResponse);
+  // //console.log('fi response',FinanceResponse.rows);
+  // res.json(handler(PIResponse.rows));
+  // })
+  // .catch(err => {console.error('Error executing query', err.stack)
+  // res.status(500).json({err});})
+
+  res.status(200).json(sequentialQueries(vet));
+})
+
+//getting data from mock json
+router.get('/assessmentDetailsMock', (req, res) => {
+  const users = require(QUERIES.myApisJsonUrls.GetUserAssessmentForVet)
+  res.json(users);
+})
+
+router.get('/calendarEvents', (req, res) => {
+  const users = require(QUERIES.myApisJsonUrls.getCalendarEvents)
+  res.json(users);
+})
+router.get('/progressNotes', (req, res) => {
+  const users = require(QUERIES.myApisJsonUrls.getProgressNotes)
+  res.json(users);
+})
+
+router.get('/resedentSearch', (req, res) => {
+  const users = require(QUERIES.myApisJsonUrls.getResedentData)
+  res.json(users);
+})
+
+router.get('/consentData', (req, res) => {
+  const users = require(QUERIES.myApisJsonUrls.getConsentData)
+  res.json(users);
+
+})
+
+router.get('/transportationRequestData', (req, res) => {
+  const users = require(QUERIES.myApisJsonUrls.GetTransportationData)
+  res.json(users);
+})
+
+//column names
+router.get('/allTablesCol',(req,res)=>{
+  let returnObj = null;
+  pool
+  .query(QUERIES.UiLayout.getTableColumns)
+  .then(res =>{ returnObj = res.rows;
+  console.log(res.rows);})
+  .catch(err => console.error('Error executing query', err.stack))
+
+  res.json(returnObj);
+})
+
+
+
 // Endpoint 5
 router.put('/consentForm/acceptConsent/:loginId', (req, res) => {
   const currentDate=new Date;
@@ -273,22 +399,38 @@ router.get("/uiLayout/getUserDetails/:veteranId", (req, res) => {
 // Endpoint 7
 router.get('/getGoals/:veteranId', (req, res) => {
   const vet = req.params.veteranId;
+
   pool
   .query(QUERIES.ProgressNotes.GetGoals, [vet])
-  .then((response) => { response.rows;
+  .then((response) => { response.rows; 
   res.json(response.rows)})
   .catch(err => {console.error('Error executing query', err.stack)
   res.status(500).json({err});})
+  
 })
+
+
+//progress notes get api for testing
+//router.get('/getGoalsTest/:veteranId', (req, res) => {
+  //const vet = parseInt(req.params.veteranId);
+  //pool.query(QUERIES.ProgressNotes.GetGoals, [vet], (error, results) => {
+	//  if (error){
+		//  throw error
+	//  }
+	 // res.status(200).json(results.rows)
+  //})
+
+//})
+
 
 // Endpoint 8
 router.post('/progressNotes/addGoal/', (req, res) => {
   const goalId = null
   const requestObj = [
-    4,  
+    4,	
     req.body.goalDescription,
-  null
-  //req.body.goalState
+	null
+	//req.body.goalState
   ]
   pool
   .query(QUERIES.ProgressNotes.AddGoal, requestObj)
@@ -302,7 +444,7 @@ router.post('/progressNotes/updateGoalStatus/', (req, res) => {
   //const goalId = req.params.veteranId;
   const requestObj = [
     4,
-    req.body.goal_id,
+    req.body.goal_id, 
     req.body.goal_status
   ]
   pool
