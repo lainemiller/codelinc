@@ -17,7 +17,7 @@ module.exports = Object.freeze({
               UpdateGoalStatus: "UPDATE codelinc.veteran_treatment_goals SET goal_status = $3 WHERE veteran_id = $1 AND goal_id = $2"
         },
         UserProfile: {
-            GetUserDetails: "SELECT photo, nick_name, address_main, address_line_2, city, state, county, zip_code, primary_phone, arital_status, contact_person, contact_person_relationship, contact_person_address, contact_person_phone from codelinc.veteran_pi where veteran_id = $1",
+            GetUserDetails: "SELECT * from codelinc.veteran_pi where veteran_id = $1",
             UpdateUserDetails: "UPDATE codelinc.veteran_pi SET nick_name = $1 WHERE veteran_id = 5",
 			//UserAssessmentDetails: "SELECT * FROM codelinc.veteran_pi WHERE veteran_id = $1",
             UserAssessmentDetailsTable:"SELECT table_name as \"Personal Information\" FROM information_schema.tables where table_name like \'%pi\' ",
@@ -26,14 +26,14 @@ module.exports = Object.freeze({
 			UserAssessmentDetailsPI: "select * from codelinc.veteran_pi where veteran_id  = $1 ",
             UserAssessmentDetailsFinanceTable: "SELECT table_name as \"Finance\" FROM information_schema.tables where table_name like \'%finance\' "
         },
-        myApisJsonUrls:{
+        myApisJsonUrls: {
             GetUserDetailsForVet: "./assets/userData.json",
-            GetUserAssessmentForVet:"./assets/assessmentData.json",
-            getCalendarEvents:"./assets/calendarEvent.json",
-            getProgressNotes:"./assets/progressNotes.json",
-            getResedentData:'./assets/resedentData.json',
-            getConsentData:'./assets/consentData.json',
-            GetTransportationData:'./assets/transportationData.json'
+            GetUserAssessmentForVet: "./assets/assessmentData.json",
+            getCalendarEvents: "./assets/calendarEvent.json",
+            getProgressNotes: "./assets/progressNotes.json",
+            getResedentData: './assets/resedentData.json',
+            getConsentData: './assets/consentData.json',
+            GetTransportationData: './assets/transportationData.json'
         },
         UiLayout: {
             getTableNames: "SELECT table_name FROM information_schema.tables",
@@ -46,14 +46,14 @@ module.exports = Object.freeze({
             UpdateTreatmentPlanDetails: ""
         },
         TransportationRequest: {
-            SaveTransportationDetails: "INSERT INTO codelinc.veteran_transport_request(appointment_date, appointment_time, reason_for_request, pick_up_address_main, pick_up_city, pick_up_state, pick_up_zip_code) VALUES($1, $2, $3, $4, $5, $6, $7)",
-            GetTransportationRequests: "SELECT v.first_name, v.last_name, t.request_id, t.appointment_date, t.appointment_time, t.reason_for_request, t.transport_coordinator, t.nursing_notified, t.notified_by, t.pick_up_address_main, t.pick_up_city, t.pick_up_state, t.pick_up_zip_code, t.approved_date, t.date_filled FROM codelinc.veteran_pi v FULL OUTER JOIN codelinc.veteran_transport_request t ON v.veteran_id = t.veteran_id ORDER BY t.date_filled DESC",
-            ApproveTransportationRequests: "UPDATE codelinc.veteran_transport_request SET transport_coordinator = $2, nursing_notified = $3, notified_by = $4, approved_date = $5 WHERE veteran_id = $1"
+            SaveTransportationDetails: "INSERT INTO codelinc.veteran_transport_request(veteran_id, appointment_date, appointment_time, reason_for_request, pick_up_address_main, va_address, pick_up_city, pick_up_state, pick_up_zip_code, requested_date) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)",
+            GetTransportationRequests: "SELECT v.first_name, v.last_name, t.request_id, t.appointment_date, t.appointment_time, t.reason_for_request, t.transport_coordinator, t.nursing_notified, t.notified_by, t.pick_up_address_main, t.pick_up_city, t.pick_up_state, t.pick_up_zip_code, t.approved_date, t.date_filled FROM codelinc.veteran_pi v FULL OUTER JOIN codelinc.veteran_transport_request t ON v.veteran_id = t.veteran_id  ORDER BY t.requested_date ASC ",
+            ApproveTransportationRequests: "UPDATE codelinc.veteran_transport_request SET transport_coordinator = $2, nursing_notified = $3, notified_by = $4, approved_date = $5, date_filled= $6 WHERE request_id = $1"
         },
-        HealthTracker:{
+        HealthTracker: {
             saveHealthTrackerRequest: "INSERT INTO codelinc.veteran_health_tracker(veteran_id,tracking_subject,note_date,measurement,tracking_comments) VALUES ($1, $2, $3, $4, $5)",
-            updateHealthTrackerRequest:"UPDATE codelinc.veteran_health_tracker SET note_date=$3, measurement=$4,tracking_comments=$5 WHERE veteran_id=$1 and tracking_subject=$2",
-            getHealthTracker:"select * from codelinc.veteran_health_tracker where veteran_id=$1"
+            updateHealthTrackerRequest: "UPDATE codelinc.veteran_health_tracker SET note_date=$3, measurement=$4,tracking_comments=$5 WHERE veteran_id=$1 and tracking_subject=$2",
+            getHealthTracker: "select * from codelinc.veteran_health_tracker where veteran_id=$1"
         }
     }
 
