@@ -12,23 +12,7 @@ const router = express.Router();
 const sequentialQueries = require('../src/AssessmentHandler/assessment.js');
 const secrets = require('./secret');
 
-// Calendar events
-const { google } = require('googleapis');
 
-// Provide the required configuration
-// const CREDENTIALS = { "type": "service_account","project_id": "calendardemoapi-356911","private_key_id": "560348301f78f6f0ccdffdbc19f9f18eb684e6e6","private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDYFKcDArPJ3SMx\nXsLC7XM4ugvm7m7PkfRjyi8dT1b/DC/g7LsCTV3ZLYa+z/bRGM4jK9pXcY7kSvRp\ndFM37OY3RKgdTLQkOlOPFUjZViCOrToivD/egxdFiQe667pBByRRsZ5pprSE21Ta\nBcgEJIKD+I8SDGLiqj0O2WnTcCIODKjoEnekQ3P21NnFlsTpTy5CJ8WB8sF2x/ln\n9gPeX+BPj70299MWiXlv91Ubp47Q8CWQ9iSNFUW3OmEeBDecKRZZU2N5a73DTH/g\n5RCAOYm/IFdTQSVvd12MORCpfU6/BreFtfXPNBmGUs5ErQnOoyjgj2h7p4H7JxyM\ntSIUMOW/AgMBAAECggEAQuVl7UMtaR360sKNFm8P4GyM2cJQcRe1Kx3Bp1fUTaK2\nwfJYVTahiuaS1EkrFwIQc4gUkUTZYako8OrwBpzjixHI4EVKcfrSurXyt0J4UuOj\nX3Sba2Z3UnJBf+eR4qb04gvUyM2xDn6ezt7CVTH+bCAMHyDRjm34+DtsDWcmS+Wi\nd7jUYfDAeWAQV0Bbt5jmFBIRTIU7WA2tOg5bI9TY2bu+NWKIyEnfZwrGS27uSvwx\nhcL4luXmL3MxN8TA2HCj1T5BR9ZkfQfVdEm2dg44ldqEmOFMijCnGyL1wtXi+iDD\nMwL7KJISlMPmaNgT4Z4J7XUXlfD5GrybnQnghyaU/QKBgQD8h/UPXjZ2jf7NKCTX\nOZbVOmDQWaRQkISDVyCfqmiRZNMwJ1Lz5PCHUpKmdXQe+07LHYKsx7BshRIppuMq\nEBf49NSuQvSSlDRs+utkZyMq7dcD9Vs5CARhffQrsinp4RPzD0KwKkPA2VZ+hgTo\nqPkep6/a8VV6dQ2+kGbSzQJ7QwKBgQDbDIPIhZPVLW1CZH56EVhygVZbCqLkB4Dy\nyRPbheWl4ZABkxUVDztqydHoD9l9ui5vLPH/JPh6Ebgqgf/UeFVfDgbss+e3v6jj\nyjVrLAYUX8eBl39qKVgUpLFHYlaLXmI82qe1KYaHaZizltSIkBlX64DaTDEY9Vf9\nLu1IBDNd1QKBgQCHewlmbU0a3aNNvbPGJAdf7inynaUh8+aj8CJ4hpwDJOyIcRB3\n+ONyNkKnO2xJEtp67iIlQBzOm7Xa0sYc0vWJgxB3TUSZPxnBPfz7qLmdVmx8my2N\ns1dmVoSgzLzf1Pk29YD5sjMXS4Kz7oLDr6O3Zo9aDw+k2xe8nQwNHB+wsQKBgQCL\nAzMy84qxFCYtp0cYwp9F88zQ9DwRyK1N5swiWaQ3FKHmTehoOAV2LOR4iG53Osuz\nJGvjhxvlpA8jcuLffQp4y5cbasTYONq+zRn/jK3DClG7bWCgB+LtHuOesMrJoblo\ncz9RWiwVDa+p8UOp8wESadOZNhdGhpUziS9ur7PFjQKBgEbPhWoPJKbBi4f5rP9I\nl5Ly7g5xRXAPe1VBd9h3xgAeb6RgHd5gps9jjhML3hlI5fa3wJytJ1zX6sA/bSvo\n6FN03dy0xIo1Aa9KQK5JsLjnSI6/uwytMTiv8Lnq8NgihDZKRQt3APAn/uEKaqd3\nouWACBG2nArTJg+P56PZc/23\n-----END PRIVATE KEY-----\n", "client_email": "testing-calendar-api@calendardemoapi-356911.iam.gserviceaccount.com", "client_id": "106233731448948100309", "auth_uri": "https://accounts.google.com/o/oauth2/auth","token_uri": "https://oauth2.googleapis.com/token", "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/testing-calendar-api%40calendardemoapi-356911.iam.gserviceaccount.com"};
-const calendarId = 'uevmkimq6ddb2b830mob5ecees@group.calendar.google.com';
-
-// Google calendar API settings
-const SCOPES = 'https://www.googleapis.com/auth/calendar';
-const calendar = google.calendar({ version: 'v3' });
-
-const auth = new google.auth.JWT(
-  'testing-calendar-api@calendardemoapi-356911.iam.gserviceaccount.com',
-  null,
-  '-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDYFKcDArPJ3SMx\nXsLC7XM4ugvm7m7PkfRjyi8dT1b/DC/g7LsCTV3ZLYa+z/bRGM4jK9pXcY7kSvRp\ndFM37OY3RKgdTLQkOlOPFUjZViCOrToivD/egxdFiQe667pBByRRsZ5pprSE21Ta\nBcgEJIKD+I8SDGLiqj0O2WnTcCIODKjoEnekQ3P21NnFlsTpTy5CJ8WB8sF2x/ln\n9gPeX+BPj70299MWiXlv91Ubp47Q8CWQ9iSNFUW3OmEeBDecKRZZU2N5a73DTH/g\n5RCAOYm/IFdTQSVvd12MORCpfU6/BreFtfXPNBmGUs5ErQnOoyjgj2h7p4H7JxyM\ntSIUMOW/AgMBAAECggEAQuVl7UMtaR360sKNFm8P4GyM2cJQcRe1Kx3Bp1fUTaK2\nwfJYVTahiuaS1EkrFwIQc4gUkUTZYako8OrwBpzjixHI4EVKcfrSurXyt0J4UuOj\nX3Sba2Z3UnJBf+eR4qb04gvUyM2xDn6ezt7CVTH+bCAMHyDRjm34+DtsDWcmS+Wi\nd7jUYfDAeWAQV0Bbt5jmFBIRTIU7WA2tOg5bI9TY2bu+NWKIyEnfZwrGS27uSvwx\nhcL4luXmL3MxN8TA2HCj1T5BR9ZkfQfVdEm2dg44ldqEmOFMijCnGyL1wtXi+iDD\nMwL7KJISlMPmaNgT4Z4J7XUXlfD5GrybnQnghyaU/QKBgQD8h/UPXjZ2jf7NKCTX\nOZbVOmDQWaRQkISDVyCfqmiRZNMwJ1Lz5PCHUpKmdXQe+07LHYKsx7BshRIppuMq\nEBf49NSuQvSSlDRs+utkZyMq7dcD9Vs5CARhffQrsinp4RPzD0KwKkPA2VZ+hgTo\nqPkep6/a8VV6dQ2+kGbSzQJ7QwKBgQDbDIPIhZPVLW1CZH56EVhygVZbCqLkB4Dy\nyRPbheWl4ZABkxUVDztqydHoD9l9ui5vLPH/JPh6Ebgqgf/UeFVfDgbss+e3v6jj\nyjVrLAYUX8eBl39qKVgUpLFHYlaLXmI82qe1KYaHaZizltSIkBlX64DaTDEY9Vf9\nLu1IBDNd1QKBgQCHewlmbU0a3aNNvbPGJAdf7inynaUh8+aj8CJ4hpwDJOyIcRB3\n+ONyNkKnO2xJEtp67iIlQBzOm7Xa0sYc0vWJgxB3TUSZPxnBPfz7qLmdVmx8my2N\ns1dmVoSgzLzf1Pk29YD5sjMXS4Kz7oLDr6O3Zo9aDw+k2xe8nQwNHB+wsQKBgQCL\nAzMy84qxFCYtp0cYwp9F88zQ9DwRyK1N5swiWaQ3FKHmTehoOAV2LOR4iG53Osuz\nJGvjhxvlpA8jcuLffQp4y5cbasTYONq+zRn/jK3DClG7bWCgB+LtHuOesMrJoblo\ncz9RWiwVDa+p8UOp8wESadOZNhdGhpUziS9ur7PFjQKBgEbPhWoPJKbBi4f5rP9I\nl5Ly7g5xRXAPe1VBd9h3xgAeb6RgHd5gps9jjhML3hlI5fa3wJytJ1zX6sA/bSvo\n6FN03dy0xIo1Aa9KQK5JsLjnSI6/uwytMTiv8Lnq8NgihDZKRQt3APAn/uEKaqd3\nouWACBG2nArTJg+P56PZc/23\n-----END PRIVATE KEY-----\n',
-  SCOPES
-);
 
 const { Pool } = require('pg');
 const { QUERIES } = require('./constants');
@@ -121,38 +105,7 @@ router.get('/transportationForm/getTransportationRequests/', (req, res) => {
       res.status(501).json({ err });
     });
 });
-router.get('/getCalendarEvents', (req, res) => {
-  // Get all the events between two dates
-  let returnObj = null;
 
-  const getEvents = async (dateTimeStart, dateTimeEnd) => {
-    try {
-      const response = await calendar.events.list({
-        auth,
-        calendarId,
-        // timeMin: dateTimeStart,
-        // timeMax: dateTimeEnd,
-        timeZone: 'Asia/Kolkata'
-      });
-      const items = response.data.items;
-      return items;
-    } catch (error) {
-      console.log(`Error at getEvents --> ${error}`);
-      return 0;
-    }
-  };
-  const start = '2022-07-20T00:00:00.000Z';
-  const end = '2022-07-28T00:00:00.000Z';
-  getEvents(start, end)
-    .then((res) => {
-      returnObj = res;
-      console.log('all events', returnObj);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-  res.json(returnObj);
-});
 // Endpoint 4
 router.get('/consentForm/getUserDetails/:loginId', (req, res) => {
   const loginId = req.params.loginId;
@@ -327,29 +280,7 @@ router.get('/assessmentDetailsMock', (req, res) => {
   res.json(users);
 });
 
-router.get('/calendarEvents', (req, res) => {
-  const users = require(QUERIES.myApisJsonUrls.getCalendarEvents);
-  res.json(users);
-});
-router.get('/progressNotes', (req, res) => {
-  const users = require(QUERIES.myApisJsonUrls.getProgressNotes);
-  res.json(users);
-});
 
-router.get('/resedentSearch', (req, res) => {
-  const users = require(QUERIES.myApisJsonUrls.getResedentData);
-  res.json(users);
-});
-
-router.get('/consentData', (req, res) => {
-  const users = require(QUERIES.myApisJsonUrls.getConsentData);
-  res.json(users);
-});
-
-router.get('/transportationRequestData', (req, res) => {
-  const users = require(QUERIES.myApisJsonUrls.GetTransportationData);
-  res.json(users);
-});
 
 // column names
 router.get('/allTablesCol', (req, res) => {
@@ -453,35 +384,7 @@ router.get('/assessmentDetailsTest/:veteranID', (req, res) => {
   res.status(200).json(sequentialQueries(vet));
 });
 
-// getting data from mock json
-router.get('/assessmentDetailsMock', (req, res) => {
-  const users = require(QUERIES.myApisJsonUrls.GetUserAssessmentForVet);
-  res.json(users);
-});
 
-router.get('/calendarEvents', (req, res) => {
-  const users = require(QUERIES.myApisJsonUrls.getCalendarEvents);
-  res.json(users);
-});
-router.get('/progressNotes', (req, res) => {
-  const users = require(QUERIES.myApisJsonUrls.getProgressNotes);
-  res.json(users);
-});
-
-router.get('/resedentSearch', (req, res) => {
-  const users = require(QUERIES.myApisJsonUrls.getResedentData);
-  res.json(users);
-});
-
-router.get('/consentData', (req, res) => {
-  const users = require(QUERIES.myApisJsonUrls.getConsentData);
-  res.json(users);
-});
-
-router.get('/transportationRequestData', (req, res) => {
-  const users = require(QUERIES.myApisJsonUrls.GetTransportationData);
-  res.json(users);
-});
 
 // column names
 router.get('/allTablesCol', (req, res) => {
