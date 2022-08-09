@@ -5,4 +5,4 @@ module.exports = Object.freeze({
   PASSWORD: 'sjr930Qhy',
   DATABASE: 'codelinc',
   PORT: '5432'
-})
+});
