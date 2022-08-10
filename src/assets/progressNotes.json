@@ -1,0 +1,39 @@
+[
+    {
+      "goalState": true,
+      "goalTitle": "Goal Title 1",
+      "addedDate": "12/12/2020",
+      "goalDescription": "Progress notes and details to go here."
+    },
+    {
+      "goalState": true,
+      "goalTitle": "Goal Title 2",
+      "addedDate": "10/22/2021",
+      "goalDescription": "Progress notes and details to go here."
+    },
+    {
+      "goalState": false,
+      "goalTitle": "Goal Title 3",
+      "addedDate": "01/12/2022",
+      "goalDescription": "Progress notes and details to go here."
+    },
+    {
+      "goalState": true,
+      "goalTitle": "Goal Title 4",
+      "addedDate": "12/12/2020",
+      "goalDescription": "Progress notes and details to go here."
+    },
+    {
+      "goalState": false,
+      "goalTitle": "Goal Title 5",
+      "addedDate": "12/12/2020",
+      "goalDescription": "Progress notes and details to go here."
+    },
+    {
+        "goalState": false,
+        "goalTitle": "Goal Title 6",
+        "addedDate": "12/12/2020",
+        "goalDescription": "Progress notes and details to go here."
+      }
+  ]
+  

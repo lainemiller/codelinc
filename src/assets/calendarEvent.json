@@ -1,0 +1,60 @@
+{
+    "data": [
+        {
+            "title": "COVID-19 Awareness Event",
+            "date": "2022-06-03",
+            "Description": "The respondents have adequate awareness for COVID‐19 outbreak and its preventive measures.",
+            "sTime": "Thu Jun 02 2022 12:00:00 GMT+0530 (India Standard Time)",
+            "enTime": "Thu Jun 02 2022 13:00:00 GMT+0530 (India Standard Time)"
+        },
+        {
+            "title": "Pet adopting Event",
+            "date": "2022-06-04",
+            "Description": "Event details go here.",
+            "sTime": "Thu Jun 02 2022 12:00:00 GMT+0530 (India Standard Time)",
+            "enTime": "Thu Jun 02 2022 13:00:00 GMT+0530 (India Standard Time)"
+        },
+        {
+            "title": "Team-building Event",
+            "date": "2022-05-05",
+            "Description": "Event details go here.",
+            "sTime": "Thu Jun 02 2022 12:00:00 GMT+0530 (India Standard Time)",
+            "enTime": "Thu Jun 02 2022 13:00:00 GMT+0530 (India Standard Time)"
+        },
+        {
+            "title": "Charity Event",
+            "date": "2022-05-05",
+            "Description": "Event details go here.",
+            "sTime": "Thu Jun 02 2022 12:00:00 GMT+0530 (India Standard Time)",
+            "enTime": "Thu Jun 02 2022 13:00:00 GMT+0530 (India Standard Time)"
+        },
+        {
+            "title": "Resume Building Help",
+            "date": "2022-03-08",
+            "Description": "Event details go here.",
+            "sTime": "Thu Jun 02 2022 12:00:00 GMT+0530 (India Standard Time)",
+            "enTime": "Thu Jun 02 2022 13:00:00 GMT+0530 (India Standard Time)"
+        },
+        {
+            "title": "Celebrating Veterans",
+            "date": "2022-05-05",
+            "Description": "Event details go here.",
+            "sTime": "Thu Jun 02 2022 12:00:00 GMT+0530 (India Standard Time)",
+            "enTime": "Thu Jun 02 2022 13:00:00 GMT+0530 (India Standard Time)"
+        },
+        {
+            "title": "National Holiday",
+            "date": "2022-03-15",
+            "Description": "Event details go here.",
+            "sTime": "Thu Jun 02 2022 12:00:00 GMT+0530 (India Standard Time)",
+            "enTime": "Thu Jun 02 2022 13:00:00 GMT+0530 (India Standard Time)"
+        },
+        {
+            "title": "Career Fair",
+            "date": "2022-06-26",
+            "Description": "Event details go here.",
+            "sTime": "Thu Jun 02 2022 12:00:00 GMT+0530 (India Standard Time)",
+            "enTime": "Thu Jun 02 2022 13:00:00 GMT+0530 (India Standard Time)"
+        }
+    ]
+}
