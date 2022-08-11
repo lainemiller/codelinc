@@ -9,10 +9,8 @@ const app = express();
 const router = express.Router();
 
 // const constants = require('./constants')
-const sequentialQueries = require('../src/AssessmentHandler/assessment.js');
+const sequentialQueries = require('./assessment-handler/assessment.js.js');
 const secrets = require('./secret');
-
-
 
 const { Pool } = require('pg');
 const { QUERIES } = require('./constants');
@@ -280,8 +278,6 @@ router.get('/assessmentDetailsMock', (req, res) => {
   res.json(users);
 });
 
-
-
 // column names
 router.get('/allTablesCol', (req, res) => {
   let returnObj = null;
@@ -300,11 +296,11 @@ router.get('/allTables', (req, res) => {
   let returnObj = null;
   pool
     .query(QUERIES.UiLayout.getTableNames)
-    .then(res => {
+    .then((res) => {
       returnObj = res.rows;
       console.log(res.rows);
     })
-    .catch(err => console.error('Error executing query', err.stack));
+    .catch((err) => console.error('Error executing query', err.stack));
 
   res.json(returnObj);
 });
@@ -315,11 +311,11 @@ router.get('/tableData', (req, res) => {
   let returnObj = null;
   pool
     .query(QUERIES.UiLayout.getTableData)
-    .then(res => {
+    .then((res) => {
       returnObj = res.rows;
       console.log(res.rows);
     })
-    .catch(err => console.error('Error executing query', err.stack));
+    .catch((err) => console.error('Error executing query', err.stack));
 
   res.json(returnObj);
 });
@@ -332,11 +328,11 @@ router.get('/queryCheck', (req, res) => {
   let returnObj = null;
   pool
     .query(QUERIES.checkQuery.query)
-    .then(res => {
+    .then((res) => {
       returnObj = res.rows;
       console.table(res.rows);
     })
-    .catch(err => console.error('Error executing query', err.stack));
+    .catch((err) => console.error('Error executing query', err.stack));
 
   res.json(returnObj);
 });
@@ -360,9 +356,13 @@ router.get('/assessmentDetails/:veteranID', (req, res) => {
   pool
     .query(QUERIES.UserProfile.UserAssessmentDetailsFinance, [vet])
     .then((response) => {
-      res.json({ assessment_details: [{ header: 'personal information', data: response.rows }] });
+      res.json({
+        assessment_details: [
+          { header: 'personal information', data: response.rows }
+        ]
+      });
     })
-    .catch(err => {
+    .catch((err) => {
       console.error('Error executing query', err.stack);
       res.status(500).json({ err });
     });
@@ -384,18 +384,16 @@ router.get('/assessmentDetailsTest/:veteranID', (req, res) => {
   res.status(200).json(sequentialQueries(vet));
 });
 
-
-
 // column names
 router.get('/allTablesCol', (req, res) => {
   let returnObj = null;
   pool
     .query(QUERIES.UiLayout.getTableColumns)
-    .then(res => {
+    .then((res) => {
       returnObj = res.rows;
       console.log(res.rows);
     })
-    .catch(err => console.error('Error executing query', err.stack));
+    .catch((err) => console.error('Error executing query', err.stack));
 
   res.json(returnObj);
 });
@@ -444,7 +442,7 @@ router.get('/getGoals/:veteranId', (req, res) => {
     .then((response) => {
       res.json(response.rows);
     })
-    .catch(err => {
+    .catch((err) => {
       console.error('Error executing query', err.stack);
       res.status(500).json({ err });
     });
@@ -472,7 +470,7 @@ router.post('/progressNotes/addGoal/', (req, res) => {
   ];
   pool
     .query(QUERIES.ProgressNotes.AddGoal, requestObj)
-    .then((res) => (res.rows[0]))
+    .then((res) => res.rows[0])
     .catch((err) => console.error('Error executing query', err.stack));
   res.json(res.rows[0]);
 });
@@ -480,14 +478,10 @@ router.post('/progressNotes/addGoal/', (req, res) => {
 // Endpoint 9
 router.post('/progressNotes/updateGoalStatus/', (req, res) => {
   // const goalId = req.params.veteranId;
-  const requestObj = [
-    4,
-    req.body.goal_id,
-    req.body.goal_status
-  ];
+  const requestObj = [4, req.body.goal_id, req.body.goal_status];
   pool
     .query(QUERIES.ProgressNotes.UpdateGoalStatus, requestObj)
-    .then((res) => (res.rows[0]))
+    .then((res) => res.rows[0])
     .catch((err) => console.error('Error executing query', err.stack));
   res.json(res.rows[0]);
 });
@@ -615,7 +609,7 @@ router.post('/updateTreatmentPlan', (req, res) => {
 
   pool
     .query(QUERIES.TreatmentPlan.UpdateTreatmentPlanDetails)
-    .then((res) => (res.status))
+    .then((res) => res.status)
     .catch((err) => console.error('Error executing query', err.stack));
 
   res.status(200);
@@ -641,13 +635,11 @@ router.post('/transportationForm/saveTransportationRequest/', (req, res) => {
     .query(QUERIES.TransportationRequest.SaveTransportationDetails, requestObj)
     .then((resp) => {
       console.log('success on endpoint SaveTransportationDetails');
-      res
-        .status(200)
-        .json({
-          vetID: req.body.veteran_id,
-          status: true,
-          result: 'Successfully saved transportation request'
-        });
+      res.status(200).json({
+        vetID: req.body.veteran_id,
+        status: true,
+        result: 'Successfully saved transportation request'
+      });
     })
     .catch((err) => {
       console.error('Error executing query', err.stack);
@@ -688,12 +680,10 @@ router.post('/transportationForm/approveTransportationRequests', (req, res) => {
     )
     .then((resp) => {
       console.log('success on endpoint ApproveTransportationDetails');
-      res
-        .status(200)
-        .json({
-          status: true,
-          result: 'Successfully approved transportation request'
-        });
+      res.status(200).json({
+        status: true,
+        result: 'Successfully approved transportation request'
+      });
     })
     .catch((err) => {
       console.error('Error exectuting query', err.stack);

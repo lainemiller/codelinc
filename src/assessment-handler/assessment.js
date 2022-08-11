@@ -1,5 +1,4 @@
 module.exports = function (requestObj) {
-  const retObj = [];
   const veteranObj = requestObj[0];
   console.log(veteranObj);
   const dataObj = [];
