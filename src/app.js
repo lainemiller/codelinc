@@ -105,17 +105,6 @@ router.get('/transportationForm/getTransportationRequests/', (req, res) => {
 });
 
 // Endpoint 4
-<<<<<<< HEAD
-router.get('/consentForm/getUserDetails/:veteranId', (req, res) => {
-  const vet = req.params.veteranId;
-  console.log(vet);
-  let returnObj = null
-
-  pool
-  .query(QUERIES.ConsentForm.GetUserDetails, [vet])
-  .then(res => returnObj = res.rows)
-  .catch(err => console.error('Error executing query', err.stack))
-=======
 router.get('/consentForm/getUserDetails/:loginId', (req, res) => {
   const loginId = req.params.loginId;
   let returnObj = null;
@@ -187,7 +176,6 @@ router.get('/allTablesCol', (req, res) => {
       console.log(res.rows);
     })
     .catch((err) => console.error('Error executing query', err.stack));
->>>>>>> a37928f8d8e3ae69f2a0360226ef4321fc6db234
 
   res.json(returnObj);
 });
@@ -202,24 +190,6 @@ router.get('/allTables', (req, res) => {
     })
     .catch((err) => console.error('Error executing query', err.stack));
 
-<<<<<<< HEAD
-
-router.get('/allTables',(req,res)=>{
-  let returnObj = null;
-  pool
-  .query(QUERIES.UiLayout.getTableNames)
-  .then(res =>{ returnObj = res.rows;
-  console.log(res.rows);})
-  .catch(err => console.error('Error executing query', err.stack))
-
-  res.json(returnObj);
-})
-
-
-//pravin apis to get data from local mock files
-router.get('/userdetailsVeteran', (req, res) => {
-    const users = require(QUERIES.myApisJsonUrls.GetUserDetailsForVet)
-=======
   res.json(returnObj);
 });
 
@@ -260,108 +230,16 @@ router.get('/queryCheck', (req, res) => {
 // pravin apis to get data from local mock files
 router.get('/userdetailsVeteran', (req, res) => {
   const users = require(QUERIES.myApisJsonUrls.GetUserDetailsForVet);
->>>>>>> a37928f8d8e3ae69f2a0360226ef4321fc6db234
   // pool
   // .query(QUERIES.UiLayout.GetUserDetailsForVet, [vet])
   // .then(res => console.log(res))
   // .catch(err => console.error('Error executing query', err.stack))
 
   res.json(users);
-<<<<<<< HEAD
-
-})
-router.get('/assessmentDetails', (req, res) => {
- 
-  const users = require(QUERIES.myApisJsonUrls.GetUserAssessmentForVet)
-  
-  // pool
-  // .query(QUERIES.UiLayout.GetUserDetailsForVet, [vet])
-  // .then(res => console.log(res))
-  // .catch(err => console.error('Error executing query', err.stack))
-
-  res.json(users);
-
-})
-router.get('/calendarEvents', (req, res) => {
- 
-  const users = require(QUERIES.myApisJsonUrls.getCalendarEvents)
-  // pool
-  // .query(QUERIES.UiLayout.GetUserDetailsForVet, [vet])
-  // .then(res => console.log(res))
-  // .catch(err => console.error('Error executing query', err.stack))
-
-  res.json(users);
-
-})
-router.get('/progressNotes', (req, res) => {
- 
-  const users = require(QUERIES.myApisJsonUrls.getProgressNotes)
-  // pool
-  // .query(QUERIES.UiLayout.GetUserDetailsForVet, [vet])
-  // .then(res => console.log(res))
-  // .catch(err => console.error('Error executing query', err.stack))
-
-  res.json(users);
-
-})
-router.get('/resedentSearch', (req, res) => {
- 
-  const users = require(QUERIES.myApisJsonUrls.getResedentData)
-  // pool
-  // .query(QUERIES.UiLayout.GetUserDetailsForVet, [vet])
-  // .then(res => console.log(res))
-  // .catch(err => console.error('Error executing query', err.stack))
-
-  res.json(users);
-
-})
-router.get('/consentData', (req, res) => {
- 
-  const users = require(QUERIES.myApisJsonUrls.getConsentData)
-  // pool
-  // .query(QUERIES.UiLayout.GetUserDetailsForVet, [vet])
-  // .then(res => console.log(res))
-  // .catch(err => console.error('Error executing query', err.stack))
-
-  res.json(users);
-
-})
-router.get('/transportationRequestData', (req, res) => {
- 
-  const users = require(QUERIES.myApisJsonUrls.GetTransportationData)
-  // pool
-  // .query(QUERIES.UiLayout.GetUserDetailsForVet, [vet])
-  // .then(res => console.log(res))
-  // .catch(err => console.error('Error executing query', err.stack))
-
-  res.json(users);
-
-})
-
-//column names
-router.get('/allTablesCol',(req,res)=>{
-  let returnObj = null;
-  pool
-  .query(QUERIES.UiLayout.getTableColumns)
-  .then(res =>{ returnObj = res.rows;
-  console.log(res.rows);})
-  .catch(err => console.error('Error executing query', err.stack))
-
-  res.json(returnObj);
-})
-
-
-
-// Endpoint 5
-router.put('/consentForm/acceptContent/:veteranId', (req, res) => {
-  const vet = req.params.veteranId;
-  const returnStatus = null
-=======
 });
 
 router.get('/assessmentDetails/:veteranID', (req, res) => {
   const vet = req.params.veteranID;
->>>>>>> a37928f8d8e3ae69f2a0360226ef4321fc6db234
 
   pool
     .query(QUERIES.UserProfile.UserAssessmentDetailsFinance, [vet])
@@ -627,26 +505,6 @@ router.get('/userProfile/getUserDetails/:veteranID', (req, res) => {
 
 // Endpoint 11
 router.put('/userProfile/updateUserDetails/', (req, res) => {
-<<<<<<< HEAD
-  let returnStatus = null
-  console.log("incoming req: ", req.body)
- let nick_name=req.body.nick_name;
-  // const requestObj = {
-  //   veteran_id: req.params.veteran_id, 
-  //   photo: req.params.photo, 
-  //   nick_name: req.params.nick_name, 
-  //   address_main: req.params.address_main, 
-  //   address_line_2: req.params.address_line_2, 
-  //   city: req.params.city, 
-  //   state: req.params.state, 
-  //   country: req.params.country, 
-  //   zip_code: req.params.zip_code, 
-  //   primary_phone: req.params.primary_phone, 
-  //   martial_status: req.params.martial_status, 
-  //   contact_person: req.params.contact_person, 
-  //   contact_person_relationship: req.params.contact_person_relationship, 
-  //   contact_person_address: req.params.contact_person_address, 
-=======
   let returnStatus = null;
   console.log('incoming req: ', req.body);
   const nickName = req.body.nick_name;
@@ -665,24 +523,16 @@ router.put('/userProfile/updateUserDetails/', (req, res) => {
   //   contact_person: req.params.contact_person,
   //   contact_person_relationship: req.params.contact_person_relationship,
   //   contact_person_address: req.params.contact_person_address,
->>>>>>> a37928f8d8e3ae69f2a0360226ef4321fc6db234
   //   contact_person_phone: req.params.contact_person_phone
   // }
 
   pool
-<<<<<<< HEAD
-  .query(QUERIES.UserProfile.UpdateUserDetails, [nick_name])
-  .then(res => {returnStatus = res.status
-  console.log(returnStatus);})
-  .catch(err => console.error('Error executing query', err.stack))
-=======
     .query(QUERIES.UserProfile.UpdateUserDetails, [nickName])
     .then((res) => {
       returnStatus = res.status;
       console.log(returnStatus);
     })
     .catch((err) => console.error('Error executing query', err.stack));
->>>>>>> a37928f8d8e3ae69f2a0360226ef4321fc6db234
 
   res.status(returnStatus);
 });
@@ -770,53 +620,6 @@ router.post('/updateTreatmentPlan', (req, res) => {
 
 // Endpoint 16
 router.post('/transportationForm/saveTransportationRequest/', (req, res) => {
-<<<<<<< HEAD
-	
- //const vet = req.params.veteranId;
-  const requestObj = [
-	
-    req.body.veteran_id,
-    req.body.appointment_date,
-    req.body.appointment_time,
-    req.body.reason_for_request,
-    req.body.pick_up_address_main, 
-    req.body.pick_up_city,
-    req.body.pick_up_state,
-    req.body.pick_up_zip_code,
-    req.body.date_filled
-  ]
-
-  pool
-  .query(QUERIES.TransportationRequest.SaveTransportationDetails, requestObj)
-  .then(resp => {
-    console.log('success on endpoint SaveTransportationDetails')
-    res.json({vetID:req.body.veteran_id, result: 'Successfully saved transportation request'})
-  })
-  .catch(err => {
-    console.error('Error executing query', err.stack)
-    res.status(501).json({err})
-  })
-})
-
-// Endpoint 17
-router.get('/transportationForm/getTransportationRequests/', (req, res) => {
-  //const veteran = req.params.veteranId
-
-  pool
-  .query(QUERIES.TransportationRequest.GetTransportationRequests)
-   //.query(QUERIES.TransportationRequest.GetTransportationRequests, [veteran])
-  .then(resp => {
-    console.log('success on endpoint GetTransportationRequests')
-	//res.json({veteranId: veteran, result: resp.rows})
-     // res.json({result:resp.rows})
-	  res.json(resp.rows)
-  })
-  .catch(err => {
-    console.error('Error exectuting query', err.stack)
-    res.status(501).json({err})
-  })
-})
-=======
   const requestObj = [
     req.body.veteran_id,
     req.body.appointmentDate,
@@ -860,29 +663,10 @@ router.get('/transportationForm/getTransportationRequests/', (req, res) => {
       res.status(501).json({ err });
     });
 });
->>>>>>> a37928f8d8e3ae69f2a0360226ef4321fc6db234
 
 // Endpoint 18
 router.post('/transportationForm/approveTransportationRequests', (req, res) => {
   const requestObj = [
-<<<<<<< HEAD
-    
-    req.body.veteran_id,
-    req.body.transport_coordinator,
-    req.body.nursing_notified,
-    req.body.notified_by,
-    req.body.approved_date
-  ]
-
-  pool
-  .query(QUERIES.TransportationRequest.ApproveTransportationRequests, requestObj)
-  .then(resp => {
-    console.log('success on endpoint ApproveTransportationDetails')
-    res.json('Successfully approved transportation request')
-  })
-  .catch(err => console.error('Error executing query', err.stack))
-}) 
-=======
     req.body.request_id,
     req.body.coordinator,
     req.body.nursing_notified,
@@ -909,7 +693,6 @@ router.post('/transportationForm/approveTransportationRequests', (req, res) => {
       res.status(501).json({ err });
     });
 });
->>>>>>> a37928f8d8e3ae69f2a0360226ef4321fc6db234
 
 // Endpoint
 router.post(
