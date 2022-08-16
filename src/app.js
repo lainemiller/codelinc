@@ -9,7 +9,7 @@ const app = express();
 const router = express.Router();
 
 // const constants = require('./constants')
-const sequentialQueries = require('./assessment-handler/assessment.js.js');
+const sequentialQueries = require('./assessment-handler/assessment.js');
 const secrets = require('./secret');
 
 const { Pool } = require('pg');
