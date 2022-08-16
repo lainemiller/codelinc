@@ -1,0 +1,67 @@
+{
+  "resedentData":[  {
+      "photo": "null",
+      "firstName": "Patrick",
+      "lastName": "Mahomes",
+      "birthDate": "07-13-2022",
+      "address": "123 Main Street, Kansas City, MO",
+      "phoneNumber": "123-456-7890",
+      "email": "pmahomes@gmail.com"
+    },
+    {
+      "photo": "null",
+      "firstName": "Kyler",
+      "lastName": "Murray",
+      "birthDate": "12-13-1990",
+      "address": "50 Elm Street, Sedona, AZ",
+      "phoneNumber": "786-456-7890",
+      "email": "kmurray@gmail.com"
+    },
+    {
+      "photo": "null",
+      "firstName": "Josh",
+      "lastName": "Allen",
+      "birthDate": "12-15-1990",
+      "address": "17 Farmington Avenue, Buffalo, NY",
+      "phoneNumber": "987-456-7890",
+      "email": "jallen@gmail.com"
+    },
+    {
+      "photo": "null",
+      "firstName": "Lamar",
+      "lastName": "Jackson",
+      "birthDate": "12-18-1990",
+      "address": "291 City Street, Baltimore, MD",
+      "phoneNumber": "111-456-7890",
+      "email": "ljackson@gmail.com"
+    },
+    {
+      "photo": "null",
+      "firstName": "Dak",
+      "lastName": "Prescott",
+      "birthDate": "12-19-1990",
+      "address": "152 Albany Avenue, Dallas, TX",
+      "phoneNumber": "999-456-7890",
+      "email": "dprescott@gmail.com"
+    },
+    {
+      "photo": "null",
+      "firstName": "Russell",
+      "lastName": "Wilson",
+      "birthDate": "12-19-1990",
+      "address": "72 New Street, Seattle, WA",
+      "phoneNumber": "999-456-7890",
+      "email": "rwilson@gmail.com"
+    },
+    {
+      "photo": "null",
+      "firstName": "Aaron",
+      "lastName": "Rodgers",
+      "birthDate": "12-11-1990",
+      "address": "2 Superbowl Way, Green Bay, WI",
+      "phoneNumber": "987-456-7890",
+      "email": "arodgers@gmail.com"
+    }
+  ]
+}
+  
