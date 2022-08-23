@@ -153,21 +153,7 @@ router.get('/getCalendarEvents', (req, res) => {
     });
   res.json(returnObj);
 });
-// Endpoint 4
-router.get('/consentForm/getUserDetails/:loginId', (req, res) => {
-  const loginId = req.params.loginId;
-  let returnObj = null;
 
-  pool
-    .query(QUERIES.ConsentForm.GetUserDetails, [loginId])
-    .then((resp) => {
-      returnObj = resp.rows;
-      res
-        .status(200)
-        .json({ status: true, loginID: loginId, result: returnObj });
-    })
-    .catch((err) => console.error('Error executing query', err.stack));
-});
 router.get('/calendarEvents', (req, res) => {
   const users = require(QUERIES.myApisJsonUrls.getCalendarEvents);
   // pool
@@ -497,6 +483,21 @@ router.get('/allTablesCol', (req, res) => {
   res.json(returnObj);
 });
 
+// Endpoint 4
+router.get('/consentForm/getUserDetails/:loginId', (req, res) => {
+  const loginId = req.params.loginId;
+
+  pool
+    .query(QUERIES.ConsentForm.GetUserDetails, [loginId])
+    .then((resp) => {
+      res.status(200).json({ responseStatus: 'SUCCESS', data: resp.rows, error: false });
+    })
+    .catch((err) =>{ 
+      console.error('Error executing query', err.stack);
+      res.status(501).json({ responseStatus: 'FAILURE', data: null, error: err });
+    });
+});
+
 // Endpoint 5
 router.put('/consentForm/acceptConsent/:loginId', (req, res) => {
   const currentDate = new Date();
@@ -514,9 +515,7 @@ router.put('/consentForm/acceptConsent/:loginId', (req, res) => {
     .then(console.log('Sucess on Consent Date update'))
     .catch((err) => console.error('Error executing query', err.stack));
 
-  res
-    .status(200)
-    .json({ status: true, result: 'Successfully Accepted Consent Form' });
+  res.status(200).json({ responseStatus: 'SUCCESS', data: 'Successfully Accepted Consent Form', error: false });
 });
 
 // Endpoint 6
@@ -607,37 +606,47 @@ router.get('/userProfile/getUserDetails/:veteranID', (req, res) => {
 });
 
 // Endpoint 11
-router.put('/userProfile/updateUserDetails/', (req, res) => {
-  let returnStatus = null;
-  console.log('incoming req: ', req.body);
-  const nickName = req.body.nick_name;
-  // const requestObj = {
-  //   veteran_id: req.params.veteran_id,
-  //   photo: req.params.photo,
-  //   nick_name: req.params.nick_name,
-  //   address_main: req.params.address_main,
-  //   address_line_2: req.params.address_line_2,
-  //   city: req.params.city,
-  //   state: req.params.state,
-  //   country: req.params.country,
-  //   zip_code: req.params.zip_code,
-  //   primary_phone: req.params.primary_phone,
-  //   martial_status: req.params.martial_status,
-  //   contact_person: req.params.contact_person,
-  //   contact_person_relationship: req.params.contact_person_relationship,
-  //   contact_person_address: req.params.contact_person_address,
-  //   contact_person_phone: req.params.contact_person_phone
-  // }
+router.put('/userProfile/updateUserDetails/:veteranId', (req, res) => {
+  console.log('incoming req: ', req.body.DOB);
+  const requestObj = [
+    req.params.veteranId,
+    req.body.firstName,
+    req.body.middleName,
+    req.body.lastName,
+    req.body.nickName,
+    req.body.DOB,
+    req.body.POB,
+    req.body.phoneNumber,
+    req.body.cfirstName,
+    req.body.hobbies,
+    req.body.address1,
+    req.body.city,
+    req.body.selectedState,
+    req.body.selectedRelationship,
+    req.body.country,
+    req.body.address2,
+    req.body.zipCode,
+    req.body.selectedGenders,
+    req.body.selectedMaritalStatus,
+    req.body.SSNNumber,
+    req.body.hmisIdNo,
+    req.body.selectedRace,
+    req.body.selectedprimaryLanguage,
+    req.body.selectedRelegion,
+    req.body.cHouseNumber,
+    req.body.cPhoneNumber,
+  ]
 
   pool
-    .query(QUERIES.UserProfile.UpdateUserDetails, [nickName])
-    .then((res) => {
-      returnStatus = res.status;
-      console.log(returnStatus);
+    .query(QUERIES.UserProfile.UpdateUserDetails, requestObj)
+    .then(() => {
+      res.status(200).json({ responseStatus: 'SUCCESS', data: 'Profile Updated Sucessfully', error: false });
     })
-    .catch((err) => console.error('Error executing query', err.stack));
+    .catch((err) => {
+      console.error('Error executing query', err.stack);
+      res.status(501).json({ responseStatus: 'FAILURE', data: null, error: err });
+    });
 
-  res.status(returnStatus);
 });
 
 // Endpoint 12
@@ -847,6 +856,21 @@ router.get('/healthTracker/getHealthTracker/:veteranId', (req, res) => {
     })
     .catch((err) => console.error('Error executing query', err.stack));
 });
+
+// Endpoint
+router.get('/getVeteranId/:userName', (req, res) => {
+  const requestObj = [req.params.userName];
+  pool
+    .query(QUERIES.UiLayout.getVeteranId, requestObj)
+    .then((resp) => {
+      console.log('Sucess on get Veteran Id');
+      res.status(200).json({ responseStatus: 'SUCCESS', data: resp.rows, error: false });
+    })
+    .catch((err) => {
+      console.error('Error executing query', err.stack);
+      res.status(501).json({ responseStatus: 'FAILURE', data: null, error: err });
+    });
+})
 
 // const veteran1 = {
 //   first_name: 'John',
