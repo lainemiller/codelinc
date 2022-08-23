@@ -1,6 +1,6 @@
 module.exports = Object.freeze({
-  QUERIES: {
-    ConsentForm: {
+    QUERIES: {
+        ConsentForm: {
       GetUserDetails:
         'select vp.first_name,vp.last_name,vp.consent_status from codelinc.web_party_info wpi join codelinc.veteran_pi vp on wpi.party_id=vp.veteran_id where wpi.web_party_id=$1',
       AcceptConsentStatus:
@@ -14,8 +14,8 @@ module.exports = Object.freeze({
       getCalendarEventsForCaseworker: 'SELECT * FROM codelinc.tableName',
       postEventsForCaseworker:
         'INSERT INTO codelinc.tableName(columns_name) VALUES()'
-    },
-    ProgressNotes: {
+        },
+        ProgressNotes: {
       GetGoals:
         'SELECT * FROM codelinc.veteran_treatment_goals WHERE veteran_id = $1',
       AddGoal:
@@ -23,8 +23,8 @@ module.exports = Object.freeze({
       // UpdateGoalStatus: `INSERT INTO codelinc.veteran_treatment_goals(veteran_id, goal_id, goal_description) VALUES($1, $2, $3) ON CONFLICT (veteran_id) DO UPDATE SET goal_description = EXCLUDED.goal_description`
       UpdateGoalStatus:
         'UPDATE codelinc.veteran_treatment_goals SET goal_status = $3 WHERE veteran_id = $1 AND goal_id = $2'
-    },
-    UserProfile: {
+        },
+        UserProfile: {
       GetUserDetails: 'SELECT * from codelinc.veteran_pi where veteran_id = $1',
       UpdateUserDetails:
         'UPDATE codelinc.veteran_pi SET nick_name = $1 WHERE veteran_id = 5',
@@ -37,7 +37,7 @@ module.exports = Object.freeze({
       UserAssessmentDetailsPI:
         'select * from codelinc.veteran_pi where veteran_id  = $1 '
       // UserAssessmentDetailsFinanceTable: `SELECT table_name as \`Finance\` FROM information_schema.tables where table_name like \'%finance\' `
-    },
+        },
     myApisJsonUrls: {
       GetUserDetailsForVet: './assets/userData.json',
       GetUserAssessmentForVet: './assets/assessmentData.json',
@@ -46,20 +46,21 @@ module.exports = Object.freeze({
       getResedentData: './assets/resedentData.json',
       getConsentData: './assets/consentData.json',
       GetTransportationData: './assets/transportationData.json'
-    },
-    UiLayout: {
+        },
+        UiLayout: {
       getTableNames: 'SELECT table_name FROM information_schema.tables',
       GetUserDetailsForCaseWorker:
         'SELECT c.photo, c.nick_name, w.last_login_date_time from codelinc.case_worker_info c JOIN codelinc.web_party_info w on c.case_worker_id = w.party_id where case_worker_id = $1',
       getTableColumns:
         'SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = \'veteran_transport_request\';',
       getTableData: 'SELECT * FROM codelinc.veteran_treatment_goals'
-    },
-    TreatmentPlan: {
-      GetTreatmentPlanDetails: '',
-      UpdateTreatmentPlanDetails: ''
-    },
-    TransportationRequest: {
+        },
+        TreatmentPlan: {
+            GetTreatmentPlanDetails: "SELECT vp.first_name,vp.last_name,vp.date_of_birth,vi.intake_date,vp.hmis_id,vi.diagnosis,vi.supports from codelinc.veteran_pi vp FULL OUTER JOIN codelinc.veteran_initial_treatment vi ON vp.veteran_id=vi.veteran_id where vp.veteran_id=$1",
+            SaveTreatmentPlanDetails: "INSERT INTO codelinc.veteran_initial_treatment(veteran_id,intake_date,diagnosis,supports) VALUES ($1,$2,$3,$4)",
+            UpdateTreatmentPlanDetails: ""
+        },
+        TransportationRequest: {
       SaveTransportationDetails:
         'INSERT INTO codelinc.veteran_transport_request(veteran_id, appointment_date, appointment_time, reason_for_request, pick_up_address_main, va_address, pick_up_city, pick_up_state, pick_up_zip_code, requested_date) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)',
       GetTransportationRequests:
@@ -74,6 +75,6 @@ module.exports = Object.freeze({
         'UPDATE codelinc.veteran_health_tracker SET note_date=$3, measurement=$4,tracking_comments=$5 WHERE veteran_id=$1 and tracking_subject=$2',
       getHealthTracker:
         'select * from codelinc.veteran_health_tracker where veteran_id=$1'
+        }
     }
-  }
 });

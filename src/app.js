@@ -370,9 +370,8 @@ router.get('getUnreadMessageCount', (req, res) => {
 })
 
 // Endpoint 14
-// VeteranTreatmentPlan Get details 
+// VeteranTreatmentPlan Get details & CaseWorkerTreatmentPlan(RS) Get details
 router.get('/getTreatmentPlanDetails/:veteran_id', (req, res) => {
-  console.log("Reached backend");
     const params =  req.params.veteran_id
     pool
     .query(QUERIES.TreatmentPlan.GetTreatmentPlanDetails,[params])
@@ -391,13 +390,13 @@ router.get('/getTreatmentPlanDetails/:veteran_id', (req, res) => {
 router.post('/postTreatmentPlanDetails/save', (req, res) => {
   
   const requestObj=[
-    1,
+    4,
     req.body.intakeDOB,
     req.body.veteranDiagnosis,
     req.body.veteranSupports
   ]
   pool
-  .query(QUERIES.TreatmentPlan.UpdateTreatmentPlanDetails, requestObj)
+  .query(QUERIES.TreatmentPlan.SaveTreatmentPlanDetails, requestObj)
   .then(resp => {
     console.log('Successfully saved treatmentPlanDetails')
   })
@@ -408,25 +407,8 @@ router.post('/postTreatmentPlanDetails/save', (req, res) => {
 })
 
 //Endpoint 15
-//Case-worker GetTreatmentDetails
-
-// router.get('/getTreatmentPlanDetails/:veteran_id', (req, res) => {
-//   const params =  req.params.veteran_id
-//   pool
-//   .query(QUERIES.TreatmentPlan.GetTreatmentPlanDetails,[params])
-//   .then(resp => {
-//     console.log('success on endpoint GetTreatmentPlanDetails')
-//     res.json(resp.rows[0])
-//   })
-//   .catch(err => {
-//     console.error('Error executing query', err.stack)
-//     res.status(501).json({err});
-//   })
-// })
-
-//Endpoint 15.5
-//Case-Worker UpdateTreatmentPlan 
-// router.post('/UpdateTreatmentPlanDetails/save', (req, res) => {
+//Case-Worker UpdateTreatmentPlan =====HAVE TO WORK ON=====
+// router.put('/updateTreatmentPlanDetails/save', (req, res) => {
   
 //   const requestObj=[
 //     1,
