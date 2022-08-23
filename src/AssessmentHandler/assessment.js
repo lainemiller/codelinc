@@ -171,7 +171,7 @@ module.exports = async function (vet) {
     // const result9 = await queryPromise9(vet);
     // const result10 = await queryPromise10(vet);
 
-    let myobj = {
+    let assessmentDetails = {
       assessment_details: [
         { header: "Personal Information", data: dataFormatter(result1.rows) },
         { header: "Financial", data: dataFormatter(result2.rows) },
@@ -191,8 +191,8 @@ module.exports = async function (vet) {
         // { header: "Initial Treatment Goals", data: dataFormatter(result10.rows) }
       ]
     };
-    //console.log("myobj", myobj);
-    return myobj;
+    //console.log("assessmentDetails", assessmentDetails);
+    return assessmentDetails;
   } catch (error) {
     console.log(error);
   }
