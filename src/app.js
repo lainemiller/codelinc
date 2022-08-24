@@ -9,10 +9,8 @@ const app = express();
 const router = express.Router();
 
 // const constants = require('./constants')
-const sequentialQueries = require('../src/AssessmentHandler/assessment.js');
+const sequentialQueries = require('./assessment-handler/assessment.js');
 const secrets = require('./secret');
-
-
 
 const { Pool } = require('pg');
 const { QUERIES } = require('./constants');
@@ -93,6 +91,7 @@ router.get('/cookie', (req, res) => {
   res.cookie('Fizz', 'buzz');
   res.json({});
 });
+
 router.get('/transportationForm/getTransportationRequests/', (req, res) => {
   pool
     .query(QUERIES.TransportationRequest.GetTransportationRequests)
@@ -106,21 +105,6 @@ router.get('/transportationForm/getTransportationRequests/', (req, res) => {
     });
 });
 
-// Endpoint 4
-router.get('/consentForm/getUserDetails/:loginId', (req, res) => {
-  const loginId = req.params.loginId;
-  let returnObj = null;
-
-  pool
-    .query(QUERIES.ConsentForm.GetUserDetails, [loginId])
-    .then((resp) => {
-      returnObj = resp.rows;
-      res
-        .status(200)
-        .json({ status: true, loginID: loginId, result: returnObj });
-    })
-    .catch((err) => console.error('Error executing query', err.stack));
-});
 router.get('/calendarEvents', (req, res) => {
   const users = require(QUERIES.myApisJsonUrls.getCalendarEvents);
   // pool
@@ -130,6 +114,7 @@ router.get('/calendarEvents', (req, res) => {
 
   res.json(users);
 });
+
 router.get('/progressNotes', (req, res) => {
   const users = require(QUERIES.myApisJsonUrls.getProgressNotes);
   // pool
@@ -139,6 +124,7 @@ router.get('/progressNotes', (req, res) => {
 
   res.json(users);
 });
+
 router.get('/resedentSearch', (req, res) => {
   const users = require(QUERIES.myApisJsonUrls.getResedentData);
   console.log(users);
@@ -149,6 +135,7 @@ router.get('/resedentSearch', (req, res) => {
 
   res.json(users);
 });
+
 router.get('/consentData', (req, res) => {
   const users = require(QUERIES.myApisJsonUrls.getConsentData);
   // pool
@@ -158,6 +145,7 @@ router.get('/consentData', (req, res) => {
 
   res.json(users);
 });
+
 router.get('/transportationRequestData', (req, res) => {
   const users = require(QUERIES.myApisJsonUrls.GetTransportationData);
   // pool
@@ -165,6 +153,91 @@ router.get('/transportationRequestData', (req, res) => {
   // .then(res => console.log(res))
   // .catch(err => console.error('Error executing query', err.stack))
 
+  res.json(users);
+});
+
+// column names
+router.get('/allTablesCol', (req, res) => {
+  let returnObj = null;
+  pool
+    .query(QUERIES.UiLayout.getTableColumns)
+    .then((res) => {
+      returnObj = res.rows;
+      console.log(res.rows);
+    })
+    .catch((err) => console.error('Error executing query', err.stack));
+
+  res.json(returnObj);
+});
+
+router.get('/allTables', (req, res) => {
+  let returnObj = null;
+  pool
+    .query(QUERIES.UiLayout.getTableNames)
+    .then((res) => {
+      returnObj = res.rows;
+      console.log(res.rows);
+    })
+    .catch((err) => console.error('Error executing query', err.stack));
+
+  res.json(returnObj);
+});
+
+// trying to get table data
+
+router.get('/tableData', (req, res) => {
+  let returnObj = null;
+  pool
+    .query(QUERIES.UiLayout.getTableData)
+    .then((res) => {
+      returnObj = res.rows;
+      console.log(res.rows);
+    })
+    .catch((err) => console.error('Error executing query', err.stack));
+
+  res.json(returnObj);
+});
+
+//
+
+// query check
+
+router.get('/queryCheck', (req, res) => {
+  let returnObj = null;
+  pool
+    .query(QUERIES.checkQuery.query)
+    .then((res) => {
+      returnObj = res.rows;
+      console.table(res.rows);
+    })
+    .catch((err) => console.error('Error executing query', err.stack));
+
+  res.json(returnObj);
+});
+
+//
+
+// pravin apis to get data from local mock files
+router.get('/userdetailsVeteran', (req, res) => {
+  const users = require(QUERIES.myApisJsonUrls.GetUserDetailsForVet);
+  // pool
+  // .query(QUERIES.UiLayout.GetUserDetailsForVet, [vet])
+  // .then(res => console.log(res))
+  // .catch(err => console.error('Error executing query', err.stack))
+
+  res.json(users);
+});
+
+// Assessment Details API
+router.get("/assessmentDetails/:veteranID", async (req, res) => {
+  const vet = req.params.veteranID;
+  const assessmentDetails = await sequentialQueries(vet);
+  res.status(200).json(assessmentDetails);
+});
+
+// getting data from mock json
+router.get('/assessmentDetailsMock', (req, res) => {
+  const users = require(QUERIES.myApisJsonUrls.GetUserAssessmentForVet);
   res.json(users);
 });
 
@@ -274,14 +347,6 @@ router.get('/assessmentDetailsTest/:veteranID', (req, res) => {
   res.status(200).json(sequentialQueries(vet));
 });
 
-// getting data from mock json
-router.get('/assessmentDetailsMock', (req, res) => {
-  const users = require(QUERIES.myApisJsonUrls.GetUserAssessmentForVet);
-  res.json(users);
-});
-
-
-
 // column names
 router.get('/allTablesCol', (req, res) => {
   let returnObj = null;
@@ -296,108 +361,19 @@ router.get('/allTablesCol', (req, res) => {
   res.json(returnObj);
 });
 
-router.get('/allTables', (req, res) => {
-  let returnObj = null;
-  pool
-    .query(QUERIES.UiLayout.getTableNames)
-    .then(res => {
-      returnObj = res.rows;
-      console.log(res.rows);
-    })
-    .catch(err => console.error('Error executing query', err.stack));
-
-  res.json(returnObj);
-});
-
-// trying to get table data
-
-router.get('/tableData', (req, res) => {
-  let returnObj = null;
-  pool
-    .query(QUERIES.UiLayout.getTableData)
-    .then(res => {
-      returnObj = res.rows;
-      console.log(res.rows);
-    })
-    .catch(err => console.error('Error executing query', err.stack));
-
-  res.json(returnObj);
-});
-
-//
-
-// query check
-
-router.get('/queryCheck', (req, res) => {
-  let returnObj = null;
-  pool
-    .query(QUERIES.checkQuery.query)
-    .then(res => {
-      returnObj = res.rows;
-      console.table(res.rows);
-    })
-    .catch(err => console.error('Error executing query', err.stack));
-
-  res.json(returnObj);
-});
-
-//
-
-// pravin apis to get data from local mock files
-router.get('/userdetailsVeteran', (req, res) => {
-  const users = require(QUERIES.myApisJsonUrls.GetUserDetailsForVet);
-  // pool
-  // .query(QUERIES.UiLayout.GetUserDetailsForVet, [vet])
-  // .then(res => console.log(res))
-  // .catch(err => console.error('Error executing query', err.stack))
-
-  res.json(users);
-});
-
-router.get('/assessmentDetails/:veteranID', (req, res) => {
-  const vet = req.params.veteranID;
+// Endpoint 4
+router.get('/consentForm/getUserDetails/:loginId', (req, res) => {
+  const loginId = req.params.loginId;
 
   pool
-    .query(QUERIES.UserProfile.UserAssessmentDetailsFinance, [vet])
-    .then((response) => {
-      res.json({ assessment_details: [{ header: 'personal information', data: response.rows }] });
+    .query(QUERIES.ConsentForm.GetUserDetails, [loginId])
+    .then((resp) => {
+      res.status(200).json({ responseStatus: 'SUCCESS', data: resp.rows, error: false });
     })
-    .catch(err => {
+    .catch((err) =>{ 
       console.error('Error executing query', err.stack);
-      res.status(500).json({ err });
+      res.status(501).json({ responseStatus: 'FAILURE', data: null, error: err });
     });
-});
-
-// assessment API testing
-router.get('/assessmentDetailsTest/:veteranID', (req, res) => {
-  const vet = req.params.veteranID;
-
-  //  pool.query(QUERIES.UserProfile.UserAssessmentDetails, [vet])
-  // .then((PIResponse, FinanceResponse) => { //response.rows;
-  //   console.log('pi response', PIResponse);
-  // //console.log('fi response',FinanceResponse.rows);
-  // res.json(handler(PIResponse.rows));
-  // })
-  // .catch(err => {console.error('Error executing query', err.stack)
-  // res.status(500).json({err});})
-
-  res.status(200).json(sequentialQueries(vet));
-});
-
-
-
-// column names
-router.get('/allTablesCol', (req, res) => {
-  let returnObj = null;
-  pool
-    .query(QUERIES.UiLayout.getTableColumns)
-    .then(res => {
-      returnObj = res.rows;
-      console.log(res.rows);
-    })
-    .catch(err => console.error('Error executing query', err.stack));
-
-  res.json(returnObj);
 });
 
 // Endpoint 5
@@ -417,9 +393,7 @@ router.put('/consentForm/acceptConsent/:loginId', (req, res) => {
     .then(console.log('Sucess on Consent Date update'))
     .catch((err) => console.error('Error executing query', err.stack));
 
-  res
-    .status(200)
-    .json({ status: true, result: 'Successfully Accepted Consent Form' });
+  res.status(200).json({ responseStatus: 'SUCCESS', data: 'Successfully Accepted Consent Form', error: false });
 });
 
 // Endpoint 6
@@ -444,7 +418,7 @@ router.get('/getGoals/:veteranId', (req, res) => {
     .then((response) => {
       res.json(response.rows);
     })
-    .catch(err => {
+    .catch((err) => {
       console.error('Error executing query', err.stack);
       res.status(500).json({ err });
     });
@@ -472,7 +446,7 @@ router.post('/progressNotes/addGoal/', (req, res) => {
   ];
   pool
     .query(QUERIES.ProgressNotes.AddGoal, requestObj)
-    .then((res) => (res.rows[0]))
+    .then((res) => res.rows[0])
     .catch((err) => console.error('Error executing query', err.stack));
   res.json(res.rows[0]);
 });
@@ -480,14 +454,10 @@ router.post('/progressNotes/addGoal/', (req, res) => {
 // Endpoint 9
 router.post('/progressNotes/updateGoalStatus/', (req, res) => {
   // const goalId = req.params.veteranId;
-  const requestObj = [
-    4,
-    req.body.goal_id,
-    req.body.goal_status
-  ];
+  const requestObj = [4, req.body.goal_id, req.body.goal_status];
   pool
     .query(QUERIES.ProgressNotes.UpdateGoalStatus, requestObj)
-    .then((res) => (res.rows[0]))
+    .then((res) => res.rows[0])
     .catch((err) => console.error('Error executing query', err.stack));
   res.json(res.rows[0]);
 });
@@ -510,37 +480,47 @@ router.get('/userProfile/getUserDetails/:veteranID', (req, res) => {
 });
 
 // Endpoint 11
-router.put('/userProfile/updateUserDetails/', (req, res) => {
-  let returnStatus = null;
-  console.log('incoming req: ', req.body);
-  const nickName = req.body.nick_name;
-  // const requestObj = {
-  //   veteran_id: req.params.veteran_id,
-  //   photo: req.params.photo,
-  //   nick_name: req.params.nick_name,
-  //   address_main: req.params.address_main,
-  //   address_line_2: req.params.address_line_2,
-  //   city: req.params.city,
-  //   state: req.params.state,
-  //   country: req.params.country,
-  //   zip_code: req.params.zip_code,
-  //   primary_phone: req.params.primary_phone,
-  //   martial_status: req.params.martial_status,
-  //   contact_person: req.params.contact_person,
-  //   contact_person_relationship: req.params.contact_person_relationship,
-  //   contact_person_address: req.params.contact_person_address,
-  //   contact_person_phone: req.params.contact_person_phone
-  // }
+router.put('/userProfile/updateUserDetails/:veteranId', (req, res) => {
+  console.log('incoming req: ', req.body.DOB);
+  const requestObj = [
+    req.params.veteranId,
+    req.body.firstName,
+    req.body.middleName,
+    req.body.lastName,
+    req.body.nickName,
+    req.body.DOB,
+    req.body.POB,
+    req.body.phoneNumber,
+    req.body.cfirstName,
+    req.body.hobbies,
+    req.body.address1,
+    req.body.city,
+    req.body.selectedState,
+    req.body.selectedRelationship,
+    req.body.country,
+    req.body.address2,
+    req.body.zipCode,
+    req.body.selectedGenders,
+    req.body.selectedMaritalStatus,
+    req.body.SSNNumber,
+    req.body.hmisIdNo,
+    req.body.selectedRace,
+    req.body.selectedprimaryLanguage,
+    req.body.selectedRelegion,
+    req.body.cHouseNumber,
+    req.body.cPhoneNumber,
+  ]
 
   pool
-    .query(QUERIES.UserProfile.UpdateUserDetails, [nickName])
-    .then((res) => {
-      returnStatus = res.status;
-      console.log(returnStatus);
+    .query(QUERIES.UserProfile.UpdateUserDetails, requestObj)
+    .then(() => {
+      res.status(200).json({ responseStatus: 'SUCCESS', data: 'Profile Updated Sucessfully', error: false });
     })
-    .catch((err) => console.error('Error executing query', err.stack));
+    .catch((err) => {
+      console.error('Error executing query', err.stack);
+      res.status(501).json({ responseStatus: 'FAILURE', data: null, error: err });
+    });
 
-  res.status(returnStatus);
 });
 
 // Endpoint 12
@@ -615,7 +595,7 @@ router.post('/updateTreatmentPlan', (req, res) => {
 
   pool
     .query(QUERIES.TreatmentPlan.UpdateTreatmentPlanDetails)
-    .then((res) => (res.status))
+    .then((res) => res.status)
     .catch((err) => console.error('Error executing query', err.stack));
 
   res.status(200);
@@ -641,13 +621,11 @@ router.post('/transportationForm/saveTransportationRequest/', (req, res) => {
     .query(QUERIES.TransportationRequest.SaveTransportationDetails, requestObj)
     .then((resp) => {
       console.log('success on endpoint SaveTransportationDetails');
-      res
-        .status(200)
-        .json({
-          vetID: req.body.veteran_id,
-          status: true,
-          result: 'Successfully saved transportation request'
-        });
+      res.status(200).json({
+        vetID: req.body.veteran_id,
+        status: true,
+        result: 'Successfully saved transportation request'
+      });
     })
     .catch((err) => {
       console.error('Error executing query', err.stack);
@@ -688,12 +666,10 @@ router.post('/transportationForm/approveTransportationRequests', (req, res) => {
     )
     .then((resp) => {
       console.log('success on endpoint ApproveTransportationDetails');
-      res
-        .status(200)
-        .json({
-          status: true,
-          result: 'Successfully approved transportation request'
-        });
+      res.status(200).json({
+        status: true,
+        result: 'Successfully approved transportation request'
+      });
     })
     .catch((err) => {
       console.error('Error exectuting query', err.stack);
@@ -750,6 +726,21 @@ router.get('/healthTracker/getHealthTracker/:veteranId', (req, res) => {
     })
     .catch((err) => console.error('Error executing query', err.stack));
 });
+
+// Endpoint
+router.get('/getVeteranId/:userName', (req, res) => {
+  const requestObj = [req.params.userName];
+  pool
+    .query(QUERIES.UiLayout.getVeteranId, requestObj)
+    .then((resp) => {
+      console.log('Sucess on get Veteran Id');
+      res.status(200).json({ responseStatus: 'SUCCESS', data: resp.rows, error: false });
+    })
+    .catch((err) => {
+      console.error('Error executing query', err.stack);
+      res.status(501).json({ responseStatus: 'FAILURE', data: null, error: err });
+    });
+})
 
 // const veteran1 = {
 //   first_name: 'John',
