@@ -24,19 +24,32 @@ module.exports = Object.freeze({
       UpdateGoalStatus:
         "UPDATE codelinc.veteran_treatment_goals SET goal_status = $3 WHERE veteran_id = $1 AND goal_id = $2",
     },
-    UserProfile: {
-      GetUserDetails: "SELECT * from codelinc.veteran_pi where veteran_id = $1",
+      UserProfile: {
+      GetUserDetails:
+        ' SELECT photo, nick_name, address_main, address_line_2, city, state, county, zip_code, primary_phone, arital_status, contact_person, contact_person_relationship, contact_person_address, contact_person_phone from codelinc.veteran_pi where veteran_id = $1',
       UpdateUserDetails:
-        "UPDATE codelinc.veteran_pi SET first_name = $2,middle_initial = $3,last_name = $4, nick_name = $5, date_of_birth =$6, place_of_birth = $7, primary_phone = $8, contact_person = $9, hobbies = $10, address_main = $11, city = $12, state = $13, contact_person_relationship= $14, county = $15, address_line_2 = $16, zip_code = $17, gender = $18, marital_status = $19, ssn = $20, hmis_id = $21, race = $22, primary_language = $23, religious_preference = $24, contact_person_address = $25, contact_person_phone =$26  WHERE veteran_id = $1",
-      // UserAssessmentDetails: "SELECT * FROM codelinc.veteran_pi WHERE veteran_id = $1",
-      // UserAssessmentDetailsTable: "SELECT table_name as \"Personal Information\" FROM information_schema.tables where table_name like \'%pi\' ",
-      UserAssessmentDetails:
-        'select first_name as "First Name", last_name as "Last Name", middle_initial  as "Middle Initial", nick_name as "Nickname", place_of_birth as "Place of Birth", ssn as "SSN#", gender as "Sex", marital_status  as "Marital Status", address_main as "Address", race as "Race", primary_language as "Primary Language", contact_person as "Contact Person", contact_person_relationship as "Relationship", contact_person_address as "Contact Person Address", contact_person_phone as "Contact Person Phone", city as "City", state as "State", zip_code as "Zip Code", city as "City" from codelinc.veteran_pi vpi where veteran_id = $1;',
-      UserAssessmentDetailsFinance:
-        "select * from codelinc.veteran_finance where veteran_id = $1;",
+        ' UPDATE codelinc.veteran_pi SET nick_name = $1 WHERE veteran_id = 5 ',
       UserAssessmentDetailsPI:
-        "select * from codelinc.veteran_pi where veteran_id  = $1 ",
-      // UserAssessmentDetailsFinanceTable: "SELECT table_name as \"Finance\" FROM information_schema.tables where table_name like \'%finance\' "
+        ' select first_name as "First Name", last_name as "Last Name", middle_initial  as "Middle Initial", nick_name as "Nickname", place_of_birth as "Place of Birth", ssn as "SSN#", gender as "Sex", marital_status  as "Marital Status", address_main as "Address", race as "Race", primary_language as "Primary Language", contact_person as "Contact Person", contact_person_relationship as "Relationship", contact_person_address as "Contact Person Address", contact_person_phone as "Contact Person Phone", city as "City", state as "State", zip_code as "Zip Code", city as "City" from codelinc.veteran_pi vpi where veteran_id = $1;',
+      UserAssessmentDetailsFinance:
+      'select * from codelinc.veteran_finance where veteran_id = $1; ',
+      // ' select income as "Income", income_type as "Income Type", bank_account_type as "Bank Account", bank_name as "Name of Bank", direct_deposit as "Direct Deposite", other_assets as "Other Assets" from codelinc.veteran_finance where veteran_id = $1; ',
+      UserAssessmentDetailsEEH:
+        ' select * from codelinc.veteran_employment_education where veteran_id = $1; ',
+      UserAssessmentDetailsSocial:
+        ' SELECT religious_preference as "Religious Preference", hobbies as "Hobbies" FROM codelinc.veteran_pi WHERE veteran_id = $1 ',
+      UserAssessmentDetailsFamily:
+        ' select * from codelinc.veteran_hist where veteran_id = $1; ',
+      UserAssessmentDetailsMH:
+        ' select * from codelinc.veteran_mental_health where veteran_id = $1; ',
+      UserAssessmentDetailsSAH:
+        ' select * from codelinc.veteran_substances where veteran_id  = $1 ',
+      UserAssessmentDetailsLHI:
+        ' SELECT * FROM codelinc.veteran_legal_history WHERE veteran_id = $1 ',
+      UserAssessmentDetailsPD:
+        ' select * from codelinc.veteran_finance where veteran_id = $1; ',
+      UserAssessmentDetailsITG:
+        ' select * from codelinc.veteran_pi where veteran_id  = $1 '
     },
     myApisJsonUrls: {
       GetUserDetailsForVet: "./assets/userData.json",

@@ -223,38 +223,11 @@ router.get('/userdetailsVeteran', (req, res) => {
   res.json(users);
 });
 
-router.get('/assessmentDetails/:veteranID', (req, res) => {
+// Assessment Details API
+router.get("/assessmentDetails/:veteranID", async (req, res) => {
   const vet = req.params.veteranID;
-
-  pool
-    .query(QUERIES.UserProfile.UserAssessmentDetailsFinance, [vet])
-    .then((response) => {
-      res.json({
-        assessment_details: [
-          { header: 'personal information', data: response.rows }
-        ]
-      });
-    })
-    .catch((err) => {
-      console.error('Error executing query', err.stack);
-      res.status(500).json({ err });
-    });
-});
-
-// assessment API testing
-router.get('/assessmentDetailsTest/:veteranID', (req, res) => {
-  const vet = req.params.veteranID;
-
-  //  pool.query(QUERIES.UserProfile.UserAssessmentDetails, [vet])
-  // .then((PIResponse, FinanceResponse) => { //response.rows;
-  //   console.log('pi response', PIResponse);
-  // //console.log('fi response',FinanceResponse.rows);
-  // res.json(handler(PIResponse.rows));
-  // })
-  // .catch(err => {console.error('Error executing query', err.stack)
-  // res.status(500).json({err});})
-
-  res.status(200).json(sequentialQueries(vet));
+  const assessmentDetails = await sequentialQueries(vet);
+  res.status(200).json(assessmentDetails);
 });
 
 // getting data from mock json
