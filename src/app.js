@@ -9,7 +9,7 @@ const app = express();
 const router = express.Router();
 
 // const constants = require('./constants')
-const sequentialQueries = require('./assessment-handler/assessment.js.js');
+const sequentialQueries = require('./assessment-handler/assessment.js');
 const secrets = require('./secret');
 
 const { Pool } = require('pg');
@@ -91,6 +91,7 @@ router.get('/cookie', (req, res) => {
   res.cookie('Fizz', 'buzz');
   res.json({});
 });
+
 router.get('/transportationForm/getTransportationRequests/', (req, res) => {
   pool
     .query(QUERIES.TransportationRequest.GetTransportationRequests)
@@ -113,6 +114,7 @@ router.get('/calendarEvents', (req, res) => {
 
   res.json(users);
 });
+
 router.get('/progressNotes', (req, res) => {
   const users = require(QUERIES.myApisJsonUrls.getProgressNotes);
   // pool
@@ -122,6 +124,7 @@ router.get('/progressNotes', (req, res) => {
 
   res.json(users);
 });
+
 router.get('/resedentSearch', (req, res) => {
   const users = require(QUERIES.myApisJsonUrls.getResedentData);
   console.log(users);
@@ -132,6 +135,7 @@ router.get('/resedentSearch', (req, res) => {
 
   res.json(users);
 });
+
 router.get('/consentData', (req, res) => {
   const users = require(QUERIES.myApisJsonUrls.getConsentData);
   // pool
@@ -141,6 +145,7 @@ router.get('/consentData', (req, res) => {
 
   res.json(users);
 });
+
 router.get('/transportationRequestData', (req, res) => {
   const users = require(QUERIES.myApisJsonUrls.GetTransportationData);
   // pool
