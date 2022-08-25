@@ -44,6 +44,7 @@
     "pg": "^8.7.1"
   },
   "devDependencies": {
+    "babel-plugin-transform-runtime": "^6.23.0",
     "copy-webpack-plugin": "^7.0.0",
     "cross-var": "^1.1.0",
     "eslint": "^8.21.0",
