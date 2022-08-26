@@ -2,7 +2,6 @@ version: 0.2
 phases:
   install:
     commands:
-      - npm i babel-polyfill
       - npm run setup
 artifacts:
   files:
