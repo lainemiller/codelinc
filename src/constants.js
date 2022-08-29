@@ -38,14 +38,15 @@ module.exports = Object.freeze({
         'select * from codelinc.veteran_pi where veteran_id  = $1 '
       // UserAssessmentDetailsFinanceTable: `SELECT table_name as \`Finance\` FROM information_schema.tables where table_name like \'%finance\' `
         },
-    myApisJsonUrls: {
-      GetUserDetailsForVet: './assets/userData.json',
-      GetUserAssessmentForVet: './assets/assessmentData.json',
-      getCalendarEvents: './assets/calendarEvent.json',
-      getProgressNotes: './assets/progressNotes.json',
-      getResedentData: './assets/resedentData.json',
-      getConsentData: './assets/consentData.json',
-      GetTransportationData: './assets/transportationData.json'
+        myApisJsonUrls:{
+            GetUserDetailsForVet: "./assets/userData.json",
+            GetUserAssessmentForVet:"./assets/assessmentData.json",
+            getCalendarEvents:"./assets/calendarEvent.json",
+            getProgressNotes:"./assets/progressNotes.json",
+            getResedentData:'./assets/resedentData.json',
+            getConsentData:'./assets/consentData.json',
+            GetTransportationData:'./assets/transportationData.json',
+            GetTreatmentPlanData:"./assets/treatmentPlanData.json"
         },
         UiLayout: {
       getTableNames: 'SELECT table_name FROM information_schema.tables',
@@ -57,8 +58,9 @@ module.exports = Object.freeze({
         },
         TreatmentPlan: {
             GetTreatmentPlanDetails: "SELECT vp.first_name,vp.last_name,vp.date_of_birth,vi.intake_date,vp.hmis_id,vi.diagnosis,vi.supports from codelinc.veteran_pi vp FULL OUTER JOIN codelinc.veteran_initial_treatment vi ON vp.veteran_id=vi.veteran_id where vp.veteran_id=$1",
+            GetAllDetails: "SELECT vp.first_name,vp.last_name,vp.address_main,vp.date_of_birth,vi.intake_date,vp.hmis_id,vp.primary_phone,vi.diagnosis,vi.supports from codelinc.veteran_pi vp FULL OUTER JOIN codelinc.veteran_initial_treatment vi ON vp.veteran_id=vi.veteran_id ",
             SaveTreatmentPlanDetails: "INSERT INTO codelinc.veteran_initial_treatment(veteran_id,intake_date,diagnosis,supports) VALUES ($1,$2,$3,$4)",
-            UpdateTreatmentPlanDetails: ""
+            UpdateTreatmentPlanDetails: "UPDATE codelinc.veteran_initial_treatment SET diagnosis = $2, supports = $3 where veteran_id = $1"
         },
         TransportationRequest: {
       SaveTransportationDetails:
@@ -77,4 +79,5 @@ module.exports = Object.freeze({
         'select * from codelinc.veteran_health_tracker where veteran_id=$1'
         }
     }
+
 });

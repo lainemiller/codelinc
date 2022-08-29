@@ -167,15 +167,20 @@ router.get('/progressNotes', (req, res) => {
   res.json(users);
 
 })
-router.get('/resedentSearch', (req, res) => {
- 
-  const users = require(QUERIES.myApisJsonUrls.getResedentData)
-  // pool
-  // .query(QUERIES.UiLayout.GetUserDetailsForVet, [vet])
-  // .then(res => console.log(res))
-  // .catch(err => console.error('Error executing query', err.stack))
 
-  res.json(users);
+router.get('/residentSearch/getAll', (req, res) => {
+  
+  pool
+  .query(QUERIES.TreatmentPlan.GetAllDetails)
+  .then(resp => {
+    console.log('success on endpoint GetAllDetails')
+    res.json(resp.rows)
+  })
+  .catch(err => {
+    console.error('Error executing query', err.stack)
+    res.status(501).json({err});
+  })
+  
 
 })
 router.get('/consentData', (req, res) => {
@@ -407,25 +412,25 @@ router.post('/postTreatmentPlanDetails/save', (req, res) => {
 })
 
 //Endpoint 15
-//Case-Worker UpdateTreatmentPlan =====HAVE TO WORK ON=====
-// router.put('/updateTreatmentPlanDetails/save', (req, res) => {
+//Case-Worker UpdateTreatmentPlan 
+router.put('/updateTreatmentPlanDetails/save/:veteran_id', (req, res) => {
   
-//   const requestObj=[
-//     1,
-//     req.body.intakeDOB,
-//     req.body.veteranDiagnosis,
-//     req.body.veteranSupports
-//   ]
-//   pool
-//   .query(QUERIES.TreatmentPlan.UpdateTreatmentPlanDetails, requestObj)
-//   .then(resp => {
-//     console.log('Successfully saved treatmentPlanDetails')
-//   })
-//   .catch(err => {
-//     console.error('Error executing query', err.stack)
-//     res.status(501).json({err})
-//   })
-// })
+  const requestObj=[
+    req.params.veteran_id,
+    req.body.veteranDiagnosis,
+    req.body.veteranSupports
+  ]
+  pool
+  .query(QUERIES.TreatmentPlan.UpdateTreatmentPlanDetails, requestObj)
+  .then(resp => {
+    res.json("Updated Details")
+    console.log('Successfully updated treatmentPlanDetails')
+  })
+  .catch(err => {
+    console.error('Error executing query', err.stack)
+    res.status(501).json({err})
+  })
+})
 
 //Endpoint 16
 router.post('/transportationForm/saveTransportationRequest/', (req, res) => {
@@ -458,16 +463,11 @@ router.post('/transportationForm/saveTransportationRequest/', (req, res) => {
 
 // Endpoint 17
 router.get('/transportationForm/getTransportationRequests/', (req, res) => {
-  //const veteran = req.params.veteranId
-
-  pool
+ pool
   .query(QUERIES.TransportationRequest.GetTransportationRequests)
-   //.query(QUERIES.TransportationRequest.GetTransportationRequests, [veteran])
   .then(resp => {
     console.log('success on endpoint GetTransportationRequests')
-	//res.json({veteranId: veteran, result: resp.rows})
-     // res.json({result:resp.rows})
-	  res.json(resp.rows)
+   res.json(resp.rows)
   })
   .catch(err => {
     console.error('Error exectuting query', err.stack)
