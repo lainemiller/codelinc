@@ -66,6 +66,7 @@ module.exports = Object.freeze({
       getTableColumns:
         "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'veteran_transport_request';",
       getTableData: "SELECT * FROM codelinc.veteran_treatment_goals",
+      getVeteranId:"select wpi.party_id,vp.nick_name  from codelinc.web_party_info wpi join codelinc.veteran_pi vp on wpi.party_id=vp.veteran_id where wpi.username =$1"
     },
     TreatmentPlan: {
       GetTreatmentPlanDetails: "",
