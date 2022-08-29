@@ -1,6 +1,6 @@
-const path = require('path')
-const CopyPlugin = require('copy-webpack-plugin')
-const webpack = require('webpack')
+const path = require('path');
+// const CopyPlugin = require('copy-webpack-plugin');
+const webpack = require('webpack');
 
 module.exports = {
   entry: './src/lambda.js',
@@ -22,4 +22,4 @@ module.exports = {
     // })
     new webpack.IgnorePlugin({ resourceRegExp: /^pg-native$/ })
   ]
-}
+};
