@@ -229,7 +229,7 @@ router.get('/userdetailsVeteran', (req, res) => {
 });
 
 // Assessment Details API
-router.get("/assessmentDetails/:veteranID", async (req, res) => {
+router.get('/assessmentDetails/:veteranID', async (req, res) => {
   const vet = req.params.veteranID;
   const assessmentDetails = await sequentialQueries(vet);
   res.status(200).json(assessmentDetails);
@@ -370,7 +370,7 @@ router.get('/consentForm/getUserDetails/:loginId', (req, res) => {
     .then((resp) => {
       res.status(200).json({ responseStatus: 'SUCCESS', data: resp.rows, error: false });
     })
-    .catch((err) =>{ 
+    .catch((err) => {
       console.error('Error executing query', err.stack);
       res.status(501).json({ responseStatus: 'FAILURE', data: null, error: err });
     });
@@ -504,12 +504,12 @@ router.put('/userProfile/updateUserDetails/:veteranId', (req, res) => {
     req.body.selectedMaritalStatus,
     req.body.SSNNumber,
     req.body.hmisIdNo,
-    req.body.selectedRace,
-    req.body.selectedprimaryLanguage,
-    req.body.selectedRelegion,
+    req.body.race,
+    req.body.primaryLanguage,
+    req.body.relegion,
     req.body.cHouseNumber,
-    req.body.cPhoneNumber,
-  ]
+    req.body.cPhoneNumber
+  ];
 
   pool
     .query(QUERIES.UserProfile.UpdateUserDetails, requestObj)
@@ -520,7 +520,6 @@ router.put('/userProfile/updateUserDetails/:veteranId', (req, res) => {
       console.error('Error executing query', err.stack);
       res.status(501).json({ responseStatus: 'FAILURE', data: null, error: err });
     });
-
 });
 
 // Endpoint 12
@@ -740,7 +739,7 @@ router.get('/getVeteranId/:userName', (req, res) => {
       console.error('Error executing query', err.stack);
       res.status(501).json({ responseStatus: 'FAILURE', data: null, error: err });
     });
-})
+});
 
 // const veteran1 = {
 //   first_name: 'John',
