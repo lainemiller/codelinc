@@ -67,13 +67,18 @@ module.exports = Object.freeze({
         "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'veteran_transport_request';",
       getTableData: 'SELECT * FROM codelinc.veteran_treatment_goals'
         },
-        TreatmentPlan: {
-            GetTreatmentPlanDetails: "SELECT vp.first_name,vp.last_name,vp.date_of_birth,vi.intake_date,vp.hmis_id,vi.diagnosis,vi.supports from codelinc.veteran_pi vp FULL OUTER JOIN codelinc.veteran_initial_treatment vi ON vp.veteran_id=vi.veteran_id where vp.veteran_id=$1",
-            GetAllDetails: "SELECT vp.first_name,vp.last_name,vp.address_main,vp.date_of_birth,vi.intake_date,vp.hmis_id,vp.primary_phone,vi.diagnosis,vi.supports from codelinc.veteran_pi vp FULL OUTER JOIN codelinc.veteran_initial_treatment vi ON vp.veteran_id=vi.veteran_id ",
-            SaveTreatmentPlanDetails: "INSERT INTO codelinc.veteran_initial_treatment(veteran_id,intake_date,diagnosis,supports) VALUES ($1,$2,$3,$4)",
-            UpdateTreatmentPlanDetails: "UPDATE codelinc.veteran_initial_treatment SET diagnosis = $2, supports = $3 where veteran_id = $1"
+    TreatmentPlan: {
+      GetTreatmentPlanDetails:
+       "SELECT vp.first_name,vp.last_name,vp.date_of_birth,vi.intake_date,vp.hmis_id,vi.diagnosis,vi.supports from codelinc.veteran_pi vp FULL OUTER JOIN codelinc.veteran_initial_treatment vi ON vp.veteran_id=vi.veteran_id where vp.veteran_id=$1",
+      GetAllDetails: 
+      "SELECT vp.veteran_id,vp.first_name,vp.last_name,vp.address_main,vp.date_of_birth,vi.intake_date,vp.hmis_id,vp.primary_phone,vi.diagnosis,vi.supports from codelinc.veteran_pi vp FULL OUTER JOIN codelinc.veteran_initial_treatment vi ON vp.veteran_id=vi.veteran_id ",
+      SaveTreatmentPlanDetails:
+      "INSERT INTO codelinc.veteran_initial_treatment(veteran_id,intake_date,diagnosis,supports) VALUES ($1,$2,$3,$4)",
+      UpdateTreatmentPlanDetails: 
+      "UPDATE codelinc.veteran_initial_treatment SET diagnosis = $2, supports = $3 where veteran_id = $1"
         },
-        TransportationRequest: {
+    
+    TransportationRequest: {
       SaveTransportationDetails:
         'INSERT INTO codelinc.veteran_transport_request(veteran_id, appointment_date, appointment_time, reason_for_request, pick_up_address_main, va_address, pick_up_city, pick_up_state, pick_up_zip_code, requested_date) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)',
       GetTransportationRequests:

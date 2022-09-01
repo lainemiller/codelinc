@@ -544,7 +544,7 @@ router.get('/getTreatmentPlanDetails/:veteran_id', (req, res) => {
     const params =  req.params.veteran_id
     pool
     .query(QUERIES.TreatmentPlan.GetTreatmentPlanDetails,[params])
-    .then(resp => {
+    .then((resp) => {
       console.log('success on endpoint GetTreatmentPlanDetails')
       res.json(resp.rows[0])
     })
@@ -587,14 +587,15 @@ router.put('/updateTreatmentPlanDetails/save/:veteran_id', (req, res) => {
   pool
   .query(QUERIES.TreatmentPlan.UpdateTreatmentPlanDetails, requestObj)
   .then(resp => {
-    res.json("Updated Details")
+    res.status(200).json({ responseStatus: 'SUCCESS',data: 'Updated Successfully',error:false})
     console.log('Successfully updated treatmentPlanDetails')
-  })
+    })
   .catch(err => {
     console.error('Error executing query', err.stack)
-    res.status(501).json({err})
+    res.status(501).json({ responseStatus: 'FAILURE', data: 'null', error:err})
   })
 })
+
 
 //Endpoint 16
 router.post('/transportationForm/saveTransportationRequest/', (req, res) => {
