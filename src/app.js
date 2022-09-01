@@ -142,7 +142,7 @@ router.get('/residentSearch/getAll', (req, res) => {
     console.error('Error executing query', err.stack)
     res.status(501).json({err});
   })
-  
+
 
 })
 router.get('/consentData', (req, res) => {
