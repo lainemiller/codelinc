@@ -1,15 +1,13 @@
-const path = require('path')
-const express = require('express')
-const bodyParser = require('body-parser')
-const cors = require('cors')
-const compression = require('compression')
-const { getCurrentInvoke } = require('@vendia/serverless-express')
-const ejs = require('ejs').__express
-const app = express()
-const router = express.Router()
-
-var constants = require('./constants');
-
+// const path = require('path')
+const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const compression = require('compression');
+// const { getCurrentInvoke } = require('@vendia/serverless-express')
+const ejs = require('ejs').__express;
+const app = express();
+const router = express.Router();
+const upload = require('./imageUploadService/uploadImage.js');
 // const constants = require('./constants')
 const sequentialQueries = require('./assessment-handler/assessment.js');
 const secrets = require('./secret');
@@ -493,9 +491,9 @@ router.put('/userProfile/updateUserDetails/:veteranId', (req, res) => {
     req.body.selectedMaritalStatus,
     req.body.SSNNumber,
     req.body.hmisIdNo,
-    req.body.selectedRace,
-    req.body.selectedprimaryLanguage,
-    req.body.selectedRelegion,
+    req.body.race,
+    req.body.primaryLanguage,
+    req.body.relegion,
     req.body.cHouseNumber,
     req.body.cPhoneNumber
   ];
@@ -683,6 +681,15 @@ router.get('/getVeteranId/:userName', (req, res) => {
       res.status(501).json({ responseStatus: 'FAILURE', data: null, error: err });
     });
 });
+
+router.post('/api/v1/upload', upload.single("image"), async (req, res) => {
+
+  /* This will be th 8e response sent from the backend to the frontend */
+  // console.log('req is =>',req)
+  // console.log('res is =>',res)
+  res.send({ image: req.file });
+
+ });
 
 // const veteran1 = {
 //   first_name: 'John',

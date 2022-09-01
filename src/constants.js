@@ -65,8 +65,9 @@ module.exports = Object.freeze({
         'SELECT c.photo, c.nick_name, w.last_login_date_time from codelinc.case_worker_info c JOIN codelinc.web_party_info w on c.case_worker_id = w.party_id where case_worker_id = $1',
       getTableColumns:
         "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'veteran_transport_request';",
-      getTableData: 'SELECT * FROM codelinc.veteran_treatment_goals'
-        },
+      getTableData: "SELECT * FROM codelinc.veteran_treatment_goals",
+      getVeteranId:"select wpi.party_id,vp.nick_name  from codelinc.web_party_info wpi join codelinc.veteran_pi vp on wpi.party_id=vp.veteran_id where wpi.username =$1"
+    },
     TreatmentPlan: {
       GetTreatmentPlanDetails:
        "SELECT vp.first_name,vp.last_name,vp.date_of_birth,vi.intake_date,vp.hmis_id,vi.diagnosis,vi.supports from codelinc.veteran_pi vp FULL OUTER JOIN codelinc.veteran_initial_treatment vi ON vp.veteran_id=vi.veteran_id where vp.veteran_id=$1",
