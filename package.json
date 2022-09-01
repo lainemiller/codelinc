@@ -50,6 +50,7 @@
     "babel-core": "^6.26.3",
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-polyfill": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
     "copy-webpack-plugin": "^7.0.0",
     "cross-var": "^1.1.0",
     "eslint": "^8.21.0",
