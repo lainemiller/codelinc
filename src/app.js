@@ -7,6 +7,7 @@ const compression = require('compression');
 const ejs = require('ejs').__express;
 const app = express();
 const router = express.Router();
+const upload = require('./imageUploadService/uploadImage.js');
 
 // const constants = require('./constants')
 const sequentialQueries = require('./assessment-handler/assessment.js');
@@ -741,6 +742,13 @@ router.get('/getVeteranId/:userName', (req, res) => {
     });
 });
 
+
+router.post('/api/v1/upload', upload.single("image"), async (req, res) => {
+  /* This will be th 8e response sent from the backend to the frontend */
+  console.log('req is =>',req)
+  console.log('res is =>',res)
+  res.send({ image: req.file });
+ });
 // const veteran1 = {
 //   first_name: 'John',
 //   last_name: 'Smith',
