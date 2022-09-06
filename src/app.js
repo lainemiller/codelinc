@@ -742,13 +742,15 @@ router.get('/getVeteranId/:userName', (req, res) => {
     });
 });
 
-
 router.post('/api/v1/upload', upload.single("image"), async (req, res) => {
+
   /* This will be th 8e response sent from the backend to the frontend */
-  console.log('req is =>',req)
-  console.log('res is =>',res)
+  // console.log('req is =>',req)
+  // console.log('res is =>',res)
   res.send({ image: req.file });
+
  });
+
 // const veteran1 = {
 //   first_name: 'John',
 //   last_name: 'Smith',
