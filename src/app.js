@@ -515,9 +515,10 @@ router.post('/progressNotes/addGoal/:veteranId', (req, res) => {
     })
     .catch((err) => console.error('Error executing query', err.stack))
 })
+
 // Endpoint 9
 router.post('/progressNotes/updateGoalStatus/:veteranId', (req, res) => {
-  const requestObj = [req.params.veteranId, req.body.goal_id, req.body.goal_status]
+  const requestObj = [req.params.veteranId, req.body.goalTitle, req.body.goalState]
   pool
     .query(QUERIES.ProgressNotes.UpdateGoalStatus, requestObj)
     .then((res) => (goalId = res.rows[0]))
