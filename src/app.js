@@ -484,10 +484,14 @@ router.get('/uiLayout/getCaseWorkerDetails/:caseWorkerId', (req, res) => {
 
   pool
   .query(QUERIES.UiLayout.GetUserDetailsForCaseWorker, [caseWorker])
-  .then(res => returnObj = res.rows)
-  .catch(err => console.error('Error executing query', err.stack))
-
-  res.json(returnObj);
+  .then((resp) => {
+    console.log('success on endpoint GetUserDetailsForCaseWorker');
+    res.json(resp.rows);
+  })
+  .catch((err) => {
+    console.error('Error exectuting query', err.stack);
+    res.status(501).json({ err });
+  });
 
 })
 
