@@ -539,29 +539,46 @@ router.get('getUnreadMessageCount', (req, res) => {
 // Endpoint 14
 // VeteranTreatmentPlan Get details & CaseWorkerTreatmentPlan(RS) Get details
 router.get('/getTreatmentPlanDetails/:veteran_id', (req, res) => {
-    const params =  req.params.veteran_id
-    pool
-    .query(QUERIES.TreatmentPlan.GetTreatmentPlanDetails,[params])
-    .then((resp) => {
-      console.log('success on endpoint GetTreatmentPlanDetails')
-      res.json(resp.rows[0])
-    })
-    .catch(err => {
-      console.error('Error executing query', err.stack)
-      res.status(501).json({err});
-    })
+  const params =  req.params.veteran_id
+  pool
+  .query(QUERIES.TreatmentPlan.GetTreatmentPlanDetails,[params])
+  .then((resp) => {
+    res.status(200).json({ responseStatus: 'SUCCESS',data: resp.rows[0],error:false})
+    console.log('success on endpoint GetTreatmentPlanDetails')
+  })
+  .catch(err => {
+    res.status(501).json({ responseStatus: 'FAILURE', data: null, error: err });
+    console.error('Error executing query', err.stack)
+    
+  })
 })
+
 
 // Endpoint 14.5
 //VeteranTreatmentPlan Save details
-router.post('/postTreatmentPlanDetails/save', (req, res) => {
-  
+router.post('/postTreatmentPlanDetails/save/:veteran_id', (req, res) => {
+  const treatmentIssues= req.body.treatmentIssues[0]
+  //const goalType= req.body.treatmentIssues[0].title
+  const goals= treatmentIssues.physicalHealth[0].goals
+  const plans= treatmentIssues.physicalHealth[0].plans
+  const strategies= treatmentIssues.physicalHealth[0].strategies
+  const targetDate= treatmentIssues.physicalHealth[0].targetDate
+
   const requestObj=[
-    4,
+    req.params.veteran_id,
     req.body.intakeDOB,
     req.body.veteranDiagnosis,
-    req.body.veteranSupports
+    req.body.veteranSupports,
+    req.body.veteranStrengths,
+    req.body.veteranNotes,
+    goals,
+    req.body.addedDate,
+    targetDate,
+    plans,
+    strategies
+    
   ]
+  //console.log(requestObj)
   pool
   .query(QUERIES.TreatmentPlan.SaveTreatmentPlanDetails, requestObj)
   .then(resp => {
@@ -580,7 +597,9 @@ router.put('/updateTreatmentPlanDetails/save/:veteran_id', (req, res) => {
   const requestObj=[
     req.params.veteran_id,
     req.body.veteranDiagnosis,
-    req.body.veteranSupports
+    req.body.veteranSupports,
+    req.body.veteranStrengths,
+    req.body.veteranNotes
   ]
   pool
   .query(QUERIES.TreatmentPlan.UpdateTreatmentPlanDetails, requestObj)
