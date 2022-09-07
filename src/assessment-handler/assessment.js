@@ -1,15 +1,15 @@
-const secrets = require("../secret");
+/* eslint-disable no-undef */
+const secrets = require('../secret')
 
-const { Pool } = require("pg");
-const { QUERIES } = require("../constants");
-const json = require("body-parser/lib/types/json");
+const { Pool } = require('pg')
+const { QUERIES } = require('../constants')
 const pool = new Pool({
   host: secrets.HOST,
   user: secrets.USER,
   password: secrets.PASSWORD,
   database: secrets.DATABASE,
-  port: secrets.PORT,
-});
+  port: secrets.PORT
+})
 
 queryPromise1 = (vet) => {
   return new Promise((resolve, reject) => {
@@ -18,13 +18,13 @@ queryPromise1 = (vet) => {
       [vet],
       (error, results) => {
         if (error) {
-          return reject(error);
+          return reject(error)
         }
-        return resolve(results);
+        return resolve(results)
       }
-    );
-  });
-};
+    )
+  })
+}
 
 queryPromise2 = (vet) => {
   return new Promise((resolve, reject) => {
@@ -33,13 +33,13 @@ queryPromise2 = (vet) => {
       [vet],
       (error, results) => {
         if (error) {
-          return reject(error);
+          return reject(error)
         }
-        return resolve(results);
+        return resolve(results)
       }
-    );
-  });
-};
+    )
+  })
+}
 
 queryPromise3 = (vet) => {
   return new Promise((resolve, reject) => {
@@ -48,13 +48,13 @@ queryPromise3 = (vet) => {
       [vet],
       (error, results) => {
         if (error) {
-          return reject(error);
+          return reject(error)
         }
-        return resolve(results);
+        return resolve(results)
       }
-    );
-  });
-};
+    )
+  })
+}
 queryPromise4 = (vet) => {
   return new Promise((resolve, reject) => {
     pool.query(
@@ -62,13 +62,13 @@ queryPromise4 = (vet) => {
       [vet],
       (error, results) => {
         if (error) {
-          return reject(error);
+          return reject(error)
         }
-        return resolve(results);
+        return resolve(results)
       }
-    );
-  });
-};
+    )
+  })
+}
 
 queryPromise5 = (vet) => {
   return new Promise((resolve, reject) => {
@@ -77,13 +77,13 @@ queryPromise5 = (vet) => {
       [vet],
       (error, results) => {
         if (error) {
-          return reject(error);
+          return reject(error)
         }
-        return resolve(results);
+        return resolve(results)
       }
-    );
-  });
-};
+    )
+  })
+}
 queryPromise6 = (vet) => {
   return new Promise((resolve, reject) => {
     pool.query(
@@ -91,13 +91,13 @@ queryPromise6 = (vet) => {
       [vet],
       (error, results) => {
         if (error) {
-          return reject(error);
+          return reject(error)
         }
-        return resolve(results);
+        return resolve(results)
       }
-    );
-  });
-};
+    )
+  })
+}
 
 queryPromise7 = (vet) => {
   return new Promise((resolve, reject) => {
@@ -106,13 +106,13 @@ queryPromise7 = (vet) => {
       [vet],
       (error, results) => {
         if (error) {
-          return reject(error);
+          return reject(error)
         }
-        return resolve(results);
+        return resolve(results)
       }
-    );
-  });
-};
+    )
+  })
+}
 queryPromise8 = (vet) => {
   return new Promise((resolve, reject) => {
     pool.query(
@@ -120,13 +120,13 @@ queryPromise8 = (vet) => {
       [vet],
       (error, results) => {
         if (error) {
-          return reject(error);
+          return reject(error)
         }
-        return resolve(results);
+        return resolve(results)
       }
-    );
-  });
-};
+    )
+  })
+}
 
 // queryPromise9 = (vet) => {
 //   return new Promise((resolve, reject) => {
@@ -160,51 +160,51 @@ queryPromise8 = (vet) => {
 
 module.exports = async function (vet) {
   try {
-    const result1 = await queryPromise1(vet);
-    const result2 = await queryPromise2(vet);
-    const result3 = await queryPromise3(vet);
-    const result4 = await queryPromise4(vet);
-    const result5 = await queryPromise5(vet);
-    const result6 = await queryPromise6(vet);
-    const result7 = await queryPromise7(vet);
-    const result8 = await queryPromise8(vet);
+    const result1 = await queryPromise1(vet)
+    const result2 = await queryPromise2(vet)
+    const result3 = await queryPromise3(vet)
+    const result4 = await queryPromise4(vet)
+    const result5 = await queryPromise5(vet)
+    const result6 = await queryPromise6(vet)
+    const result7 = await queryPromise7(vet)
+    const result8 = await queryPromise8(vet)
     // const result9 = await queryPromise9(vet);
     // const result10 = await queryPromise10(vet);
 
-    let assessmentDetails = {
+    const assessmentDetails = {
       assessment_details: [
-        { header: "Personal Information", data: dataFormatter(result1.rows) },
-        { header: "Financial", data: dataFormatter(result2.rows) },
+        { header: 'Personal Information', data: dataFormatter(result1.rows) },
+        { header: 'Financial', data: dataFormatter(result2.rows) },
         {
-          header: "Employment and Education History",
-          data: dataFormatter(result3.rows),
+          header: 'Employment and Education History',
+          data: dataFormatter(result3.rows)
         },
-        { header: "Social", data: dataFormatter(result4.rows) },
-        { header: "Family", data: dataFormatter(result5.rows) },
-        { header: "Mental Health", data: dataFormatter(result6.rows) },
+        { header: 'Social', data: dataFormatter(result4.rows) },
+        { header: 'Family', data: dataFormatter(result5.rows) },
+        { header: 'Mental Health', data: dataFormatter(result6.rows) },
         {
-          header: "Substance Abuse History",
-          data: dataFormatter(result7.rows),
+          header: 'Substance Abuse History',
+          data: dataFormatter(result7.rows)
         },
-        { header: "Legal History/Issues", data: dataFormatter(result8.rows) },
+        { header: 'Legal History/Issues', data: dataFormatter(result8.rows) }
         // { header: "Preliminary Diagnosi", data: dataFormatter(result9.rows) },
         // { header: "Initial Treatment Goals", data: dataFormatter(result10.rows) }
       ]
-    };
-    //console.log("assessmentDetails", assessmentDetails);
-    return assessmentDetails;
+    }
+    console.log('assessmentDetails', assessmentDetails)
+    return assessmentDetails
   } catch (error) {
-    console.log(error);
+    console.log(error)
   }
-};
+}
 
-function dataFormatter(requestObj) {
-  const veteranObj = requestObj[0];
+function dataFormatter (requestObj) {
+  const veteranObj = requestObj[0]
 
-  const dataObj = [];
+  const dataObj = []
   for (const veteranProp in veteranObj) {
-    dataObj.push({ key: veteranProp, value: veteranObj[veteranProp] });
+    dataObj.push({ key: veteranProp, value: veteranObj[veteranProp] })
   }
 
-  return dataObj;
+  return dataObj
 }

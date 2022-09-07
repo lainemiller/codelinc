@@ -7,9 +7,10 @@ const compression = require('compression');
 const ejs = require('ejs').__express;
 const app = express();
 const router = express.Router();
+const upload = require('./imageUploadService/uploadImage.js');
 
 // const constants = require('./constants')
-const sequentialQueries = require('./assessment-handler/assessment.js.js');
+const sequentialQueries = require('./assessment-handler/assessment.js');
 const secrets = require('./secret');
 
 const { Pool } = require('pg');
@@ -91,6 +92,7 @@ router.get('/cookie', (req, res) => {
   res.cookie('Fizz', 'buzz');
   res.json({});
 });
+
 router.get('/transportationForm/getTransportationRequests/', (req, res) => {
   pool
     .query(QUERIES.TransportationRequest.GetTransportationRequests)
@@ -113,6 +115,68 @@ router.get('/calendarEvents', (req, res) => {
 
   res.json(users);
 });
+
+router.post('/postCalendarEvents',(req,res)=>{
+  console.log(req.body);
+  const requestObj =[
+    req.body.case_worker_id,
+    req.body.participants,
+    req.body.isAppointment,
+    req.body.title,
+    req.body.description,
+    req.body.sTime,
+    req.body.enTime,
+  ]
+    pool
+      .query(QUERIES.calendarAPis.postEventsForCaseworker,requestObj)
+      .then((resp) => {
+        res
+          .status(200)
+          .json({ responseStatus: 'SUCCESS', data: resp.rows, error: false });
+      })
+      .catch((err) => {
+        console.error('Error executing query', err.stack);
+        res
+          .status(501)
+          .json({ responseStatus: 'FAILURE', data: null, error: err });
+      });
+  })
+  
+  router.get('/getCalendarEvents/:caseWorkerId',(req,res)=>{
+    let caseWorkerId = req.params.caseWorkerId;
+    pool
+    .query(QUERIES.calendarAPis.getCalendarEventsForCaseworker,[caseWorkerId])
+    .then((resp) => {
+      res
+        .status(200)
+        .json({ responseStatus: 'SUCCESS', data: resp.rows, error: false });
+    })
+    .catch((err) => {
+      console.error('Error executing query', err.stack);
+      res
+        .status(501)
+        .json({ responseStatus: 'FAILURE', data: null, error: err });
+    });
+  })
+  
+  router.get('/getCalendarEventsForVeteran',(req,res)=>{
+   // let veteranId = req.params.veteranId;
+    pool
+    .query(QUERIES.calendarAPis.getCalendarEventsForVeteran)
+    .then((resp) => {
+      res
+        .status(200)
+        .json({ responseStatus: 'SUCCESS', data: resp.rows, error: false });
+    })
+    .catch((err) => {
+      console.error('Error executing query', err.stack);
+      res
+        .status(501)
+        .json({ responseStatus: 'FAILURE', data: null, error: err });
+    });
+  })
+
+  
 router.get('/progressNotes', (req, res) => {
   const users = require(QUERIES.myApisJsonUrls.getProgressNotes);
   // pool
@@ -122,6 +186,7 @@ router.get('/progressNotes', (req, res) => {
 
   res.json(users);
 });
+
 router.get('/resedentSearch', (req, res) => {
   const users = require(QUERIES.myApisJsonUrls.getResedentData);
   console.log(users);
@@ -132,6 +197,7 @@ router.get('/resedentSearch', (req, res) => {
 
   res.json(users);
 });
+
 router.get('/consentData', (req, res) => {
   const users = require(QUERIES.myApisJsonUrls.getConsentData);
   // pool
@@ -141,6 +207,7 @@ router.get('/consentData', (req, res) => {
 
   res.json(users);
 });
+
 router.get('/transportationRequestData', (req, res) => {
   const users = require(QUERIES.myApisJsonUrls.GetTransportationData);
   // pool
@@ -224,7 +291,7 @@ router.get('/userdetailsVeteran', (req, res) => {
 });
 
 // Assessment Details API
-router.get("/assessmentDetails/:veteranID", async (req, res) => {
+router.get('/assessmentDetails/:veteranID', async (req, res) => {
   const vet = req.params.veteranID;
   const assessmentDetails = await sequentialQueries(vet);
   res.status(200).json(assessmentDetails);
@@ -365,7 +432,7 @@ router.get('/consentForm/getUserDetails/:loginId', (req, res) => {
     .then((resp) => {
       res.status(200).json({ responseStatus: 'SUCCESS', data: resp.rows, error: false });
     })
-    .catch((err) =>{ 
+    .catch((err) => {
       console.error('Error executing query', err.stack);
       res.status(501).json({ responseStatus: 'FAILURE', data: null, error: err });
     });
@@ -499,12 +566,12 @@ router.put('/userProfile/updateUserDetails/:veteranId', (req, res) => {
     req.body.selectedMaritalStatus,
     req.body.SSNNumber,
     req.body.hmisIdNo,
-    req.body.selectedRace,
-    req.body.selectedprimaryLanguage,
-    req.body.selectedRelegion,
+    req.body.race,
+    req.body.primaryLanguage,
+    req.body.relegion,
     req.body.cHouseNumber,
-    req.body.cPhoneNumber,
-  ]
+    req.body.cPhoneNumber
+  ];
 
   pool
     .query(QUERIES.UserProfile.UpdateUserDetails, requestObj)
@@ -515,7 +582,6 @@ router.put('/userProfile/updateUserDetails/:veteranId', (req, res) => {
       console.error('Error executing query', err.stack);
       res.status(501).json({ responseStatus: 'FAILURE', data: null, error: err });
     });
-
 });
 
 // Endpoint 12
@@ -735,7 +801,16 @@ router.get('/getVeteranId/:userName', (req, res) => {
       console.error('Error executing query', err.stack);
       res.status(501).json({ responseStatus: 'FAILURE', data: null, error: err });
     });
-})
+});
+
+router.post('/api/v1/upload', upload.single("image"), async (req, res) => {
+
+  /* This will be th 8e response sent from the backend to the frontend */
+  // console.log('req is =>',req)
+  // console.log('res is =>',res)
+  res.send({ image: req.file });
+
+ });
 
 // const veteran1 = {
 //   first_name: 'John',

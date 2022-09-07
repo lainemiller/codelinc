@@ -4,7 +4,6 @@ phases:
     commands:
       - npm run setup
 artifacts:
-  type: zip
   files:
-    - samTemplate.yaml
-    - outputSamTemplate.yaml
+    - sam-template.yaml
+    - sam-template.packaged.yaml
