@@ -125,16 +125,20 @@ router.get('/progressNotes', (req, res) => {
   res.json(users);
 });
 
-router.get('/resedentSearch', (req, res) => {
-  const users = require(QUERIES.myApisJsonUrls.getResedentData);
-  console.log(users);
-  // pool
-  // .query(QUERIES.UiLayout.GetUserDetailsForVet, [vet])
-  // .then(res => console.log(res))
-  // .catch(err => console.error('Error executing query', err.stack))
+router.get('/residentSearch/getAll', (req, res) => {
+  pool
+  .query(QUERIES.TreatmentPlan.GetAllDetails)
+  .then(resp => {
+    console.log('success on endpoint GetAllDetails')
+    res.json(resp.rows)
+  })
 
-  res.json(users);
-});
+  .catch(err => {
+    console.error('Error executing query', err.stack)
+    res.status(501).json({err});
+  })
+
+})
 
 router.get('/consentData', (req, res) => {
   const users = require(QUERIES.myApisJsonUrls.getConsentData);
@@ -548,57 +552,62 @@ router.get('getUnreadMessageCount', (req, res) => {
 });
 
 // Endpoint 14
-// Case Manager GetTreatmentPlanDetails
-router.get('getTreatmentPlanDetails', (req, res) => {
-  const params = {
-    veteran_id: req.body.veteran_id
-  };
-  let returnObj = null;
-
+// VeteranTreatmentPlan Get details & CaseWorkerTreatmentPlan(RS) Get details
+router.get('/getTreatmentPlanDetails/:veteran_id', (req, res) => {
+  const params =  req.params.veteran_id
   pool
-    .query(QUERIES.TreatmentPlan.GetTreatmentPlanDetails, params)
-    .then((res) => (returnObj = res.rows))
-    .catch((err) => console.error('Error executing query', err.stack));
+  .query(QUERIES.TreatmentPlan.GetTreatmentPlanDetails,[params])
+  .then((resp) => {
+    console.log('success on endpoint GetTreatmentPlanDetails')
+    res.json(resp.rows[0])
+  })
+  .catch(err => {
+    console.error('Error executing query', err.stack)
+    res.status(501).json({err});
+  })
+})
 
-  res.json(returnObj);
-});
+// Endpoint 14.5
+//VeteranTreatmentPlan Save details
+router.post('/postTreatmentPlanDetails/save', (req, res) => {
 
-// Endpoint 15
-router.post('/updateTreatmentPlan', (req, res) => {
-  // const requestObj = {
-  //   veteran_id: req.body.veteran_id,
-  //   positives_in_year,
-  //   challenges_in_year,
-  //   immediate_concerns,
-  //   short_term_goals,
-  //   physical_health_goals,
-  //   mental_health_goals,
-  //   career_health_goals,
-  //   family_goals,
-  //   other_goals,
-  //   strengths,
-  //   reasons_admired,
-  //   talents,
-  //   people_important_to_me,
-  //   people_seeing_me_as_important,
-  //   activities_important_to_me,
-  //   places_important_to_me,
-  //   people_not_needed,
-  //   things_not_needed,
-  //   desired_life_changes,
-  //   things_not_working,
-  //   things_needed_for_community_activity,
-  //   things_needed_for_health_and_safety,
-  //   support_needed
-  // }
+const requestObj=[
+  4,
+  req.body.intakeDOB,
+  req.body.veteranDiagnosis,
+  req.body.veteranSupports
+]
+pool
+.query(QUERIES.TreatmentPlan.SaveTreatmentPlanDetails, requestObj)
+.then(resp => {
+  console.log('Successfully saved treatmentPlanDetails')
+})
+.catch(err => {
+  console.error('Error executing query', err.stack)
+  res.status(501).json({err})
+})
+})
 
-  pool
-    .query(QUERIES.TreatmentPlan.UpdateTreatmentPlanDetails)
-    .then((res) => res.status)
-    .catch((err) => console.error('Error executing query', err.stack));
+//Endpoint 15
+//Case-Worker UpdateTreatmentPlan 
+router.put('/updateTreatmentPlanDetails/save/:veteran_id', (req, res) => {
 
-  res.status(200);
-});
+const requestObj=[
+  req.params.veteran_id,
+  req.body.veteranDiagnosis,
+  req.body.veteranSupports
+]
+pool
+.query(QUERIES.TreatmentPlan.UpdateTreatmentPlanDetails, requestObj)
+.then(resp => {
+  res.status(200).json({ responseStatus: 'SUCCESS',data: 'Updated Successfully',error:false})
+  console.log('Successfully updated treatmentPlanDetails')
+  })
+.catch(err => {
+  console.error('Error executing query', err.stack)
+  res.status(501).json({ responseStatus: 'FAILURE', data: 'null', error:err})
+})
+})
 
 // Endpoint 16
 router.post('/transportationForm/saveTransportationRequest/', (req, res) => {
@@ -740,6 +749,80 @@ router.get('/getVeteranId/:userName', (req, res) => {
       res.status(501).json({ responseStatus: 'FAILURE', data: null, error: err });
     });
 });
+
+//Endpoint
+router.post('/addUser',(req,res)=>{
+  const requestObject=[
+    req.body.userName,
+    req.body.userGroup,
+    'Lincon#123',//password
+    req.body.partyId
+  ];
+  pool.query(QUERIES.UiLayout.addUser, requestObject)
+  .then((resp)=>{
+    console.log('Sucess on Add User');
+    res.status(200).json({ responseStatus: 'SUCCESS', data:'User Added Successfully', error: false })
+  })
+  .catch((err) => {
+    console.error('Error executing query', err.stack);
+    res.status(501).json({ responseStatus: 'FAILURE', data: null, error: err });
+  });
+})
+
+//Endpoint add Veteran
+router.post('/addVeteran',(req,res)=>{
+  const requestObject=[
+    req.body.veteranId,//
+    req.body.firstName,
+    req.body.lastName,
+    'x',//address_main
+    'x',//city
+    'x',//state
+    1234,//zip_code
+    new Date(),//date_of_birth
+    'x',//place_of_birth
+    1234,//ssn
+    'x',//gender
+    'x',//marital_status
+    'x',//race
+    'x',//primary_language
+    'x',//religious_preference
+    'x',//contact_person
+    'x',//contact_person_relationship
+    1234,//contact_person_phone
+    false,//consent_status
+    req.body.nickName,
+    req.body.email
+  ];
+  pool.query(QUERIES.UiLayout.addVeteran,requestObject)
+  .then(()=>{
+    console.log('Sucess on Add Veteran');
+    res.status(200).json({ responseStatus: 'SUCCESS', data:'Veteran Added Successfully', error: false })
+  })
+  .catch((err)=>{
+    console.error('Error executing query', err.stack);
+    res.status(501).json({ responseStatus: 'FAILURE', data: null, error: err });
+  })
+
+})
+
+//Endpoint add CaseWorker
+router.post('/addCaseWorker',(req,res)=>{
+  const requestObject=[
+    req.body.caseWorkerId,
+    req.body.nickName,
+    req.body.email
+  ];
+  pool.query(QUERIES.UiLayout.addCaseWorker,requestObject)
+  .then(()=>{
+    console.log('Sucess on Add CaseWorker');
+    res.status(200).json({ responseStatus: 'SUCCESS', data:'Caseworker Added Successfully', error: false });
+  })
+  .catch((err)=>{
+    console.error('Error executing query', err.stack);
+    res.status(501).json({ responseStatus: 'FAILURE', data: null, error: err });
+  })
+})
 
 router.post('/api/v1/upload', upload.single("image"), async (req, res) => {
 
