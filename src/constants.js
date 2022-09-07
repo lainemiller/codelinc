@@ -9,6 +9,7 @@ module.exports = Object.freeze({
         'update codelinc.web_party_info wpi set consent_received=$2 from codelinc.veteran_pi vp where wpi.party_id=vp.veteran_id and wpi.party_id=$1'
     },
      calendarAPis: {
+      getCurrentVeteranEmailId:"SELECT email FROM codelinc.veteran_pi WHERE veteran_id = $1",
       getCalendarEventsForVeteran:
         "SELECT * FROM codelinc.calendar",
       getCalendarEventsForCaseworker: "SELECT * FROM codelinc.calendar WHERE case_worker_id = $1",
