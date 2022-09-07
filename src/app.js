@@ -8,6 +8,7 @@ const ejs = require('ejs').__express;
 const app = express();
 const router = express.Router();
 const upload = require('./imageUploadService/uploadImage.js');
+
 // const constants = require('./constants')
 const sequentialQueries = require('./assessment-handler/assessment.js');
 const secrets = require('./secret');
@@ -115,6 +116,67 @@ router.get('/calendarEvents', (req, res) => {
   res.json(users);
 });
 
+router.post('/postCalendarEvents',(req,res)=>{
+  console.log(req.body);
+  const requestObj =[
+    req.body.case_worker_id,
+    req.body.participants,
+    req.body.isAppointment,
+    req.body.title,
+    req.body.description,
+    req.body.sTime,
+    req.body.enTime,
+  ]
+    pool
+      .query(QUERIES.calendarAPis.postEventsForCaseworker,requestObj)
+      .then((resp) => {
+        res
+          .status(200)
+          .json({ responseStatus: 'SUCCESS', data: resp.rows, error: false });
+      })
+      .catch((err) => {
+        console.error('Error executing query', err.stack);
+        res
+          .status(501)
+          .json({ responseStatus: 'FAILURE', data: null, error: err });
+      });
+  })
+  
+  router.get('/getCalendarEvents/:caseWorkerId',(req,res)=>{
+    let caseWorkerId = req.params.caseWorkerId;
+    pool
+    .query(QUERIES.calendarAPis.getCalendarEventsForCaseworker,[caseWorkerId])
+    .then((resp) => {
+      res
+        .status(200)
+        .json({ responseStatus: 'SUCCESS', data: resp.rows, error: false });
+    })
+    .catch((err) => {
+      console.error('Error executing query', err.stack);
+      res
+        .status(501)
+        .json({ responseStatus: 'FAILURE', data: null, error: err });
+    });
+  })
+  
+  router.get('/getCalendarEventsForVeteran',(req,res)=>{
+   // let veteranId = req.params.veteranId;
+    pool
+    .query(QUERIES.calendarAPis.getCalendarEventsForVeteran)
+    .then((resp) => {
+      res
+        .status(200)
+        .json({ responseStatus: 'SUCCESS', data: resp.rows, error: false });
+    })
+    .catch((err) => {
+      console.error('Error executing query', err.stack);
+      res
+        .status(501)
+        .json({ responseStatus: 'FAILURE', data: null, error: err });
+    });
+  })
+
+  
 router.get('/progressNotes', (req, res) => {
   const users = require(QUERIES.myApisJsonUrls.getProgressNotes);
   // pool

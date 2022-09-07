@@ -8,12 +8,12 @@ module.exports = Object.freeze({
       AcceptedConsentDate:
         'update codelinc.web_party_info wpi set consent_received=$2 from codelinc.veteran_pi vp where wpi.party_id=vp.veteran_id and wpi.party_id=$1'
     },
-    calendarAPis: {
+     calendarAPis: {
       getCalendarEventsForVeteran:
-        'SELECT * FROM codelinc.tableName WHERE veteran_id = $1',
-      getCalendarEventsForCaseworker: 'SELECT * FROM codelinc.tableName',
+        "SELECT * FROM codelinc.calendar",
+      getCalendarEventsForCaseworker: "SELECT * FROM codelinc.calendar WHERE case_worker_id = $1",
       postEventsForCaseworker:
-        'INSERT INTO codelinc.tableName(columns_name) VALUES()'
+        "INSERT INTO codelinc.calendar(case_worker_id,participants,isappointment,title,description,eventstart,eventend) VALUES($1, $2, $3, $4, $5, $6, $7)",
     },
     ProgressNotes: {
       GetGoals:

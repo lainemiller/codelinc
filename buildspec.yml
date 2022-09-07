@@ -5,5 +5,5 @@ phases:
       - npm run setup
 artifacts:
   files:
-    - samTemplate.yaml
-    - outputSamTemplate.yaml
+    - sam-template.yaml
+    - sam-template.packaged.yaml
