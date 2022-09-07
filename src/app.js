@@ -10,6 +10,7 @@ const router = express.Router();
 const upload = require('./imageUploadService/uploadImage.js');
 // const constants = require('./constants')
 const sequentialQueries = require('./assessment-handler/assessment.js');
+const treatmentQueries = require('./treatmentPlan-handler/treatment.js');
 const secrets = require('./secret');
 
 const { Pool } = require('pg')
@@ -554,40 +555,39 @@ router.get('/getTreatmentPlanDetails/:veteran_id', (req, res) => {
 })
 
 
-// Endpoint 14.5
-//VeteranTreatmentPlan Save details
-router.post('/postTreatmentPlanDetails/save/:veteran_id', (req, res) => {
-  const treatmentIssues= req.body.treatmentIssues[0]
-  //const goalType= req.body.treatmentIssues[0].title
+//Endpoint 14.5
+//VeteranSaveTreatmentPlan Post details
+router.post('/postTreatmentPlanDetails/save/:veteran_id', async (req, res) => {
+  const treatmentIssues = req.body.treatmentIssues[0]
+  //const goalType= treatmentIssues.object
+  
   const goals= treatmentIssues.physicalHealth[0].goals
   const plans= treatmentIssues.physicalHealth[0].plans
   const strategies= treatmentIssues.physicalHealth[0].strategies
   const targetDate= treatmentIssues.physicalHealth[0].targetDate
-
+  const vet=req.params.veteran_id
+  
   const requestObj=[
-    req.params.veteran_id,
+    vet,
     req.body.intakeDOB,
     req.body.veteranDiagnosis,
     req.body.veteranSupports,
     req.body.veteranStrengths,
-    req.body.veteranNotes,
+    req.body.veteranNotes];
+  
+    const requestObjIssues=[  
+    vet,
     goals,
     req.body.addedDate,
     targetDate,
     plans,
     strategies
-    
   ]
-  //console.log(requestObj)
-  pool
-  .query(QUERIES.TreatmentPlan.SaveTreatmentPlanDetails, requestObj)
-  .then(resp => {
-    console.log('Successfully saved treatmentPlanDetails')
-  })
-  .catch(err => {
-    console.error('Error executing query', err.stack)
-    res.status(501).json({err})
-  })
+    console.log(requestObj,)
+    console.log(requestObjIssues)
+    //const postTreatmentPlanDetails = await treatmentQueries(requestObj,requestObjIssues);
+    //res.status(200).json(postTreatmentPlanDetails) 
+  
 })
 
 //Endpoint 15
