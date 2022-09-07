@@ -17,10 +17,11 @@ module.exports = Object.freeze({
     },
     ProgressNotes: {
       GetGoals:
-        'SELECT * FROM codelinc.veteran_treatment_goals WHERE veteran_id = $1',
+         'SELECT goal_status as "goalState", goal_title as "goalTitle", created_on as "addedDate", goal_description as "goalDescription", goal_type as "goalType" FROM codelinc.veteran_treatment_goals WHERE veteran_id = $1',
+      // 'SELECT * FROM codelinc.veteran_treatment_goals WHERE veteran_id = $1',
       AddGoal:
-        'INSERT INTO codelinc.veteran_treatment_goals(veteran_id, goal_description, goal_type) VALUES($1, $2, $3)',
-      // UpdateGoalStatus: `INSERT INTO codelinc.veteran_treatment_goals(veteran_id, goal_id, goal_description) VALUES($1, $2, $3) ON CONFLICT (veteran_id) DO UPDATE SET goal_description = EXCLUDED.goal_description`
+        'INSERT INTO codelinc.veteran_treatment_goals(veteran_id, goal_title, goal_type, goal_description, goal_status, created_on) VALUES($1, $2, $3, $4, $5, $6)',
+      // UpdateGoalStatus: "INSERT INTO codelinc.veteran_treatment_goals(veteran_id, goal_id, goal_description) VALUES($1, $2, $3) ON CONFLICT (veteran_id) DO UPDATE SET goal_description = EXCLUDED.goal_description"
       UpdateGoalStatus:
         'UPDATE codelinc.veteran_treatment_goals SET goal_status = $3 WHERE veteran_id = $1 AND goal_id = $2'
     },
