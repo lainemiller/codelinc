@@ -558,24 +558,34 @@ router.get('/getTreatmentPlanDetails/:veteran_id', (req, res) => {
 //Endpoint 14.5
 //VeteranSaveTreatmentPlan Post details
 router.post('/postTreatmentPlanDetails/save/:veteran_id', async (req, res) => {
-  const treatmentIssues = req.body.treatmentIssues[0]
-  //const goalType= treatmentIssues.object
-  
-  const goals= treatmentIssues.physicalHealth[0].goals
-  const plans= treatmentIssues.physicalHealth[0].plans
-  const strategies= treatmentIssues.physicalHealth[0].strategies
-  const targetDate= treatmentIssues.physicalHealth[0].targetDate
+ 
   const vet=req.params.veteran_id
-  
+  const treatmentIssues = req.body.treatmentIssues[0]  
   const requestObj=[
     vet,
-    req.body.intakeDOB,
     req.body.veteranDiagnosis,
     req.body.veteranSupports,
     req.body.veteranStrengths,
-    req.body.veteranNotes];
-  
-    const requestObjIssues=[  
+    req.body.veteranNotes
+  ]
+  pool
+  .query(QUERIES.TreatmentPlan.SaveTreatmentPlanDetails, requestObj)
+  .then(resp => {
+    res.status(200).json({ responseStatus: 'SUCCESS',data: 'saved Successfully',error:false})
+    console.log('Successfully saved Initial TPD')
+    })
+  .catch(err => {
+    console.error('Error executing query', err.stack)
+    res.status(501).json({ responseStatus: 'FAILURE', data: 'null', error:err})
+  })
+  //PhysicalHealth
+  for(i=0; i<3; i++){
+    let requestObjIssuesPH=null;
+    const goals= treatmentIssues.physicalHealth[i].goals
+    const plans= treatmentIssues.physicalHealth[i].plans
+    const strategies= treatmentIssues.physicalHealth[i].strategies
+    const targetDate= treatmentIssues.physicalHealth[i].targetDate
+    requestObjIssuesPH=[  
     vet,
     goals,
     req.body.addedDate,
@@ -583,10 +593,27 @@ router.post('/postTreatmentPlanDetails/save/:veteran_id', async (req, res) => {
     plans,
     strategies
   ]
-      console.log(requestObj,)
-      console.log(requestObjIssues)
-     const postTreatmentPlanDetails = await treatmentQueries(requestObj,requestObjIssues);
-     res.status(200).json(postTreatmentPlanDetails) 
+  const returnStatement = await treatmentQueries(requestObjIssuesPH);
+  res.status(200).json(returnStatement) 
+}
+//MentalHealth
+  for(i=0; i<3; i++){
+    let requestObjIssuesMH=null;
+    const goals= treatmentIssues.mentalHealth[i].goals
+    const plans= treatmentIssues.mentalHealth[i].plans
+    const strategies= treatmentIssues.mentalHealth[i].strategies
+    const targetDate= treatmentIssues.mentalHealth[i].targetDate
+    requestObjIssuesMH=[  
+    vet,
+    goals,
+    req.body.addedDate,
+    targetDate,
+    plans,
+    strategies
+  ]
+  const returnStatement = await treatmentQueries(requestObjIssuesMH);
+  res.status(200).json(returnStatement) 
+  }
   
 })
 

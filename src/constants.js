@@ -70,11 +70,11 @@ module.exports = Object.freeze({
     },
     TreatmentPlan: {
       GetTreatmentPlanDetails:
-       "SELECT vp.first_name,vp.last_name,vp.date_of_birth,vi.intake_date,vp.hmis_id,vi.diagnosis,vi.supports,vi.strengths,vi.notes from codelinc.veteran_pi vp FULL OUTER JOIN codelinc.veteran_initial_treatment vi ON vp.veteran_id=vi.veteran_id where vp.veteran_id=$1",
+      "SELECT vp.first_name,vp.last_name,vp.record_number,vp.date_of_birth,vp.intake_date,vp.hmis_id,vi.diagnosis,vi.supports,vi.strengths,vi.notes from codelinc.veteran_pi vp FULL OUTER JOIN codelinc.veteran_initial_treatment vi ON vp.veteran_id=vi.veteran_id where vp.veteran_id=$1",
       GetAllDetails: 
       "SELECT vp.veteran_id,vp.first_name,vp.last_name,vp.address_main,vp.date_of_birth,vi.intake_date,vp.hmis_id,vp.primary_phone,vi.diagnosis,vi.supports,vi.strengths,vi.notes from codelinc.veteran_pi vp FULL OUTER JOIN codelinc.veteran_initial_treatment vi ON vp.veteran_id=vi.veteran_id ",
       SaveTreatmentPlanDetails:
-      "INSERT INTO codelinc.veteran_initial_treatment(veteran_id,intake_date,diagnosis,supports,strengths,notes) VALUES ($1,$2,$3,$4,$5,$6)",
+      "INSERT INTO codelinc.veteran_initial_treatment(veteran_id,diagnosis,supports,strengths,notes) VALUES ($1, $2, $3, $4, $5)",
       UpdateTreatmentPlanDetails: 
       "UPDATE codelinc.veteran_initial_treatment SET diagnosis = $2, supports = $3, strengths= $4 ,notes= $5 where veteran_id = $1"
     },

@@ -10,24 +10,11 @@ const pool = new Pool({
   port: secrets.PORT
 })
 
-queryPromise1 = (requestObj) => {
-  return new Promise((resolve, reject) => {
-    pool.query(
-     QUERIES.TreatmentPlan.SaveTreatmentPlanDetails,requestObj,
-     (error, results) => {
-      if (error) {
-       return reject(error)
-     }
-      return resolve(results)
-    }
-    )
-  })
-}
-
-queryPromise2 = (requestObjIssues) => {
+//PhysicalHealth
+queryPromise1 = (requestObjIssuesPH) => {
     return new Promise((resolve, reject) => {
       pool.query(
-       QUERIES.SaveTreatmentPlan.TreatmentPlanDetailsPH,requestObjIssues,
+       QUERIES.SaveTreatmentPlan.TreatmentPlanDetailsPH,requestObjIssuesPH,
        (error, results) => {
         if (error) {
          return reject(error)
@@ -38,13 +25,26 @@ queryPromise2 = (requestObjIssues) => {
 })
 }
 
+queryPromise2 = (requestObjIssuesMH) => {
+  return new Promise((resolve, reject) => {
+    pool.query(
+     QUERIES.SaveTreatmentPlan.TreatmentPlanDetailsPH,requestObjIssuesMH,
+     (error, results) => {
+      if (error) {
+       return reject(error)
+     }
+      return resolve(results)
+    }
+  )
+})
+}
 
-module.exports = async function (requestObj,requestObjIssues){
+
+module.exports = async function (requestObjIssuesPH,requestObjIssuesMH){
     try {
-        const result1= await queryPromise1(requestObj)
-        const result2= await queryPromise2(requestObjIssues)
-     
-        const returnStatement=console.log("Successully saved TreatmentPlanDetails")
+        const result1= await queryPromise1(requestObjIssuesPH)
+        const result2= await queryPromise2(requestObjIssuesMH)
+        const returnStatement=console.log("Successully saved TreatmentIssues")
         return returnStatement
     }catch(error){
         console.log(error)
