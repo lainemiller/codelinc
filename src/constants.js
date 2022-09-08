@@ -2,27 +2,29 @@ module.exports = Object.freeze({
   QUERIES: {
     ConsentForm: {
       GetUserDetails:
-        'select vp.first_name,vp.last_name,vp.consent_status from codelinc.web_party_info wpi join codelinc.veteran_pi vp on wpi.party_id=vp.veteran_id where wpi.web_party_id=$1',
+        'select vp.first_name,vp.last_name,vp.consent_status,vp.email from codelinc.web_party_info wpi join codelinc.veteran_pi vp on wpi.party_id=vp.veteran_id where wpi.party_id=$1',
       AcceptConsentStatus:
         'update codelinc.veteran_pi vp set consent_status=$2 from codelinc.web_party_info wpi where wpi.party_id=vp.veteran_id and wpi.party_id=$1',
       AcceptedConsentDate:
         'update codelinc.web_party_info wpi set consent_received=$2 from codelinc.veteran_pi vp where wpi.party_id=vp.veteran_id and wpi.party_id=$1'
     },
-    calendarAPis: {
+     calendarAPis: {
+      getCurrentVeteranEmailId:"SELECT email FROM codelinc.veteran_pi WHERE veteran_id = $1",
       getCalendarEventsForVeteran:
-        'SELECT * FROM codelinc.tableName WHERE veteran_id = $1',
-      getCalendarEventsForCaseworker: 'SELECT * FROM codelinc.tableName',
+        "SELECT * FROM codelinc.calendar",
+      getCalendarEventsForCaseworker: "SELECT * FROM codelinc.calendar WHERE case_worker_id = $1",
       postEventsForCaseworker:
-        'INSERT INTO codelinc.tableName(columns_name) VALUES()'
+        "INSERT INTO codelinc.calendar(case_worker_id,participants,isappointment,title,description,eventstart,eventend) VALUES($1, $2, $3, $4, $5, $6, $7)",
     },
     ProgressNotes: {
       GetGoals:
-        'SELECT * FROM codelinc.veteran_treatment_goals WHERE veteran_id = $1',
+         'SELECT goal_status as "goalState", goal_title as "goalTitle", created_on as "addedDate", goal_description as "goalDescription", goal_type as "goalType" FROM codelinc.veteran_treatment_goals WHERE veteran_id = $1',
+      // 'SELECT * FROM codelinc.veteran_treatment_goals WHERE veteran_id = $1',
       AddGoal:
-        'INSERT INTO codelinc.veteran_treatment_goals(veteran_id, goal_description, goal_type) VALUES($1, $2, $3)',
-      // UpdateGoalStatus: `INSERT INTO codelinc.veteran_treatment_goals(veteran_id, goal_id, goal_description) VALUES($1, $2, $3) ON CONFLICT (veteran_id) DO UPDATE SET goal_description = EXCLUDED.goal_description`
+        'INSERT INTO codelinc.veteran_treatment_goals(veteran_id, goal_title, goal_type, goal_description, goal_status, created_on) VALUES($1, $2, $3, $4, $5, $6)',
+      // UpdateGoalStatus: "INSERT INTO codelinc.veteran_treatment_goals(veteran_id, goal_id, goal_description) VALUES($1, $2, $3) ON CONFLICT (veteran_id) DO UPDATE SET goal_description = EXCLUDED.goal_description"
       UpdateGoalStatus:
-        'UPDATE codelinc.veteran_treatment_goals SET goal_status = $3 WHERE veteran_id = $1 AND goal_id = $2'
+        'UPDATE codelinc.veteran_treatment_goals SET goal_status = $3 WHERE veteran_id = $1 AND goal_title = $2'
     },
     UserProfile: {
       GetUserDetails: 'SELECT * from codelinc.veteran_pi where veteran_id = $1',
@@ -66,12 +68,21 @@ module.exports = Object.freeze({
       getTableColumns:
         "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'veteran_transport_request';",
       getTableData: "SELECT * FROM codelinc.veteran_treatment_goals",
-      getVeteranId:"select wpi.party_id,vp.nick_name  from codelinc.web_party_info wpi join codelinc.veteran_pi vp on wpi.party_id=vp.veteran_id where wpi.username =$1"
+      getVeteranId:"select party_id from codelinc.web_party_info where username =$1",
+      addUser:"INSERT INTO codelinc.web_party_info(username,party_type,password,party_id) values ($1,$2,$3,$4)",
+      addVeteran:"INSERT INTO codelinc.veteran_pi(veteran_id,first_name,last_name,address_main,city,state,zip_code,date_of_birth,place_of_birth,ssn,gender,marital_status,race,primary_language,religious_preference,contact_person,contact_person_relationship,contact_person_phone,consent_status,nick_name,email) values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21)",
+      addCaseWorker:"INSERT INTO codelinc.case_worker_info(case_worker_id,nick_name,email) values ($1,$2,$3)"
     },
     TreatmentPlan: {
-      GetTreatmentPlanDetails: '',
-      UpdateTreatmentPlanDetails: ''
-    },
+      GetTreatmentPlanDetails:
+       "SELECT vp.first_name,vp.last_name,vp.date_of_birth,vi.intake_date,vp.hmis_id,vi.diagnosis,vi.supports from codelinc.veteran_pi vp FULL OUTER JOIN codelinc.veteran_initial_treatment vi ON vp.veteran_id=vi.veteran_id where vp.veteran_id=$1",
+      GetAllDetails: 
+      "SELECT vp.veteran_id,vp.first_name,vp.last_name,vp.address_main,vp.date_of_birth,vi.intake_date,vp.hmis_id,vp.primary_phone,vi.diagnosis,vi.supports from codelinc.veteran_pi vp FULL OUTER JOIN codelinc.veteran_initial_treatment vi ON vp.veteran_id=vi.veteran_id ",
+      SaveTreatmentPlanDetails:
+      "INSERT INTO codelinc.veteran_initial_treatment(veteran_id,intake_date,diagnosis,supports) VALUES ($1,$2,$3,$4)",
+      UpdateTreatmentPlanDetails: 
+      "UPDATE codelinc.veteran_initial_treatment SET diagnosis = $2, supports = $3 where veteran_id = $1"
+      },
     TransportationRequest: {
       SaveTransportationDetails:
         'INSERT INTO codelinc.veteran_transport_request(veteran_id, appointment_date, appointment_time, reason_for_request, pick_up_address_main, va_address, pick_up_city, pick_up_state, pick_up_zip_code, requested_date) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)',
