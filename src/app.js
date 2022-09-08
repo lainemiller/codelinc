@@ -10,7 +10,7 @@ const router = express.Router();
 const upload = require('./imageUploadService/uploadImage.js');
 // const constants = require('./constants')
 const sequentialQueries = require('./assessment-handler/assessment.js');
-const treatmentQueries = require('./treatmentPlan-handler/treatment.js');
+const treatmentQueries = require('./treatmentPlan-handler/postTreatment.js');
 const secrets = require('./secret');
 
 const { Pool } = require('pg')
@@ -583,10 +583,10 @@ router.post('/postTreatmentPlanDetails/save/:veteran_id', async (req, res) => {
     plans,
     strategies
   ]
-    console.log(requestObj,)
-    console.log(requestObjIssues)
-    //const postTreatmentPlanDetails = await treatmentQueries(requestObj,requestObjIssues);
-    //res.status(200).json(postTreatmentPlanDetails) 
+      console.log(requestObj,)
+      console.log(requestObjIssues)
+     const postTreatmentPlanDetails = await treatmentQueries(requestObj,requestObjIssues);
+     res.status(200).json(postTreatmentPlanDetails) 
   
 })
 
