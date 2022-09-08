@@ -541,6 +541,22 @@ router.get('/userProfile/getUserDetails/:veteranID', (req, res) => {
     });
 });
 
+router.get('/uiLayout/getCaseWorkerDetails/:caseWorkerId', (req, res) => {
+  const caseWorker = req.params.caseWorkerId;
+
+  pool
+  .query(QUERIES.UiLayout.GetUserDetailsForCaseWorker, [caseWorker])
+  .then((resp) => {
+    console.log('success on endpoint GetUserDetailsForCaseWorker');
+    res.json(resp.rows);
+  })
+  .catch((err) => {
+    console.error('Error exectuting query', err.stack);
+    res.status(501).json({ err });
+  });
+
+})
+
 // Endpoint 11
 router.put('/userProfile/updateUserDetails/:veteranId', (req, res) => {
   console.log('incoming req: ', req.body.DOB);
