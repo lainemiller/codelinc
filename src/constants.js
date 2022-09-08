@@ -9,6 +9,7 @@ module.exports = Object.freeze({
         'update codelinc.web_party_info wpi set consent_received=$2 from codelinc.veteran_pi vp where wpi.party_id=vp.veteran_id and wpi.party_id=$1'
     },
      calendarAPis: {
+      getCurrentVeteranEmailId:"SELECT email FROM codelinc.veteran_pi WHERE veteran_id = $1",
       getCalendarEventsForVeteran:
         "SELECT * FROM codelinc.calendar",
       getCalendarEventsForCaseworker: "SELECT * FROM codelinc.calendar WHERE case_worker_id = $1",
@@ -17,12 +18,13 @@ module.exports = Object.freeze({
     },
     ProgressNotes: {
       GetGoals:
-        'SELECT * FROM codelinc.veteran_treatment_goals WHERE veteran_id = $1',
+         'SELECT goal_status as "goalState", goal_title as "goalTitle", created_on as "addedDate", goal_description as "goalDescription", goal_type as "goalType" FROM codelinc.veteran_treatment_goals WHERE veteran_id = $1',
+      // 'SELECT * FROM codelinc.veteran_treatment_goals WHERE veteran_id = $1',
       AddGoal:
-        'INSERT INTO codelinc.veteran_treatment_goals(veteran_id, goal_description, goal_type) VALUES($1, $2, $3)',
-      // UpdateGoalStatus: `INSERT INTO codelinc.veteran_treatment_goals(veteran_id, goal_id, goal_description) VALUES($1, $2, $3) ON CONFLICT (veteran_id) DO UPDATE SET goal_description = EXCLUDED.goal_description`
+        'INSERT INTO codelinc.veteran_treatment_goals(veteran_id, goal_title, goal_type, goal_description, goal_status, created_on) VALUES($1, $2, $3, $4, $5, $6)',
+      // UpdateGoalStatus: "INSERT INTO codelinc.veteran_treatment_goals(veteran_id, goal_id, goal_description) VALUES($1, $2, $3) ON CONFLICT (veteran_id) DO UPDATE SET goal_description = EXCLUDED.goal_description"
       UpdateGoalStatus:
-        'UPDATE codelinc.veteran_treatment_goals SET goal_status = $3 WHERE veteran_id = $1 AND goal_id = $2'
+        'UPDATE codelinc.veteran_treatment_goals SET goal_status = $3 WHERE veteran_id = $1 AND goal_title = $2'
     },
     UserProfile: {
       GetUserDetails: 'SELECT * from codelinc.veteran_pi where veteran_id = $1',
@@ -84,6 +86,7 @@ module.exports = Object.freeze({
     TransportationRequest: {
       SaveTransportationDetails:
         'INSERT INTO codelinc.veteran_transport_request(veteran_id, appointment_date, appointment_time, reason_for_request, pick_up_address_main, va_address, pick_up_city, pick_up_state, pick_up_zip_code, requested_date) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)',
+      
       GetTransportationRequests:
         'SELECT v.first_name, v.last_name, t.request_id, t.appointment_date, t.appointment_time, t.reason_for_request, t.transport_coordinator, t.nursing_notified, t.notified_by, t.pick_up_address_main, t.pick_up_city, t.pick_up_state, t.pick_up_zip_code, t.approved_date, t.date_filled FROM codelinc.veteran_pi v FULL OUTER JOIN codelinc.veteran_transport_request t  ON v.veteran_id = t.veteran_id WHERE t.approved_date IS NULL AND t.request_id IS NOT NULL ORDER BY t.request_id DESC',
       ApproveTransportationRequests:
