@@ -159,6 +159,23 @@ router.post('/postCalendarEvents',(req,res)=>{
     });
   })
   
+  router.get('/getCurrentVeteranEmailId/:veteranId',(req,res)=>{
+     let veteranId = req.params.veteranId;
+     pool
+     .query(QUERIES.calendarAPis.getCurrentVeteranEmailId,[veteranId])
+     .then((resp) => {
+       res
+         .status(200)
+         .json({ responseStatus: 'SUCCESS', data: resp.rows, error: false });
+     })
+     .catch((err) => {
+       console.error('Error executing query', err.stack);
+       res
+         .status(501)
+         .json({ responseStatus: 'FAILURE', data: null, error: err });
+     });
+   })
+
   router.get('/getCalendarEventsForVeteran',(req,res)=>{
    // let veteranId = req.params.veteranId;
     pool
