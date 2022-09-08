@@ -84,22 +84,8 @@ queryPromise5 = (vet) => {
     )
   })
 }
-queryPromise6 = (vet) => {
-  return new Promise((resolve, reject) => {
-    pool.query(
-      QUERIES.UserProfile.UserAssessmentDetailsMH,
-      [vet],
-      (error, results) => {
-        if (error) {
-          return reject(error)
-        }
-        return resolve(results)
-      }
-    )
-  })
-}
 
-queryPromise7 = (vet) => {
+queryPromise6 = (vet) => {
   return new Promise((resolve, reject) => {
     pool.query(
       QUERIES.UserProfile.UserAssessmentDetailsSAH,
@@ -113,7 +99,7 @@ queryPromise7 = (vet) => {
     )
   })
 }
-queryPromise8 = (vet) => {
+queryPromise7 = (vet) => {
   return new Promise((resolve, reject) => {
     pool.query(
       QUERIES.UserProfile.UserAssessmentDetailsLHI,
@@ -128,22 +114,7 @@ queryPromise8 = (vet) => {
   })
 }
 
-// queryPromise9 = (vet) => {
-//   return new Promise((resolve, reject) => {
-//     pool.query(
-//       QUERIES.UserProfile.UserAssessmentDetailsPD,
-//       [vet],
-//       (error, results) => {
-//         if (error) {
-//           return reject(error);
-//         }
-//         return resolve(results);
-//       }
-//     );
-//   });
-// };
-
-// queryPromise10 = (vet) => {
+// queryPromise8 = (vet) => {
 //   return new Promise((resolve, reject) => {
 //     pool.query(
 //       QUERIES.UserProfile.UserAssessmentDetailsITG,
@@ -167,9 +138,7 @@ module.exports = async function (vet) {
     const result5 = await queryPromise5(vet)
     const result6 = await queryPromise6(vet)
     const result7 = await queryPromise7(vet)
-    const result8 = await queryPromise8(vet)
-    // const result9 = await queryPromise9(vet);
-    // const result10 = await queryPromise10(vet);
+    // const result8 = await queryPromise8(vet)
 
     const assessmentDetails = {
       assessment_details: [
@@ -181,17 +150,15 @@ module.exports = async function (vet) {
         },
         { header: 'Social', data: dataFormatter(result4.rows) },
         { header: 'Family', data: dataFormatter(result5.rows) },
-        { header: 'Mental Health', data: dataFormatter(result6.rows) },
         {
           header: 'Substance Abuse History',
-          data: dataFormatter(result7.rows)
+          data: dataFormatter(result6.rows)
         },
-        { header: 'Legal History/Issues', data: dataFormatter(result8.rows) }
-        // { header: "Preliminary Diagnosi", data: dataFormatter(result9.rows) },
-        // { header: "Initial Treatment Goals", data: dataFormatter(result10.rows) }
+        { header: 'Legal History/Issues', data: dataFormatter(result7.rows) }
+        // { header: "Initial Treatment Goals", data: dataFormatter(result8.rows) },
       ]
     }
-    console.log('assessmentDetails', assessmentDetails)
+    // console.log('assessmentDetails', assessmentDetails)
     return assessmentDetails
   } catch (error) {
     console.log(error)
