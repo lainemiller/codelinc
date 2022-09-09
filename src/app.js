@@ -11,6 +11,7 @@ const upload = require('./imageUploadService/uploadImage.js');
 
 // const constants = require('./constants')
 const sequentialQueries = require('./assessment-handler/assessment.js');
+const veteranEventsQueries = require('./veteranEvents-handler/veteranEvent.js')
 const secrets = require('./secret');
 
 const { Pool } = require('pg');
@@ -158,42 +159,17 @@ router.post('/postCalendarEvents',(req,res)=>{
         .json({ responseStatus: 'FAILURE', data: null, error: err });
     });
   })
+
   
-  router.get('/getCurrentVeteranEmailId/:veteranId',(req,res)=>{
+
+  router.get('/getCurrentVeteranEvents/:veteranId',async (req,res)=>{
      let veteranId = req.params.veteranId;
-     pool
-     .query(QUERIES.calendarAPis.getCurrentVeteranEmailId,[veteranId])
-     .then((resp) => {
+      const veteranEventDetails = await veteranEventsQueries(veteranId);
        res
          .status(200)
-         .json({ responseStatus: 'SUCCESS', data: resp.rows, error: false });
-     })
-     .catch((err) => {
-       console.error('Error executing query', err.stack);
-       res
-         .status(501)
-         .json({ responseStatus: 'FAILURE', data: null, error: err });
-     });
+         .json({ responseStatus: 'SUCCESS', data: veteranEventDetails, error: false });
    })
 
-  router.get('/getCalendarEventsForVeteran/:emailId',(req,res)=>{
-
-    let emailId = req.params.emailId;
-    console.log(req.body)
-    pool
-    .query(QUERIES.calendarAPis.getCalendarEventsForVeteran,[emailId])
-    .then((resp) => {
-      res
-        .status(200)
-        .json({ responseStatus: 'SUCCESS', data: resp.rows, error: false });
-    })
-    .catch((err) => {
-      console.error('Error executing query', err.stack);
-      res
-        .status(501)
-        .json({ responseStatus: 'FAILURE', data: null, error: err });
-    });
-  })
 
   
 router.get('/progressNotes', (req, res) => {
