@@ -11,7 +11,7 @@ module.exports = Object.freeze({
      calendarAPis: {
       getCurrentVeteranEmailId:"SELECT email FROM codelinc.veteran_pi WHERE veteran_id = $1",
       getCalendarEventsForVeteran:
-        "SELECT * FROM codelinc.calendar",
+        "SELECT * FROM codelinc.calendar WHERE position( $1 in participants)>0",
       getCalendarEventsForCaseworker: "SELECT * FROM codelinc.calendar WHERE case_worker_id = $1",
       postEventsForCaseworker:
         "INSERT INTO codelinc.calendar(case_worker_id,participants,isappointment,title,description,eventstart,eventend) VALUES($1, $2, $3, $4, $5, $6, $7)",
