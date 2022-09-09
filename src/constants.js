@@ -30,24 +30,21 @@ module.exports = Object.freeze({
       GetUserDetails: 'SELECT * from codelinc.veteran_pi where veteran_id = $1',
       UpdateUserDetails:
         'UPDATE codelinc.veteran_pi SET first_name = $2,middle_initial = $3,last_name = $4, nick_name = $5, date_of_birth =$6, place_of_birth = $7, primary_phone = $8, contact_person = $9, hobbies = $10, address_main = $11, city = $12, state = $13, contact_person_relationship= $14, county = $15, address_line_2 = $16, zip_code = $17, gender = $18, marital_status = $19, ssn = $20, hmis_id = $21, race = $22, primary_language = $23, religious_preference = $24, contact_person_address = $25, contact_person_phone =$26  WHERE veteran_id = $1',
-      UserAssessmentDetailsPI:
+        UserAssessmentDetailsPI:
         ' select first_name as "First Name", last_name as "Last Name", middle_initial  as "Middle Initial", nick_name as "Nickname", place_of_birth as "Place of Birth", ssn as "SSN#", gender as "Sex", marital_status  as "Marital Status", address_main as "Address", race as "Race", primary_language as "Primary Language", contact_person as "Contact Person", contact_person_relationship as "Relationship", contact_person_address as "Contact Person Address", contact_person_phone as "Contact Person Phone", city as "City", state as "State", zip_code as "Zip Code", city as "City" from codelinc.veteran_pi vpi where veteran_id = $1;',
       UserAssessmentDetailsFinance:
+      // 'select * from codelinc.veteran_finance where veteran_id = $1; ',
       'select income as "Income", income_type as "Income Type", bank_account_type as "Bank Account Type", bank_name as "Name of the Bank", direct_deposit as "Direct Deposit", other_assets as "Other Assets", current_benefits as "Current Benefits", needed_benefits as "Needed Benefits", cash_benefits as "Cash Benefits", non_cash_benefits as "Non Cash Benefits" from codelinc.veteran_finance where veteran_id = $1; ',
       UserAssessmentDetailsEEH:
-        ' select * from codelinc.veteran_employment_education where veteran_id = $1; ',
+        ' select current_occupation as "Current Occupation", current_employer as "Currentr Employer", current_employer_location as "Current Employer Location", previous_occupations as "Previous Occupation", work_skills as "Works/Skills", highest_education_grade as "Highest Education Grade", school_name as "Name of the School", active_military_status as "Active Military Status", military_branch as "Military Branch", discharge_type as "Discharge Type", service_dates as "Service Dates", service_location as "Service Location", other_training_education as "Other Training or Educations" from codelinc.veteran_employment_education where veteran_id = $1; ',
       UserAssessmentDetailsSocial:
         ' SELECT religious_preference as "Religious Preference", hobbies as "Hobbies" FROM codelinc.veteran_pi WHERE veteran_id = $1 ',
       UserAssessmentDetailsFamily:
-        ' select * from codelinc.veteran_hist where veteran_id = $1; ',
-      UserAssessmentDetailsMH:
-        ' select * from codelinc.veteran_mental_health where veteran_id = $1; ',
+        ' select childhood as "Childhood", parent_relationship as "Relationship with Parents", sibling_relationship as "Relationship with Siblings",  discipline_type as "Discipline Type", physical_abuse_hist as "Any Physical Abuse History", sexual_abuse_hist as "Any Sexual Abuse History", substance_abuse as "Any Substance Abuse", family_hist_mental_health_and_substance_abuse as "Family History", ever_married "Ever Married",times_married as "Number of Times", current_marital_status as "Current Marital Status", sexual_orientation as "Sexual Orientation", sexually_active as "Sexually Active", sexual_concerns as "Sexual Concerns",  sexual_concern_specifics as "Any Specific",  hiv_tested as "HIV Tested", hiv_test_location as "HIV Test Location", approx_hiv_test_date as "Approximate Test Date", hiv_test_results as "HIV Test Results", other_std_tested as " Tested for Other STD \'s",  std_test_location as "STD Test Location",  approx_std_test_date "Approximate Test Date", std_test_results as "STD Test Results", hiv_test_desired as "HIV Test Desired" from codelinc.veteran_hist where veteran_id = $1; ',
       UserAssessmentDetailsSAH:
-        ' select * from codelinc.veteran_substances where veteran_id  = $1 ',
+        ' select alcohol_history as "Alcohol History", currently_consumes_alcohol as "Currently Consumes Alcohol", current_alcohol_intake_freq as "Alcohol Intake Frequency", drug_use_history as "Drug use History", currently_uses_drugs as "Currently Uses Drugs", current_drug_use_freq as "Drug intake Frequency", drug_alcohol_last_use as "Last use of Drug and Alcohol", current_drug_alcohol_treatment as "Current Drug/Alcohol Treatment", withdrawal_history as "Withdrawal History", tobacco_use_history as "Tobacco Use History", currently_uses_tobacco as "Currently Uses Tobacco", current_tobacco_use_freq as "Current Tobacoo Intake Frequency", caffeine_use_history as "Caffeine use History", currently_uses_caffeine as "Currently Uses Caffeine", current_caffeine_use_freq as "Current Caffeine Intake Frequency", treatment_programs as "Treatment Programs" from codelinc.veteran_substances where veteran_id  = $1 ',
       UserAssessmentDetailsLHI:
-        ' SELECT * FROM codelinc.veteran_legal_history WHERE veteran_id = $1 ',
-      UserAssessmentDetailsPD:
-        ' select * from codelinc.veteran_finance where veteran_id = $1; ',
+        ' SELECT ever_arrested as "Ever Arrested", arrest_reason as "Arrested Reason", ever_convicted as "Ever Convicted", conviction_reason as "Conviction Reason", current_pending_charges as "Current Pending Charges", charges as "Charges", outstanding_warrants as "Outstanding Warrants", warrant_reason as "Warrant Reason", on_probation_or_parole as "are you on Probation or Parole?", officer_name as "Officer Name", officer_address as "Officer Address", probation_or_parole_terms as "Any Proabation or Parole Terms" FROM codelinc.veteran_legal_history WHERE veteran_id = $1 ',
       UserAssessmentDetailsITG:
         ' select * from codelinc.veteran_pi where veteran_id  = $1 '
     },
@@ -98,6 +95,13 @@ module.exports = Object.freeze({
         'UPDATE codelinc.veteran_health_tracker SET note_date=$3, measurement=$4,tracking_comments=$5 WHERE veteran_id=$1 and tracking_subject=$2',
       getHealthTracker:
         'select * from codelinc.veteran_health_tracker where veteran_id=$1'
+    },
+    InitialAssessment: {
+      page1: 'insert into codelinc.veteran_treatment_plan where ',
+      page2: '',
+      page3: '',
+      page4: '',
+      page5: ''
     }
   }
 });

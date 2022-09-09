@@ -497,12 +497,17 @@ router.get('/getGoals/:veteranId', (req, res) => {
   const vet = req.params.veteranId
   pool
     .query(QUERIES.ProgressNotes.GetGoals, [vet])
-    .then((response) => {
-      res.json(response.rows)
+    .then((resp) => {
+      console.log('success on endpoint fetching progress notes')
+      res
+        .status(200)
+        .json({ responseStatus: 'SUCCESS', data: resp.rows, error: false })
     })
     .catch((err) => {
       console.error('Error executing query', err.stack)
-      res.status(500).json({ err })
+      res
+        .status(200)
+        .json({ responseStatus: 'FAILURE', data: null, error: err })
     })
 })
 
@@ -533,17 +538,35 @@ router.post('/progressNotes/addGoal/:veteranId', (req, res) => {
     .query(QUERIES.ProgressNotes.AddGoal, requestObj)
     .then((resp) => {
       console.log('success on endpoint add progress notes')
+      res
+        .status(200)
+        .json({ responseStatus: 'SUCCESS', data: resp.rows, error: false })
     })
-    .catch((err) => console.error('Error executing query', err.stack))
+    .catch((err) => {
+      console.error('Error executing query', err.stack)
+      res
+        .status(200)
+        .json({ responseStatus: 'FAILURE', data: null, error: err })
+    })
 })
 
 // Endpoint 9
-router.post('/progressNotes/updateGoalStatus/:veteranId', (req, res) => {
+router.put('/progressNotes/updateGoalStatus/:veteranId', (req, res) => {
   const requestObj = [req.params.veteranId, req.body.goalTitle, req.body.goalState]
   pool
     .query(QUERIES.ProgressNotes.UpdateGoalStatus, requestObj)
-    .then((res) => (goalId = res.rows[0]))
-    .catch((err) => console.error('Error executing query', err.stack))
+    .then((resp) => {
+      console.log('success on endpoint updating progress notes status')
+      res
+        .status(200)
+        .json({ responseStatus: 'SUCCESS', data: resp.rows[0], error: false })
+    })
+    .catch((err) => {
+      console.error('Error executing query', err.stack)
+      res
+        .status(200)
+        .json({ responseStatus: 'FAILURE', data: null, error: err })
+    })
 })
 
 // Endpoint 10
