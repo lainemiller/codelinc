@@ -32,8 +32,7 @@ module.exports = Object.freeze({
       UserAssessmentDetailsPI:
         ' select first_name as "First Name", last_name as "Last Name", middle_initial  as "Middle Initial", nick_name as "Nickname", place_of_birth as "Place of Birth", ssn as "SSN#", gender as "Sex", marital_status  as "Marital Status", address_main as "Address", race as "Race", primary_language as "Primary Language", contact_person as "Contact Person", contact_person_relationship as "Relationship", contact_person_address as "Contact Person Address", contact_person_phone as "Contact Person Phone", city as "City", state as "State", zip_code as "Zip Code", city as "City" from codelinc.veteran_pi vpi where veteran_id = $1;',
       UserAssessmentDetailsFinance:
-        'select * from codelinc.veteran_finance where veteran_id = $1; ',
-      // ' select income as "Income", income_type as "Income Type", bank_account_type as "Bank Account", bank_name as "Name of Bank", direct_deposit as "Direct Deposite", other_assets as "Other Assets" from codelinc.veteran_finance where veteran_id = $1; ',
+      'select income as "Income", income_type as "Income Type", bank_account_type as "Bank Account Type", bank_name as "Name of the Bank", direct_deposit as "Direct Deposit", other_assets as "Other Assets", current_benefits as "Current Benefits", needed_benefits as "Needed Benefits", cash_benefits as "Cash Benefits", non_cash_benefits as "Non Cash Benefits" from codelinc.veteran_finance where veteran_id = $1; ',
       UserAssessmentDetailsEEH:
         ' select * from codelinc.veteran_employment_education where veteran_id = $1; ',
       UserAssessmentDetailsSocial:
