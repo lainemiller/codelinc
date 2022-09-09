@@ -176,10 +176,12 @@ router.post('/postCalendarEvents',(req,res)=>{
      });
    })
 
-  router.get('/getCalendarEventsForVeteran',(req,res)=>{
-   // let veteranId = req.params.veteranId;
+  router.get('/getCalendarEventsForVeteran/:emailId',(req,res)=>{
+
+    let emailId = req.params.emailId;
+    console.log(req.body)
     pool
-    .query(QUERIES.calendarAPis.getCalendarEventsForVeteran)
+    .query(QUERIES.calendarAPis.getCalendarEventsForVeteran,[emailId])
     .then((resp) => {
       res
         .status(200)
@@ -928,6 +930,7 @@ router.post('/api/v1/upload', upload.single("image"), async (req, res) => {
   res.send({ image: req.file });
 
  });
+
 
 // const veteran1 = {
 //   first_name: 'John',
