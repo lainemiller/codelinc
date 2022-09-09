@@ -497,17 +497,12 @@ router.get('/getGoals/:veteranId', (req, res) => {
   const vet = req.params.veteranId
   pool
     .query(QUERIES.ProgressNotes.GetGoals, [vet])
-    .then((resp) => {
-      console.log('success on endpoint fetching progress notes')
-      res
-        .status(200)
-        .json({ responseStatus: 'SUCCESS', data: resp.rows, error: false })
+    .then((response) => {
+      res.json(response.rows)
     })
     .catch((err) => {
       console.error('Error executing query', err.stack)
-      res
-        .status(200)
-        .json({ responseStatus: 'FAILURE', data: null, error: err })
+      res.status(500).json({ err })
     })
 })
 
