@@ -8,13 +8,13 @@ module.exports = Object.freeze({
       AcceptedConsentDate:
         'update codelinc.web_party_info wpi set consent_received=$2 from codelinc.veteran_pi vp where wpi.party_id=vp.veteran_id and wpi.party_id=$1'
     },
-     calendarAPis: {
-      getCurrentVeteranEmailId:"SELECT email FROM codelinc.veteran_pi WHERE veteran_id = $1",
+    calendarAPis: {
+      getCurrentVeteranEmailId: 'SELECT email FROM codelinc.veteran_pi WHERE veteran_id = $1',
       getCalendarEventsForVeteran:
-        "SELECT * FROM codelinc.calendar WHERE position( $1 in participants)>0",
-      getCalendarEventsForCaseworker: "SELECT * FROM codelinc.calendar WHERE case_worker_id = $1",
+        'SELECT * FROM codelinc.calendar WHERE position( $1 in participants)>0',
+      getCalendarEventsForCaseworker: 'SELECT * FROM codelinc.calendar WHERE case_worker_id = $1',
       postEventsForCaseworker:
-        "INSERT INTO codelinc.calendar(case_worker_id,participants,isappointment,title,description,eventstart,eventend) VALUES($1, $2, $3, $4, $5, $6, $7)",
+        'INSERT INTO codelinc.calendar(case_worker_id,participants,isappointment,title,description,eventstart,eventend) VALUES($1, $2, $3, $4, $5, $6, $7)'
     },
     ProgressNotes: {
       GetGoals:
@@ -30,7 +30,7 @@ module.exports = Object.freeze({
       GetUserDetails: 'SELECT * from codelinc.veteran_pi where veteran_id = $1',
       UpdateUserDetails:
         'UPDATE codelinc.veteran_pi SET first_name = $2,middle_initial = $3,last_name = $4, nick_name = $5, date_of_birth =$6, place_of_birth = $7, primary_phone = $8, contact_person = $9, hobbies = $10, address_main = $11, city = $12, state = $13, contact_person_relationship= $14, county = $15, address_line_2 = $16, zip_code = $17, gender = $18, marital_status = $19, ssn = $20, hmis_id = $21, race = $22, primary_language = $23, religious_preference = $24, contact_person_address = $25, contact_person_phone =$26  WHERE veteran_id = $1',
-        UserAssessmentDetailsPI:
+      UserAssessmentDetailsPI:
         ' select first_name as "First Name", last_name as "Last Name", middle_initial  as "Middle Initial", nick_name as "Nickname", place_of_birth as "Place of Birth", ssn as "SSN#", gender as "Sex", marital_status  as "Marital Status", address_main as "Address", race as "Race", primary_language as "Primary Language", contact_person as "Contact Person", contact_person_relationship as "Relationship", contact_person_address as "Contact Person Address", contact_person_phone as "Contact Person Phone", city as "City", state as "State", zip_code as "Zip Code", city as "City" from codelinc.veteran_pi vpi where veteran_id = $1;',
       UserAssessmentDetailsFinance:
       // 'select * from codelinc.veteran_finance where veteran_id = $1; ',
@@ -63,26 +63,26 @@ module.exports = Object.freeze({
         'SELECT c.photo, c.nick_name, w.last_login_date_time from codelinc.case_worker_info c JOIN codelinc.web_party_info w on c.case_worker_id = w.party_id where case_worker_id = $1',
       getTableColumns:
         "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'veteran_transport_request';",
-      getTableData: "SELECT * FROM codelinc.veteran_treatment_goals",
-      getVeteranId:"select party_id from codelinc.web_party_info where username =$1",
-      addUser:"INSERT INTO codelinc.web_party_info(username,party_type,password,party_id) values ($1,$2,$3,$4)",
-      addVeteran:"INSERT INTO codelinc.veteran_pi(veteran_id,first_name,last_name,address_main,city,state,zip_code,date_of_birth,place_of_birth,ssn,gender,marital_status,race,primary_language,religious_preference,contact_person,contact_person_relationship,contact_person_phone,consent_status,nick_name,email) values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21)",
-      addCaseWorker:"INSERT INTO codelinc.case_worker_info(case_worker_id,nick_name,email) values ($1,$2,$3)"
+      getTableData: 'SELECT * FROM codelinc.veteran_treatment_goals',
+      getVeteranId: 'select party_id from codelinc.web_party_info where username =$1',
+      addUser: 'INSERT INTO codelinc.web_party_info(username,party_type,password,party_id) values ($1,$2,$3,$4)',
+      addVeteran: 'INSERT INTO codelinc.veteran_pi(veteran_id,first_name,last_name,address_main,city,state,zip_code,date_of_birth,place_of_birth,ssn,gender,marital_status,race,primary_language,religious_preference,contact_person,contact_person_relationship,contact_person_phone,consent_status,nick_name,email) values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21)',
+      addCaseWorker: 'INSERT INTO codelinc.case_worker_info(case_worker_id,nick_name,email) values ($1,$2,$3)'
     },
     TreatmentPlan: {
       GetTreatmentPlanDetails:
-       "SELECT vp.first_name,vp.last_name,vp.date_of_birth,vi.intake_date,vp.hmis_id,vi.diagnosis,vi.supports from codelinc.veteran_pi vp FULL OUTER JOIN codelinc.veteran_initial_treatment vi ON vp.veteran_id=vi.veteran_id where vp.veteran_id=$1",
-      GetAllDetails: 
-      "SELECT vp.veteran_id,vp.first_name,vp.last_name,vp.address_main,vp.date_of_birth,vi.intake_date,vp.hmis_id,vp.primary_phone,vi.diagnosis,vi.supports from codelinc.veteran_pi vp FULL OUTER JOIN codelinc.veteran_initial_treatment vi ON vp.veteran_id=vi.veteran_id ",
+       'SELECT vp.first_name,vp.last_name,vp.date_of_birth,vi.intake_date,vp.hmis_id,vi.diagnosis,vi.supports from codelinc.veteran_pi vp FULL OUTER JOIN codelinc.veteran_initial_treatment vi ON vp.veteran_id=vi.veteran_id where vp.veteran_id=$1',
+      GetAllDetails:
+      'SELECT vp.veteran_id,vp.first_name,vp.last_name,vp.address_main,vp.date_of_birth,vi.intake_date,vp.hmis_id,vp.primary_phone,vi.diagnosis,vi.supports from codelinc.veteran_pi vp FULL OUTER JOIN codelinc.veteran_initial_treatment vi ON vp.veteran_id=vi.veteran_id ',
       SaveTreatmentPlanDetails:
-      "INSERT INTO codelinc.veteran_initial_treatment(veteran_id,intake_date,diagnosis,supports) VALUES ($1,$2,$3,$4)",
-      UpdateTreatmentPlanDetails: 
-      "UPDATE codelinc.veteran_initial_treatment SET diagnosis = $2, supports = $3 where veteran_id = $1"
-      },
+      'INSERT INTO codelinc.veteran_initial_treatment(veteran_id,intake_date,diagnosis,supports) VALUES ($1,$2,$3,$4)',
+      UpdateTreatmentPlanDetails:
+      'UPDATE codelinc.veteran_initial_treatment SET diagnosis = $2, supports = $3 where veteran_id = $1'
+    },
     TransportationRequest: {
       SaveTransportationDetails:
         'INSERT INTO codelinc.veteran_transport_request(veteran_id, appointment_date, appointment_time, reason_for_request, pick_up_address_main, va_address, pick_up_city, pick_up_state, pick_up_zip_code, requested_date) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)',
-      
+
       GetTransportationRequests:
         'SELECT v.first_name, v.last_name, t.request_id, t.appointment_date, t.appointment_time, t.reason_for_request, t.transport_coordinator, t.nursing_notified, t.notified_by, t.pick_up_address_main, t.pick_up_city, t.pick_up_state, t.pick_up_zip_code, t.approved_date, t.date_filled FROM codelinc.veteran_pi v FULL OUTER JOIN codelinc.veteran_transport_request t  ON v.veteran_id = t.veteran_id WHERE t.approved_date IS NULL AND t.request_id IS NOT NULL ORDER BY t.request_id DESC',
       ApproveTransportationRequests:
