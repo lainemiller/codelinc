@@ -80,7 +80,7 @@ module.exports = Object.freeze({
     },
     SaveTreatmentPlan:{
       TreatmentPlanDetailsPH:
-      "WITH ins1 as (INSERT into codelinc.veteran_treatment_goals(veteran_id,goal_title,created_on,target_date) VALUES ($1, $2, $3, $4) RETURNING goal_id as goalid) INSERT into codelinc.veteran_treatment_plan(goal_id,goal_plan_short_term,goal_plan_long_term) select  goalid, $5, $6 from ins1 "
+      "WITH ins1 as (INSERT into codelinc.veteran_treatment_goals(veteran_id,goal_type,goal_title,created_on,target_date) VALUES ($1, $2, $3, $4, $5) RETURNING goal_id as goalid) INSERT into codelinc.veteran_treatment_plan(goal_id,goal_plan_short_term,goal_plan_long_term) select  goalid, $6, $7 from ins1 "
     },    
     TransportationRequest: {
       SaveTransportationDetails:

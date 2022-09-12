@@ -25,28 +25,12 @@ queryPromise1 = (requestObjIssuesPH) => {
 })
 }
 
-queryPromise2 = (requestObjIssuesMH) => {
-  return new Promise((resolve, reject) => {
-    pool.query(
-     QUERIES.SaveTreatmentPlan.TreatmentPlanDetailsPH,requestObjIssuesMH,
-     (error, results) => {
-      if (error) {
-       return reject(error)
-     }
-      return resolve(results)
-    }
-  )
-})
-}
-
-
-module.exports = async function (requestObjIssuesPH,requestObjIssuesMH){
-    try {
-        const result1= await queryPromise1(requestObjIssuesPH)
-        const result2= await queryPromise2(requestObjIssuesMH)
-        const returnStatement=console.log("Successully saved TreatmentIssues")
+  module.exports = async function (requestObjIssuesPH){ 
+  try {
+        const result1 = await queryPromise1(requestObjIssuesPH)
+        const returnStatement = console.log("Successully saved TreatmentIssues") 
         return returnStatement
-    }catch(error){
+    } catch(error){
         console.log(error)
     }
 }
