@@ -196,7 +196,19 @@ router.get('/residentSearch/getAll', (req, res) => {
     });
 });
 
+router.get('/residentSearch/getAll', (req, res) => {
+  pool
+    .query(QUERIES.TreatmentPlan.GetAllDetails)
+    .then(resp => {
+      console.log('success on endpoint GetAllDetails');
+      res.json(resp.rows);
+    })
 
+    .catch(err => {
+      console.error('Error executing query', err.stack);
+      res.status(501).json({ err });
+    });
+});
 
 router.get('/consentData', (req, res) => {
  
@@ -478,6 +490,43 @@ router.post('/progressNotes/addGoal/:veteranId', (req, res) => {
   ];
   pool
     .query(QUERIES.ProgressNotes.AddGoal, requestObj)
+    .then((resp) => {
+      console.log('success on endpoint add progress notes');
+      res
+        .status(200)
+        .json({ responseStatus: 'SUCCESS', data: resp.rows, error: false });
+    })
+    .catch((err) => {
+      console.error('Error executing query', err.stack);
+      res
+        .status(200)
+        .json({ responseStatus: 'FAILURE', data: null, error: err });
+    });
+});
+
+// Endpoint 9
+router.put('/progressNotes/updateGoalStatus/:veteranId', (req, res) => {
+  const requestObj = [req.params.veteranId, req.body.goalTitle, req.body.goalState];
+  pool
+    .query(QUERIES.ProgressNotes.UpdateGoalStatus, requestObj)
+    .then((resp) => {
+      console.log('success on endpoint updating progress notes status');
+      res
+        .status(200)
+        .json({ responseStatus: 'SUCCESS', data: resp.rows[0], error: false });
+    })
+    .catch((err) => {
+      console.error('Error executing query', err.stack);
+      res
+        .status(200)
+        .json({ responseStatus: 'FAILURE', data: null, error: err });
+    });
+});
+
+// Endpoint 10
+router.get('/userProfile/getUserDetails/:veteranID', (req, res) => {
+  pool
+    .query(QUERIES.UserProfile.GetUserDetails, [req.params.veteranID])
     .then((resp) => {
       console.log('success on endpoint add progress notes');
       res
