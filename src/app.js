@@ -182,19 +182,6 @@ router.get('/progressNotes', (req, res) => {
 
   res.json(users);
 })
-router.get('/residentSearch/getAll', (req, res) => {
-  pool
-    .query(QUERIES.TreatmentPlan.GetAllDetails)
-    .then(resp => {
-      console.log('success on endpoint GetAllDetails');
-      res.json(resp.rows);
-    })
-
-    .catch(err => {
-      console.error('Error executing query', err.stack);
-      res.status(501).json({ err });
-    });
-});
 
 router.get('/residentSearch/getAll', (req, res) => {
   pool
