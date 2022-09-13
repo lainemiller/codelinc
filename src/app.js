@@ -118,9 +118,9 @@ router.get('/calendarEvents', (req, res) => {
   res.json(users);
 });
 
-router.post('/postCalendarEvents', (req, res) => {
-  console.log(req.body);
-  const requestObj = [
+router.post('/postCalendarEvents',(req,res)=>{
+  const requestObj =[
+
     req.body.case_worker_id,
     req.body.participants,
     req.body.isAppointment,
