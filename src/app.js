@@ -118,7 +118,6 @@ router.get('/calendarEvents', (req, res) => {
 });
 
 router.post('/postCalendarEvents',(req,res)=>{
-  console.log(req.body);
   const requestObj =[
     req.body.case_worker_id,
     req.body.participants,
