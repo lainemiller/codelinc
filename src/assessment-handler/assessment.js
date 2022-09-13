@@ -11,7 +11,7 @@ const pool = new Pool({
   port: secrets.PORT
 });
 
-queryPromise1 = (vet) => {
+PIQuery = (vet) => {
   return new Promise((resolve, reject) => {
     pool.query(
       QUERIES.UserProfile.UserAssessmentDetailsPI,
@@ -26,7 +26,7 @@ queryPromise1 = (vet) => {
   });
 };
 
-queryPromise2 = (vet) => {
+FIQuery = (vet) => {
   return new Promise((resolve, reject) => {
     pool.query(
       QUERIES.UserProfile.UserAssessmentDetailsFinance,
@@ -41,36 +41,7 @@ queryPromise2 = (vet) => {
   });
 };
 
-queryPromise3 = (vet) => {
-  return new Promise((resolve, reject) => {
-    pool.query(
-      QUERIES.UserProfile.UserAssessmentDetailsEEH,
-      [vet],
-      (error, results) => {
-        if (error) {
-          return reject(error);
-        }
-        return resolve(results);
-      }
-    );
-  });
-};
-queryPromise4 = (vet) => {
-  return new Promise((resolve, reject) => {
-    pool.query(
-      QUERIES.UserProfile.UserAssessmentDetailsSocial,
-      [vet],
-      (error, results) => {
-        if (error) {
-          return reject(error);
-        }
-        return resolve(results);
-      }
-    );
-  });
-};
-
-queryPromise5 = (vet) => {
+FamilyQuery = (vet) => {
   return new Promise((resolve, reject) => {
     pool.query(
       QUERIES.UserProfile.UserAssessmentDetailsFamily,
@@ -85,7 +56,7 @@ queryPromise5 = (vet) => {
   });
 };
 
-queryPromise6 = (vet) => {
+SubQuery = (vet) => {
   return new Promise((resolve, reject) => {
     pool.query(
       QUERIES.UserProfile.UserAssessmentDetailsSAH,
@@ -99,10 +70,41 @@ queryPromise6 = (vet) => {
     );
   });
 };
-queryPromise7 = (vet) => {
+
+LegalQuery = (vet) => {
   return new Promise((resolve, reject) => {
     pool.query(
       QUERIES.UserProfile.UserAssessmentDetailsLHI,
+      [vet],
+      (error, results) => {
+        if (error) {
+          return reject(error);
+        }
+        return resolve(results);
+      }
+    );
+  });
+};
+
+EduQuery = (vet) => {
+  return new Promise((resolve, reject) => {
+    pool.query(
+      QUERIES.UserProfile.UserAssessmentDetailsEEH,
+      [vet],
+      (error, results) => {
+        if (error) {
+          return reject(error);
+        }
+        return resolve(results);
+      }
+    );
+  });
+};
+
+SocialQuery = (vet) => {
+  return new Promise((resolve, reject) => {
+    pool.query(
+      QUERIES.UserProfile.UserAssessmentDetailsSocial,
       [vet],
       (error, results) => {
         if (error) {
@@ -131,13 +133,13 @@ queryPromise7 = (vet) => {
 
 module.exports = async function (vet) {
   try {
-    const result1 = await queryPromise1(vet);
-    const result2 = await queryPromise2(vet);
-    const result3 = await queryPromise3(vet);
-    const result4 = await queryPromise4(vet);
-    const result5 = await queryPromise5(vet);
-    const result6 = await queryPromise6(vet);
-    const result7 = await queryPromise7(vet);
+    const result1 = await PIQuery(vet);
+    const result2 = await FIQuery(vet);
+    const result3 = await EduQuery(vet);
+    const result4 = await SocialQuery(vet);
+    const result5 = await FamilyQuery(vet);
+    const result6 = await SubQuery(vet);
+    const result7 = await LegalQuery(vet);
     // const result8 = await queryPromise8(vet)
 
     const assessmentDetails = {
@@ -158,7 +160,7 @@ module.exports = async function (vet) {
         // { header: "Initial Treatment Goals", data: dataFormatter(result8.rows) },
       ]
     };
-    // console.log('assessmentDetails', assessmentDetails)
+    // console.log("assessmentDetails", assessmentDetails);
     return assessmentDetails;
   } catch (error) {
     console.log(error);
