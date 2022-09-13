@@ -11,10 +11,10 @@ const pool = new Pool({
 })
 
 //PhysicalHealth
-queryPromise1 = (requestObjIssuesPH) => {
+treatmentIssue = (requestObjIssues) => {
     return new Promise((resolve, reject) => {
       pool.query(
-       QUERIES.SaveTreatmentPlan.TreatmentPlanDetailsPH,requestObjIssuesPH,
+       QUERIES.SaveTreatmentPlan.TreatmentPlanDetailsPH,requestObjIssues,
        (error, results) => {
         if (error) {
          return reject(error)
@@ -25,9 +25,9 @@ queryPromise1 = (requestObjIssuesPH) => {
 })
 }
 
-  module.exports = async function (requestObjIssuesPH){ 
+  module.exports = async function (requestObjIssues){ 
   try {
-        const result1 = await queryPromise1(requestObjIssuesPH)
+        const result1 = await treatmentIssue(requestObjIssues)
         const returnStatement = console.log("Successully saved TreatmentIssues") 
         return returnStatement
     } catch(error){
