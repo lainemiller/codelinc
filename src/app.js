@@ -874,6 +874,31 @@ router.post('/api/v1/upload', upload.single('image'), async (req, res) => {
   res.send({ image: req.file });
 });
 
+// ia forms api rtesting
+router.post('/initialAssessment/page-5', (req, res) => {
+  const requestObject = [
+    req.body.additionalComments,
+    req.body.hppenedInMyLifeLastYear,
+    req.body.longTermGoals,
+    req.body.needs,
+    req.body.preferences,
+    req.body.shortTermGoals,
+    req.body.strengthAndResources,
+    req.body.supports
+  ];
+  // pool.query(QUERIES.UiLayout.addCaseWorker,requestObject)
+  // .then(()=>{
+  //   console.log('Sucess on Add CaseWorker');
+  //   res.status(200).json({ responseStatus: 'SUCCESS', data:'Caseworker Added Successfully', error: false });
+  // })
+  // .catch((err)=>{
+  //   console.error('Error executing query', err.stack);
+  //   res.status(501).json({ responseStatus: 'FAILURE', data: null, error: err });
+  // })
+
+  console.log(requestObject);
+});
+
 // const veteran1 = {
 //   first_name: 'John',
 //   last_name: 'Smith',
