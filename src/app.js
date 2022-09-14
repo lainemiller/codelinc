@@ -510,27 +510,23 @@ router.get('/userProfile/getUserDetails/:veteranID', (req, res) => {
     .catch((err) => {
       console.error('Error executing query', err.stack);
       res
-        .status(200)
+        .status(501)
         .json({ responseStatus: 'FAILURE', data: null, error: err });
     });
 });
 
-router.put('/progressNotes/updateGoalStatus/:veteranId', (req, res) => {
-  const requestObj = [req.params.veteranId, req.body.goalTitle, req.body.goalState];
-  
+router.get('/uiLayout/getCaseWorkerDetails/:caseWorkerId', (req, res) => {
+  const caseWorker = req.params.caseWorkerId;
+
   pool
-    .query(QUERIES.ProgressNotes.UpdateGoalStatus, requestObj)
+    .query(QUERIES.UiLayout.GetUserDetailsForCaseWorker, [caseWorker])
     .then((resp) => {
-      console.log('success on endpoint updating progress notes status');
-      res
-        .status(200)
-        .json({ responseStatus: 'SUCCESS', data: resp.rows[0], error: false });
+      console.log('success on endpoint GetUserDetailsForCaseWorker');
+      res.json(resp.rows);
     })
     .catch((err) => {
-      console.error('Error executing query', err.stack);
-      res
-        .status(200)
-        .json({ responseStatus: 'FAILURE', data: null, error: err });
+      console.error('Error exectuting query', err.stack);
+      res.status(501).json({ err });
     });
 });
 
