@@ -5,8 +5,6 @@ const treatmentQueries = require('./postTreatment.js');
 const savetreatmentIssues = async (req) => {
   const vet = req.params.veteran_id;
   const treatmentIssues = req.body.treatmentIssues[0];
-  console.log(vet);
-  console.log(treatmentIssues);
   let i; let j; let k; let l; let m; let n; let o; let p = 0;
   for (i = 0; i < 3; i++) {
     let requestObjIssuesPH = null;
