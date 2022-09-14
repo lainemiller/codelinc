@@ -684,6 +684,7 @@ router.post('/transportationForm/saveTransportationRequest/', (req, res) => {
     .then((resp) => {
       console.log('success on endpoint SaveTransportationDetails');
       res.status(200).json({
+        responseStatus: 'SUCCESS',
         vetID: req.body.veteran_id,
         status: true,
         result: 'Successfully saved transportation request'
@@ -691,7 +692,7 @@ router.post('/transportationForm/saveTransportationRequest/', (req, res) => {
     })
     .catch((err) => {
       console.error('Error executing query', err.stack);
-      res.status(501).json({ err });
+      res.status(501).json({ responseStatus: 'FAILURE', error: err });
     });
 });
 
@@ -729,13 +730,15 @@ router.post('/transportationForm/approveTransportationRequests', (req, res) => {
     .then((resp) => {
       console.log('success on endpoint ApproveTransportationDetails');
       res.status(200).json({
+        responseStatus: 'SUCCESS',
         status: true,
         result: 'Successfully approved transportation request'
       });
     })
     .catch((err) => {
       console.error('Error exectuting query', err.stack);
-      res.status(501).json({ err });
+      res.status(501).json({ responseStatus: 'FAILURE', error: err });
+
     });
 });
 
