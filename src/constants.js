@@ -82,8 +82,8 @@ module.exports = Object.freeze({
     },
     TransportationRequest: {
       SaveTransportationDetails:
-        'INSERT INTO codelinc.veteran_transport_request(veteran_id, appointment_date, appointment_time, reason_for_request, pick_up_address_main, va_address, pick_up_city, pick_up_state, pick_up_zip_code, requested_date) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)',
-
+        'INSERT INTO codelinc.veteran_transport_request(veteran_id, appointment_date, appointment_time, reason_for_request, pick_up_address_main, pick_up_address_line_2, pick_up_city, pick_up_state, pick_up_zip_code, requested_date) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)',
+      
       GetTransportationRequests:
         'SELECT v.first_name, v.last_name, t.request_id, t.appointment_date, t.appointment_time, t.reason_for_request, t.transport_coordinator, t.nursing_notified, t.notified_by, t.pick_up_address_main, t.pick_up_city, t.pick_up_state, t.pick_up_zip_code, t.approved_date, t.date_filled FROM codelinc.veteran_pi v FULL OUTER JOIN codelinc.veteran_transport_request t  ON v.veteran_id = t.veteran_id WHERE t.approved_date IS NULL AND t.request_id IS NOT NULL ORDER BY t.request_id DESC',
       ApproveTransportationRequests:
@@ -91,9 +91,9 @@ module.exports = Object.freeze({
     },
     HealthTracker: {
       saveHealthTrackerRequest:
-        'INSERT INTO codelinc.veteran_health_tracker(veteran_id,tracking_subject,note_date,measurement,tracking_comments) VALUES ($1, $2, $3, $4, $5)',
+        'INSERT INTO codelinc.veteran_health_tracker(veteran_id,tracking_subject,note_date,measurement,tracking_comments,current_tracker) VALUES ($1, $2, $3, $4, $5, $6)',
       updateHealthTrackerRequest:
-        'UPDATE codelinc.veteran_health_tracker SET note_date=$3, measurement=$4,tracking_comments=$5 WHERE veteran_id=$1 and tracking_subject=$2',
+        'UPDATE codelinc.veteran_health_tracker SET current_tracker=false WHERE veteran_id=$1 and tracking_subject=$2 and note_date=$3 and measurement=$4 and tracking_comments=$5 and current_tracker=$6',
       getHealthTracker:
         'select * from codelinc.veteran_health_tracker where veteran_id=$1'
     },
