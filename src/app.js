@@ -684,6 +684,7 @@ router.post('/transportationForm/saveTransportationRequest/', (req, res) => {
     .then((resp) => {
       console.log('success on endpoint SaveTransportationDetails');
       res.status(200).json({
+        responseStatus: 'SUCCESS',
         vetID: req.body.veteran_id,
         status: true,
         result: 'Successfully saved transportation request'
@@ -691,7 +692,7 @@ router.post('/transportationForm/saveTransportationRequest/', (req, res) => {
     })
     .catch((err) => {
       console.error('Error executing query', err.stack);
-      res.status(501).json({ err });
+      res.status(501).json({ responseStatus: 'FAILURE', error: err });
     });
 });
 
@@ -729,13 +730,15 @@ router.post('/transportationForm/approveTransportationRequests', (req, res) => {
     .then((resp) => {
       console.log('success on endpoint ApproveTransportationDetails');
       res.status(200).json({
+        responseStatus: 'SUCCESS',
         status: true,
         result: 'Successfully approved transportation request'
       });
     })
     .catch((err) => {
       console.error('Error exectuting query', err.stack);
-      res.status(501).json({ err });
+      res.status(501).json({ responseStatus: 'FAILURE', error: err });
+
     });
 });
 
@@ -759,13 +762,12 @@ router.post(
           .query(QUERIES.HealthTracker.saveHealthTrackerRequest, requestObj)
           .then(() => {
             console.log('sucess on endpoint SaveHealthTracker');
-           // res.status(200).json({ responseStatus: 'SUCCESS', data: 'Successfully saved Health Tracker request', error: false });
           })
           .catch((err) =>{ 
             console.error('Error executing query', err.stack);
-          //  res.status(501).json({ err });
         });
       }
+      res.status(200).json({ responseStatus: 'SUCCESS', data: 'Successfully saved Health Tracker request', error: false });
   }
 );
 
@@ -794,6 +796,7 @@ router.post(
             console.error('Error executing query', err.stack);
         });
         }
+        res.status(200).json({ responseStatus: 'SUCCESS', data: 'Successfully updated Health Tracker request', error: false });
   }
 );
 
@@ -855,7 +858,7 @@ router.post('/addVeteran', (req, res) => {
     'x', // city
     'x', // state
     1234, // zip_code
-    new Date(), // date_of_birth
+    '1777-09-15T07:16:10.261Z', // date_of_birth
     'x', // place_of_birth
     1234, // ssn
     'x', // gender
