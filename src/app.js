@@ -11,6 +11,7 @@ const upload = require('./imageUploadService/uploadImage.js');
 
 // const constants = require('./constants')
 const sequentialQueries = require('./assessment-handler/assessment.js');
+const saveTreatmentPlan = require('./treatmentPlan-handler/treatmentIssue.js');
 const veteranEventsQueries = require('./veteranEvents-handler/veteranEvent.js');
 const iaFormsQueries = require('./initialAssessmentFormsHandler/iaForm.js');
 const secrets = require('./secret');
@@ -118,9 +119,9 @@ router.get('/calendarEvents', (req, res) => {
   res.json(users);
 });
 
-router.post('/postCalendarEvents', (req, res) => {
-  console.log(req.body);
-  const requestObj = [
+router.post('/postCalendarEvents',(req,res)=>{
+  const requestObj =[
+
     req.body.case_worker_id,
     req.body.participants,
     req.body.isAppointment,
@@ -532,7 +533,6 @@ router.get('/uiLayout/getCaseWorkerDetails/:caseWorkerId', (req, res) => {
 
 // Endpoint 11
 router.put('/userProfile/updateUserDetails/:veteranId', (req, res) => {
-  console.log('incoming req: ', req.body.DOB);
   const requestObj = [
     req.params.veteranId,
     req.body.firstName,
@@ -605,33 +605,41 @@ router.get('/getTreatmentPlanDetails/:veteran_id', (req, res) => {
   pool
     .query(QUERIES.TreatmentPlan.GetTreatmentPlanDetails, [params])
     .then((resp) => {
+      res.status(200).json({ responseStatus: 'SUCCESS', data: resp.rows[0], error: false });
       console.log('success on endpoint GetTreatmentPlanDetails');
-      res.json(resp.rows[0]);
     })
     .catch(err => {
+      res.status(501).json({ responseStatus: 'FAILURE', data: null, error: err });
       console.error('Error executing query', err.stack);
-      res.status(501).json({ err });
     });
 });
 
 // Endpoint 14.5
-// VeteranTreatmentPlan Save details
-router.post('/postTreatmentPlanDetails/save', (req, res) => {
+// VeteranSaveTreatmentPlan Post details
+router.post('/postTreatmentPlanDetails/save/:veteran_id', async (req, res) => {
+  const vet = req.params.veteran_id;
+  // Saving initial TPD
   const requestObj = [
-    4,
-    req.body.intakeDOB,
+    vet,
     req.body.veteranDiagnosis,
-    req.body.veteranSupports
+    req.body.veteranSupports,
+    req.body.veteranStrengths,
+    req.body.veteranNotes
   ];
   pool
     .query(QUERIES.TreatmentPlan.SaveTreatmentPlanDetails, requestObj)
     .then(resp => {
-      console.log('Successfully saved treatmentPlanDetails');
+      res.status(200).json({ responseStatus: 'SUCCESS', data: 'saved Successfully', error: false });
+      console.log('Successfully saved Initial TPD');
     })
     .catch(err => {
       console.error('Error executing query', err.stack);
-      res.status(501).json({ err });
+      res.status(501).json({ responseStatus: 'FAILURE', data: 'null', error: err });
     });
+
+  // Saving TreatmentIssues
+  const result = saveTreatmentPlan(req);
+  console.log(result);
 });
 
 // Endpoint 15
@@ -640,7 +648,9 @@ router.put('/updateTreatmentPlanDetails/save/:veteran_id', (req, res) => {
   const requestObj = [
     req.params.veteran_id,
     req.body.veteranDiagnosis,
-    req.body.veteranSupports
+    req.body.veteranSupports,
+    req.body.veteranStrengths,
+    req.body.veteranNotes
   ];
   pool
     .query(QUERIES.TreatmentPlan.UpdateTreatmentPlanDetails, requestObj)
@@ -675,6 +685,7 @@ router.post('/transportationForm/saveTransportationRequest/', (req, res) => {
     .then((resp) => {
       console.log('success on endpoint SaveTransportationDetails');
       res.status(200).json({
+        responseStatus: 'SUCCESS',
         vetID: req.body.veteran_id,
         status: true,
         result: 'Successfully saved transportation request'
@@ -682,7 +693,7 @@ router.post('/transportationForm/saveTransportationRequest/', (req, res) => {
     })
     .catch((err) => {
       console.error('Error executing query', err.stack);
-      res.status(501).json({ err });
+      res.status(501).json({ responseStatus: 'FAILURE', error: err });
     });
 });
 
@@ -720,13 +731,15 @@ router.post('/transportationForm/approveTransportationRequests', (req, res) => {
     .then((resp) => {
       console.log('success on endpoint ApproveTransportationDetails');
       res.status(200).json({
+        responseStatus: 'SUCCESS',
         status: true,
         result: 'Successfully approved transportation request'
       });
     })
     .catch((err) => {
       console.error('Error exectuting query', err.stack);
-      res.status(501).json({ err });
+      res.status(501).json({ responseStatus: 'FAILURE', error: err });
+
     });
 });
 
@@ -734,37 +747,57 @@ router.post('/transportationForm/approveTransportationRequests', (req, res) => {
 router.post(
   '/healthTracker/saveHealthTrackerRequest/:veteranId',
   (req, res) => {
-    const trackerReq = Object.values(req.body);
+     const trackerReq = req.body;
     for (let i = 0; i < trackerReq.length; i++) {
-      const requestParams = trackerReq[i];
-      const requestObj = [
-        req.params.veteranId,
-        requestParams.trackingSubject,
-        requestParams.date,
-        requestParams.measurement,
-        requestParams.comments
-      ];
-      if (requestParams.isUpdate) {
-        pool
-          .query(QUERIES.HealthTracker.updateHealthTrackerRequest, requestObj)
-          .then(() => {
-            console.log('sucess on endpoint UpdateHealthTracker');
-          })
-          .catch((err) => console.error('Error executing query', err.stack));
-      } else {
-        pool
+      const requestParams = req.body[i];
+        const requestObj = [
+          req.params.veteranId,
+          requestParams.trackingSubject,
+          requestParams.date,
+          requestParams.measurement,
+          requestParams.comments,
+          requestParams.currentTracker
+        ];
+        console.log("insert",requestObj)
+       pool
           .query(QUERIES.HealthTracker.saveHealthTrackerRequest, requestObj)
           .then(() => {
             console.log('sucess on endpoint SaveHealthTracker');
           })
-          .catch((err) => console.error('Error executing query', err.stack));
+          .catch((err) =>{ 
+            console.error('Error executing query', err.stack);
+        });
       }
-    }
-    // handling status
-    res.status(200).json({
-      status: true,
-      result: 'Successfully saved Health Tracker request'
-    });
+      res.status(200).json({ responseStatus: 'SUCCESS', data: 'Successfully saved Health Tracker request', error: false });
+  }
+);
+
+// Endpoint
+router.post(
+  '/healthTracker/updateHealthTrackerRequest/:veteranId',
+  (req, res) => {
+     const trackerReq = req.body;
+    for (let i = 0; i < trackerReq.length; i++) {
+    const requestParams = req.body[i];
+     const requestObj = [
+      req.params.veteranId,
+      requestParams[0].tracking_subject,
+      requestParams[0].note_date,
+      requestParams[0].measurement,
+      requestParams[0].tracking_comments,
+      requestParams[0].current_tracker
+    ];
+    console.log("update",requestObj)
+       pool
+          .query(QUERIES.HealthTracker.updateHealthTrackerRequest, requestObj)
+          .then(() => {
+            console.log('sucess on endpoint UpdateHealthTracker');
+          })
+          .catch((err) => { 
+            console.error('Error executing query', err.stack);
+        });
+        }
+        res.status(200).json({ responseStatus: 'SUCCESS', data: 'Successfully updated Health Tracker request', error: false });
   }
 );
 
@@ -775,9 +808,11 @@ router.get('/healthTracker/getHealthTracker/:veteranId', (req, res) => {
     .query(QUERIES.HealthTracker.getHealthTracker, requestObj)
     .then((resp) => {
       console.log('Sucess on get HealthTracker');
-      res.json({ result: resp.rows });
+      res.status(200).json({ responseStatus: 'SUCCESS', data: resp.rows, error: false });
     })
-    .catch((err) => console.error('Error executing query', err.stack));
+    .catch((err) =>{ 
+    console.error('Error executing query', err.stack);
+    res.status(501).json({ responseStatus: 'FAILURE', data: null, error: err });});
 });
 
 // Endpoint
@@ -824,7 +859,7 @@ router.post('/addVeteran', (req, res) => {
     'x', // city
     'x', // state
     1234, // zip_code
-    new Date(), // date_of_birth
+    '1777-09-15T07:16:10.261Z', // date_of_birth
     'x', // place_of_birth
     1234, // ssn
     'x', // gender

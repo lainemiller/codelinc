@@ -11,8 +11,9 @@ module.exports = Object.freeze({
     calendarAPis: {
       getCurrentVeteranEmailId: 'SELECT email FROM codelinc.veteran_pi WHERE veteran_id = $1',
       getCalendarEventsForVeteran:
-        'SELECT * FROM codelinc.calendar WHERE position( $1 in participants)>0',
-      getCalendarEventsForCaseworker: 'SELECT * FROM codelinc.calendar WHERE case_worker_id = $1',
+        "SELECT * FROM codelinc.calendar WHERE position( $1 in participants)>0 OR isappointment = false",
+      getCalendarEventsForCaseworker: "SELECT * FROM codelinc.calendar WHERE case_worker_id = $1 OR isappointment = false",
+
       postEventsForCaseworker:
         'INSERT INTO codelinc.calendar(case_worker_id,participants,isappointment,title,description,eventstart,eventend) VALUES($1, $2, $3, $4, $5, $6, $7)'
     },
@@ -71,18 +72,22 @@ module.exports = Object.freeze({
     },
     TreatmentPlan: {
       GetTreatmentPlanDetails:
-       'SELECT vp.first_name,vp.last_name,vp.date_of_birth,vi.intake_date,vp.hmis_id,vi.diagnosis,vi.supports from codelinc.veteran_pi vp FULL OUTER JOIN codelinc.veteran_initial_treatment vi ON vp.veteran_id=vi.veteran_id where vp.veteran_id=$1',
+      'SELECT vp.first_name,vp.last_name,vp.record_number,vp.date_of_birth,vp.intake_date,vp.hmis_id,vi.diagnosis,vi.supports,vi.strengths,vi.notes from codelinc.veteran_pi vp FULL OUTER JOIN codelinc.veteran_initial_treatment vi ON vp.veteran_id=vi.veteran_id where vp.veteran_id=$1',
       GetAllDetails:
-      'SELECT vp.veteran_id,vp.first_name,vp.last_name,vp.address_main,vp.date_of_birth,vi.intake_date,vp.hmis_id,vp.primary_phone,vi.diagnosis,vi.supports from codelinc.veteran_pi vp FULL OUTER JOIN codelinc.veteran_initial_treatment vi ON vp.veteran_id=vi.veteran_id ',
+      'SELECT vp.veteran_id,vp.first_name,vp.last_name,vp.address_main,vp.date_of_birth,vi.intake_date,vp.hmis_id,vp.primary_phone,vi.diagnosis,vi.supports,vi.strengths,vi.notes from codelinc.veteran_pi vp FULL OUTER JOIN codelinc.veteran_initial_treatment vi ON vp.veteran_id=vi.veteran_id ',
       SaveTreatmentPlanDetails:
-      'INSERT INTO codelinc.veteran_initial_treatment(veteran_id,intake_date,diagnosis,supports) VALUES ($1,$2,$3,$4)',
+      'INSERT INTO codelinc.veteran_initial_treatment(veteran_id,diagnosis,supports,strengths,notes) VALUES ($1, $2, $3, $4, $5)',
       UpdateTreatmentPlanDetails:
-      'UPDATE codelinc.veteran_initial_treatment SET diagnosis = $2, supports = $3 where veteran_id = $1'
+      'UPDATE codelinc.veteran_initial_treatment SET diagnosis = $2, supports = $3, strengths= $4 ,notes= $5 where veteran_id = $1'
+    },
+    SaveTreatmentPlan: {
+      TreatmentPlanDetailsPH:
+      'WITH ins1 as (INSERT into codelinc.veteran_treatment_goals(veteran_id,goal_type,goal_title,created_on,target_date) VALUES ($1, $2, $3, $4, $5) RETURNING goal_id as goalid) INSERT into codelinc.veteran_treatment_plan(goal_id,goal_plan_short_term,goal_plan_long_term) select  goalid, $6, $7 from ins1 '
     },
     TransportationRequest: {
       SaveTransportationDetails:
-        'INSERT INTO codelinc.veteran_transport_request(veteran_id, appointment_date, appointment_time, reason_for_request, pick_up_address_main, va_address, pick_up_city, pick_up_state, pick_up_zip_code, requested_date) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)',
-
+        'INSERT INTO codelinc.veteran_transport_request(veteran_id, appointment_date, appointment_time, reason_for_request, pick_up_address_main, pick_up_address_line_2, pick_up_city, pick_up_state, pick_up_zip_code, requested_date) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)',
+      
       GetTransportationRequests:
         'SELECT v.first_name, v.last_name, t.request_id, t.appointment_date, t.appointment_time, t.reason_for_request, t.transport_coordinator, t.nursing_notified, t.notified_by, t.pick_up_address_main, t.pick_up_city, t.pick_up_state, t.pick_up_zip_code, t.approved_date, t.date_filled FROM codelinc.veteran_pi v FULL OUTER JOIN codelinc.veteran_transport_request t  ON v.veteran_id = t.veteran_id WHERE t.approved_date IS NULL AND t.request_id IS NOT NULL ORDER BY t.request_id DESC',
       ApproveTransportationRequests:
@@ -90,9 +95,9 @@ module.exports = Object.freeze({
     },
     HealthTracker: {
       saveHealthTrackerRequest:
-        'INSERT INTO codelinc.veteran_health_tracker(veteran_id,tracking_subject,note_date,measurement,tracking_comments) VALUES ($1, $2, $3, $4, $5)',
+        'INSERT INTO codelinc.veteran_health_tracker(veteran_id,tracking_subject,note_date,measurement,tracking_comments,current_tracker) VALUES ($1, $2, $3, $4, $5, $6)',
       updateHealthTrackerRequest:
-        'UPDATE codelinc.veteran_health_tracker SET note_date=$3, measurement=$4,tracking_comments=$5 WHERE veteran_id=$1 and tracking_subject=$2',
+        'UPDATE codelinc.veteran_health_tracker SET current_tracker=false WHERE veteran_id=$1 and tracking_subject=$2 and note_date=$3 and measurement=$4 and tracking_comments=$5 and current_tracker=$6',
       getHealthTracker:
         'select * from codelinc.veteran_health_tracker where veteran_id=$1'
     },
