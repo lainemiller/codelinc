@@ -12,6 +12,7 @@ const upload = require('./imageUploadService/uploadImage.js');
 // const constants = require('./constants')
 const sequentialQueries = require('./assessment-handler/assessment.js');
 const veteranEventsQueries = require('./veteranEvents-handler/veteranEvent.js');
+const iaFormsQueries = require('./initialAssessmentFormsHandler/iaForm.js');
 const secrets = require('./secret');
 
 const { Pool } = require('pg');
@@ -431,7 +432,7 @@ router.get('/getGoals/:veteranId', (req, res) => {
   pool
     .query(QUERIES.ProgressNotes.GetGoals, [vet])
     .then((response) => {
-      res.json(response.rows);
+      res.status(200).json(response.rows);
     })
     .catch((err) => {
       console.error('Error executing query', err.stack);
@@ -874,17 +875,155 @@ router.post('/api/v1/upload', upload.single('image'), async (req, res) => {
   res.send({ image: req.file });
 });
 
-// ia forms api rtesting
-router.post('/initialAssessment/page-5', (req, res) => {
-  const requestObject = [
-    req.body.additionalComments,
-    req.body.hppenedInMyLifeLastYear,
-    req.body.longTermGoals,
-    req.body.needs,
-    req.body.preferences,
-    req.body.shortTermGoals,
-    req.body.strengthAndResources,
-    req.body.supports
+// get api for page1
+router.get('/getInitialAssessment/page-1/:veteranId', (req, res) => {
+  const vet = req.params.veteranId;
+  pool
+    .query(QUERIES.InitialAssessment.page1, [vet])
+    .then((resp) => {
+      console.log('success on endpoint GetTransportationRequests');
+      res.json(resp.rows);
+    })
+    .catch((err) => {
+      console.error('Error exectuting query', err.stack);
+      res.status(501).json({ err });
+    });
+});
+
+// ia forms api testing page1
+router.post('/initialAssessment/page-1', (req, res) => {
+  const personalDetails = [
+    req.body.personalDetails.addressLine2,
+    req.body.personalDetails.addressMain,
+    req.body.personalDetails.age,
+    req.body.personalDetails.city,
+    req.body.personalDetails.contactPerson,
+    req.body.personalDetails.contactPersonAddress,
+    req.body.personalDetails.country,
+    req.body.personalDetails.dob,
+    req.body.personalDetails.firstName,
+    req.body.personalDetails.lastName,
+    req.body.personalDetails.maritalStatus,
+    req.body.personalDetails.middleInitial,
+    req.body.personalDetails.nickName,
+    req.body.personalDetails.phone,
+    req.body.personalDetails.placeOfBirth,
+    req.body.personalDetails.primaryLanguage,
+    req.body.personalDetails.primaryPhone,
+    req.body.personalDetails.race,
+    req.body.personalDetails.relationship,
+    req.body.personalDetails.sex,
+    req.body.personalDetails.ssn,
+    req.body.personalDetails.zipcode
+  ];
+
+  const benefits = [
+    req.body.benefits.receivingBenefits,
+    req.body.benefits.applyingBenefits
+  ];
+
+  const income = [
+    req.body.incomeAndResources.bankAccount,
+    req.body.incomeAndResources.bankName,
+    req.body.incomeAndResources.cashBenefits,
+    req.body.incomeAndResources.directDeposit,
+    req.body.incomeAndResources.income,
+    req.body.incomeAndResources.medicaid,
+    req.body.incomeAndResources.nonCashBenefits,
+    req.body.incomeAndResources.otherAssets,
+    req.body.incomeAndResources.otherBenefits,
+    req.body.incomeAndResources.type
+  ];
+
+  const social = [
+    req.body.socialAndFamilyHistory.childhood,
+    req.body.socialAndFamilyHistory.children,
+    req.body.socialAndFamilyHistory.currentMaritalStatus,
+    req.body.socialAndFamilyHistory.discipline,
+    req.body.socialAndFamilyHistory.fatherStatus,
+    req.body.socialAndFamilyHistory.fathersFullName,
+    req.body.socialAndFamilyHistory.healthProblemsInFamily,
+    req.body.socialAndFamilyHistory.hivTestDesired,
+    req.body.socialAndFamilyHistory.hivTestResult,
+    req.body.socialAndFamilyHistory.hivTestedDate,
+    req.body.socialAndFamilyHistory.hivTestedLocation,
+    req.body.socialAndFamilyHistory.married,
+    req.body.socialAndFamilyHistory.motherStatus,
+    req.body.socialAndFamilyHistory.mothersFullName,
+    req.body.socialAndFamilyHistory.numberOfMarriages,
+    req.body.socialAndFamilyHistory.physicalAbuse,
+    req.body.socialAndFamilyHistory.relationShipWithParents,
+    req.body.socialAndFamilyHistory.relationShipWithSiblings,
+    req.body.socialAndFamilyHistory.sexualAbuse,
+    req.body.socialAndFamilyHistory.sexualOrientation,
+    req.body.socialAndFamilyHistory.sexualProblemsOrConcerns,
+    req.body.socialAndFamilyHistory.sexuallyActive,
+    req.body.socialAndFamilyHistory.siblings,
+    req.body.socialAndFamilyHistory.specifySexualProblems,
+    req.body.socialAndFamilyHistory.spouseOrSignificvantOther,
+    req.body.socialAndFamilyHistory.stdTestResult,
+    req.body.socialAndFamilyHistory.stdTestedDate,
+    req.body.socialAndFamilyHistory.stdTestedLocation,
+    req.body.socialAndFamilyHistory.testedForHivOrAids,
+    req.body.socialAndFamilyHistory.testedSTDs
+  ];
+
+  // pool.query(QUERIES.UiLayout.addCaseWorker,requestObject)
+  // .then(()=>{
+  //   console.log('Sucess on Add CaseWorker');
+  //   res.status(200).json({ responseStatus: 'SUCCESS', data:'Caseworker Added Successfully', error: false });
+  // })
+  // .catch((err)=>{
+  //   console.error('Error executing query', err.stack);
+  //   res.status(501).json({ responseStatus: 'FAILURE', data: null, error: err });
+  // })
+
+  console.log('Personal Details', personalDetails);
+  console.log('Benefits', benefits);
+  console.log('Income and Resources', income);
+  console.log('Social and Family', social);
+});
+
+// ia forms api testing page2
+router.post('/initialAssessment/page-2', (req, res) => {
+  const edu = [
+    req.body.educationAndEmploymentHistory.branch,
+    req.body.educationAndEmploymentHistory.currentEmployer,
+    req.body.educationAndEmploymentHistory.currentEmployerLocation,
+    req.body.educationAndEmploymentHistory.highestGradeCompleted,
+    req.body.educationAndEmploymentHistory.jobDate,
+    req.body.educationAndEmploymentHistory.jobEmployedInLongest,
+    req.body.educationAndEmploymentHistory.military,
+    req.body.educationAndEmploymentHistory.mostRecentJob,
+    req.body.educationAndEmploymentHistory.nameAndLocation,
+    req.body.educationAndEmploymentHistory.occupationOrWorkSkill,
+    req.body.educationAndEmploymentHistory.otherTrainingEducation,
+    req.body.educationAndEmploymentHistory.otherTrainingOrEducation,
+    req.body.educationAndEmploymentHistory.reasonForLeaving,
+    req.body.educationAndEmploymentHistory.serviceDate,
+    req.body.educationAndEmploymentHistory.serviceLocation,
+    req.body.educationAndEmploymentHistory.typeOfDischarge
+  ];
+
+  const mental = [
+    req.body.mentalHealthInformation.currentPsychiatricTreatment,
+    req.body.mentalHealthInformation.dateScheduled,
+    req.body.mentalHealthInformation.diagnoses,
+    req.body.mentalHealthInformation.needPsychiatricCunsultant,
+    req.body.mentalHealthInformation.pastTreatments,
+    req.body.mentalHealthInformation.psychEvaluatorAddress,
+    req.body.mentalHealthInformation.psychEvaluatorCity,
+    req.body.mentalHealthInformation.psychEvaluatorLicense,
+    req.body.mentalHealthInformation.psychEvaluatorName,
+    req.body.mentalHealthInformation.psychEvaluatorState,
+    req.body.mentalHealthInformation.psychEvaluatorZipcode,
+    req.body.mentalHealthInformation.psychiatristAddress,
+    req.body.mentalHealthInformation.psychiatristName
+  ];
+
+  const social = [
+    req.body.socialHistory.hobbiesInterests,
+    req.body.socialHistory.religiousPreferences
   ];
   // pool.query(QUERIES.UiLayout.addCaseWorker,requestObject)
   // .then(()=>{
@@ -896,7 +1035,122 @@ router.post('/initialAssessment/page-5', (req, res) => {
   //   res.status(501).json({ responseStatus: 'FAILURE', data: null, error: err });
   // })
 
-  console.log(requestObject);
+  console.log('Education and Employment History', edu);
+  console.log('Mental Health History', mental);
+  console.log('Social History', social);
+});
+
+// ia forms api testing page3
+router.post('/initialAssessment/page-3', (req, res) => {
+  const medInfo = [
+    req.body.medicalInformation.clinic,
+    req.body.medicalInformation.currentMedication,
+    req.body.medicalInformation.diagnosisAndCurrentTreatment,
+    req.body.medicalInformation.hospital,
+    req.body.medicalInformation.phone,
+    req.body.medicalInformation.physicianSpecialist,
+    req.body.medicalInformation.primaryPhysicianName
+  ];
+
+  const menStaAssess = [
+    req.body.mentalStatusAssessment.affect,
+    req.body.mentalStatusAssessment.generalAppearance,
+    req.body.mentalStatusAssessment.ideation.delusional,
+    req.body.mentalStatusAssessment.ideation.hallucinations,
+    req.body.mentalStatusAssessment.ideation.homicidePlan,
+    req.body.mentalStatusAssessment.ideation.paranoid,
+    req.body.mentalStatusAssessment.ideation.suicidePlan,
+    req.body.mentalStatusAssessment.ideation.thoughtsOfHomicide,
+    req.body.mentalStatusAssessment.ideation.thoughtsOfSuicide,
+    req.body.mentalStatusAssessment.memory.recentMemory,
+    req.body.mentalStatusAssessment.memory.remoteMemory,
+    req.body.mentalStatusAssessment.mood.answeredByClient,
+    req.body.mentalStatusAssessment.mood.observedByInterviewer,
+    req.body.mentalStatusAssessment.orientation.date,
+    req.body.mentalStatusAssessment.orientation.person,
+    req.body.mentalStatusAssessment.orientation.place,
+    req.body.mentalStatusAssessment.orientation.time,
+    req.body.mentalStatusAssessment.thoughtForum
+  ];
+  // pool.query(QUERIES.UiLayout.addCaseWorker,requestObject)
+  // .then(()=>{
+  //   console.log('Sucess on Add CaseWorker');
+  //   res.status(200).json({ responseStatus: 'SUCCESS', data:'Caseworker Added Successfully', error: false });
+  // })
+  // .catch((err)=>{
+  //   console.error('Error executing query', err.stack);
+  //   res.status(501).json({ responseStatus: 'FAILURE', data: null, error: err });
+  // })
+
+  console.log('Medical Information', medInfo);
+  console.log('Mental Status Assessment', menStaAssess);
+});
+
+// ia forms api testing page4
+router.post('/initialAssessment/page-4', async (req, res) => {
+  const legal = [
+    req.body.legalHistoryOrIssues.arrestedReason,
+    req.body.legalHistoryOrIssues.charges,
+    req.body.legalHistoryOrIssues.convictedReason,
+    req.body.legalHistoryOrIssues.currentPendingCharges,
+    req.body.legalHistoryOrIssues.everArrested,
+    req.body.legalHistoryOrIssues.everConvicted,
+    req.body.legalHistoryOrIssues.officerAddress,
+    req.body.legalHistoryOrIssues.officerName,
+    req.body.legalHistoryOrIssues.onProbationOrParole,
+    req.body.legalHistoryOrIssues.outstandingWarrants,
+    req.body.legalHistoryOrIssues.probationOrParoleTerms,
+    req.body.legalHistoryOrIssues.warrantReason
+  ];
+
+  const subAbu = [
+    req.body.substanceAbuseHistory.currentAlcoholIntakeFreq,
+    req.body.substanceAbuseHistory.currentCaffeineIntakeFreq,
+    req.body.substanceAbuseHistory.currentDrugAlcoholTreatment,
+    req.body.substanceAbuseHistory.currentDrugIntakeFreq,
+    req.body.substanceAbuseHistory.currentTobaccoIntakeFreq,
+    req.body.substanceAbuseHistory.currentlyConsumesAlcohol,
+    req.body.substanceAbuseHistory.currentlyConsumesCaffeine,
+    req.body.substanceAbuseHistory.currentlyConsumesDrugs,
+    req.body.substanceAbuseHistory.currentlyConsumesTobacco,
+    req.body.substanceAbuseHistory.histOfAlcohol,
+    req.body.substanceAbuseHistory.histOfCaffeine,
+    req.body.substanceAbuseHistory.histOfDrugs,
+    req.body.substanceAbuseHistory.histOfTobacco,
+    req.body.substanceAbuseHistory.lastUseOfDrugAlcohol,
+    req.body.substanceAbuseHistory.treatmentPrograms,
+    req.body.substanceAbuseHistory.withdrawalHistory
+  ];
+  // const vet = req.params.veteranID;
+  const resultssss = await iaFormsQueries(legal, subAbu);
+  res.status(200).json(resultssss);
+
+  console.log('res', resultssss);
+});
+
+// ia forms api testing page5
+router.post('/initialAssessment/page-5', (req, res) => {
+  const preliminary = [
+    req.body.preliminaryTreatmentGoals.additionalComments,
+    req.body.preliminaryTreatmentGoals.hppenedInMyLifeLastYear,
+    req.body.preliminaryTreatmentGoals.longTermGoals,
+    req.body.preliminaryTreatmentGoals.needs,
+    req.body.preliminaryTreatmentGoals.preferences,
+    req.body.preliminaryTreatmentGoals.shortTermGoals,
+    req.body.preliminaryTreatmentGoals.strengthAndResources,
+    req.body.preliminaryTreatmentGoals.supports
+  ];
+  // pool.query(QUERIES.UiLayout.addCaseWorker,requestObject)
+  // .then(()=>{
+  //   console.log('Sucess on Add CaseWorker');
+  //   res.status(200).json({ responseStatus: 'SUCCESS', data:'Caseworker Added Successfully', error: false });
+  // })
+  // .catch((err)=>{
+  //   console.error('Error executing query', err.stack);
+  //   res.status(501).json({ responseStatus: 'FAILURE', data: null, error: err });
+  // })
+
+  console.log('Preliminary Treatment Goals', preliminary);
 });
 
 // const veteran1 = {

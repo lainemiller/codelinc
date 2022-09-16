@@ -44,7 +44,7 @@ module.exports = Object.freeze({
       UserAssessmentDetailsSAH:
         ' select alcohol_history as "Alcohol History", currently_consumes_alcohol as "Currently Consumes Alcohol", current_alcohol_intake_freq as "Alcohol Intake Frequency", drug_use_history as "Drug use History", currently_uses_drugs as "Currently Uses Drugs", current_drug_use_freq as "Drug intake Frequency", drug_alcohol_last_use as "Last use of Drug and Alcohol", current_drug_alcohol_treatment as "Current Drug/Alcohol Treatment", withdrawal_history as "Withdrawal History", tobacco_use_history as "Tobacco Use History", currently_uses_tobacco as "Currently Uses Tobacco", current_tobacco_use_freq as "Current Tobacoo Intake Frequency", caffeine_use_history as "Caffeine use History", currently_uses_caffeine as "Currently Uses Caffeine", current_caffeine_use_freq as "Current Caffeine Intake Frequency", treatment_programs as "Treatment Programs" from codelinc.veteran_substances where veteran_id  = $1 ',
       UserAssessmentDetailsLHI:
-        ' SELECT ever_arrested as "Ever Arrested", arrest_reason as "Arrested Reason", ever_convicted as "Ever Convicted", conviction_reason as "Conviction Reason", current_pending_charges as "Current Pending Charges", charges as "Charges", outstanding_warrants as "Outstanding Warrants", warrant_reason as "Warrant Reason", on_probation_or_parole as "are you on Probation or Parole?", officer_name as "Officer Name", officer_address as "Officer Address", probation_or_parole_terms as "Any Proabation or Parole Terms" FROM codelinc.veteran_legal_history WHERE veteran_id = $1 ',
+        ' SELECT ever_arrested as "Ever Arrested", arrest_reason as "Arrested Reason", ever_convicted as "Ever Convicted", conviction_reason as "Conviction Reason", current_pending_charges as "Current Pending Charges", charges as "Charges", outstanding_warrants as "Outstanding Warrants", warrant_reason as "Warrant Reason", on_probation_or_parole as "Are you on Probation or Parole?", officer_name as "Officer Name", officer_address as "Officer Address", probation_or_parole_terms as "Any Proabation or Parole Terms" FROM codelinc.veteran_legal_history WHERE veteran_id = $1 ',
       UserAssessmentDetailsITG:
         ' select * from codelinc.veteran_pi where veteran_id  = $1 '
     },
@@ -97,10 +97,11 @@ module.exports = Object.freeze({
         'select * from codelinc.veteran_health_tracker where veteran_id=$1'
     },
     InitialAssessment: {
-      page1: 'insert into codelinc.veteran_treatment_plan where ',
+      page1: 'select first_name from codelinc.veteran_pi where veteran_id = $1',
       page2: '',
       page3: '',
-      page4: '',
+      page4SubAbu: 'UPDATE codelinc.veteran_substances SET alcohol_history=$10, currently_consumes_alcohol=$6, current_alcohol_intake_freq=$1, drug_use_history=$12, currently_uses_drugs=$8, current_drug_use_freq=$4, drug_alcohol_last_use=$14, current_drug_alcohol_treatment=$3, withdrawal_history=$16, tobacco_use_history=$13 , currently_uses_tobacco=$9, current_tobacco_use_freq=$5, caffeine_use_history=$11, currently_uses_caffeine=$7, current_caffeine_use_freq=$2, treatment_programs=$15 where veteran_id  = 4;',
+      page4legal: 'UPDATE codelinc.veteran_legal_history  SET ever_arrested = $5, arrest_reason = $1, ever_convicted = $6, conviction_reason = $3, current_pending_charges = $4,charges=$2, outstanding_warrants=$10, warrant_reason=$12, on_probation_or_parole=$9, officer_name=$8, officer_address=$7, probation_or_parole_terms=$11 where veteran_id = 4',
       page5: ''
     }
   }
