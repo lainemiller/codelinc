@@ -119,8 +119,8 @@ router.get('/calendarEvents', (req, res) => {
   res.json(users);
 });
 
-router.post('/postCalendarEvents',(req,res)=>{
-  const requestObj =[
+router.post('/postCalendarEvents', (req, res) => {
+  const requestObj = [
 
     req.body.case_worker_id,
     req.body.participants,
@@ -739,7 +739,6 @@ router.post('/transportationForm/approveTransportationRequests', (req, res) => {
     .catch((err) => {
       console.error('Error exectuting query', err.stack);
       res.status(501).json({ responseStatus: 'FAILURE', error: err });
-
     });
 });
 
@@ -747,28 +746,28 @@ router.post('/transportationForm/approveTransportationRequests', (req, res) => {
 router.post(
   '/healthTracker/saveHealthTrackerRequest/:veteranId',
   (req, res) => {
-     const trackerReq = req.body;
+    const trackerReq = req.body;
     for (let i = 0; i < trackerReq.length; i++) {
       const requestParams = req.body[i];
-        const requestObj = [
-          req.params.veteranId,
-          requestParams.trackingSubject,
-          requestParams.date,
-          requestParams.measurement,
-          requestParams.comments,
-          requestParams.currentTracker
-        ];
-        console.log("insert",requestObj)
-       pool
-          .query(QUERIES.HealthTracker.saveHealthTrackerRequest, requestObj)
-          .then(() => {
-            console.log('sucess on endpoint SaveHealthTracker');
-          })
-          .catch((err) =>{ 
-            console.error('Error executing query', err.stack);
+      const requestObj = [
+        req.params.veteranId,
+        requestParams.trackingSubject,
+        requestParams.date,
+        requestParams.measurement,
+        requestParams.comments,
+        requestParams.currentTracker
+      ];
+      console.log('insert', requestObj);
+      pool
+        .query(QUERIES.HealthTracker.saveHealthTrackerRequest, requestObj)
+        .then(() => {
+          console.log('sucess on endpoint SaveHealthTracker');
+        })
+        .catch((err) => {
+          console.error('Error executing query', err.stack);
         });
-      }
-      res.status(200).json({ responseStatus: 'SUCCESS', data: 'Successfully saved Health Tracker request', error: false });
+    }
+    res.status(200).json({ responseStatus: 'SUCCESS', data: 'Successfully saved Health Tracker request', error: false });
   }
 );
 
@@ -776,28 +775,28 @@ router.post(
 router.post(
   '/healthTracker/updateHealthTrackerRequest/:veteranId',
   (req, res) => {
-     const trackerReq = req.body;
+    const trackerReq = req.body;
     for (let i = 0; i < trackerReq.length; i++) {
-    const requestParams = req.body[i];
-     const requestObj = [
-      req.params.veteranId,
-      requestParams[0].tracking_subject,
-      requestParams[0].note_date,
-      requestParams[0].measurement,
-      requestParams[0].tracking_comments,
-      requestParams[0].current_tracker
-    ];
-    console.log("update",requestObj)
-       pool
-          .query(QUERIES.HealthTracker.updateHealthTrackerRequest, requestObj)
-          .then(() => {
-            console.log('sucess on endpoint UpdateHealthTracker');
-          })
-          .catch((err) => { 
-            console.error('Error executing query', err.stack);
+      const requestParams = req.body[i];
+      const requestObj = [
+        req.params.veteranId,
+        requestParams[0].tracking_subject,
+        requestParams[0].note_date,
+        requestParams[0].measurement,
+        requestParams[0].tracking_comments,
+        requestParams[0].current_tracker
+      ];
+      console.log('update', requestObj);
+      pool
+        .query(QUERIES.HealthTracker.updateHealthTrackerRequest, requestObj)
+        .then(() => {
+          console.log('sucess on endpoint UpdateHealthTracker');
+        })
+        .catch((err) => {
+          console.error('Error executing query', err.stack);
         });
-        }
-        res.status(200).json({ responseStatus: 'SUCCESS', data: 'Successfully updated Health Tracker request', error: false });
+    }
+    res.status(200).json({ responseStatus: 'SUCCESS', data: 'Successfully updated Health Tracker request', error: false });
   }
 );
 
@@ -810,9 +809,10 @@ router.get('/healthTracker/getHealthTracker/:veteranId', (req, res) => {
       console.log('Sucess on get HealthTracker');
       res.status(200).json({ responseStatus: 'SUCCESS', data: resp.rows, error: false });
     })
-    .catch((err) =>{ 
-    console.error('Error executing query', err.stack);
-    res.status(501).json({ responseStatus: 'FAILURE', data: null, error: err });});
+    .catch((err) => {
+      console.error('Error executing query', err.stack);
+      res.status(501).json({ responseStatus: 'FAILURE', data: null, error: err });
+    });
 });
 
 // Endpoint
