@@ -482,7 +482,7 @@ router.post('/progressNotes/addGoal/:veteranId', (req, res) => {
 
 // Endpoint 9
 router.put('/progressNotes/updateGoalStatus/:veteranId', (req, res) => {
-  const requestObj = [req.params.veteranId, req.body.goalTitle, req.body.goalState];
+  const requestObj = [req.params.veteranId, req.body.goalId, req.body.goalState];
   pool
     .query(QUERIES.ProgressNotes.UpdateGoalStatus, requestObj)
     .then((resp) => {
