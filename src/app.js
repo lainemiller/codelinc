@@ -15,6 +15,7 @@ const saveTreatmentPlan = require('./treatmentPlan-handler/treatmentIssue.js');
 const veteranEventsQueries = require('./veteranEvents-handler/veteranEvent.js');
 const iaFormsQueries = require('./initialAssessmentFormsHandler/iaForm.js');
 const secrets = require('./secret');
+const healthTrackerQueries = require('./healthTrackerHandler/healthTracker.js');
 
 const { Pool } = require('pg');
 const { QUERIES } = require('./constants');
@@ -744,64 +745,6 @@ router.post('/transportationForm/approveTransportationRequests', (req, res) => {
 });
 
 // Endpoint
-router.post(
-  '/healthTracker/saveHealthTrackerRequest/:veteranId',
-  (req, res) => {
-     const trackerReq = req.body;
-    for (let i = 0; i < trackerReq.length; i++) {
-      const requestParams = req.body[i];
-        const requestObj = [
-          req.params.veteranId,
-          requestParams.trackingSubject,
-          requestParams.date,
-          requestParams.measurement,
-          requestParams.comments,
-          requestParams.currentTracker
-        ];
-        console.log("insert",requestObj)
-       pool
-          .query(QUERIES.HealthTracker.saveHealthTrackerRequest, requestObj)
-          .then(() => {
-            console.log('sucess on endpoint SaveHealthTracker');
-          })
-          .catch((err) =>{ 
-            console.error('Error executing query', err.stack);
-        });
-      }
-      res.status(200).json({ responseStatus: 'SUCCESS', data: 'Successfully saved Health Tracker request', error: false });
-  }
-);
-
-// Endpoint
-router.post(
-  '/healthTracker/updateHealthTrackerRequest/:veteranId',
-  (req, res) => {
-     const trackerReq = req.body;
-    for (let i = 0; i < trackerReq.length; i++) {
-    const requestParams = req.body[i];
-     const requestObj = [
-      req.params.veteranId,
-      requestParams[0].tracking_subject,
-      requestParams[0].note_date,
-      requestParams[0].measurement,
-      requestParams[0].tracking_comments,
-      requestParams[0].current_tracker
-    ];
-    console.log("update",requestObj)
-       pool
-          .query(QUERIES.HealthTracker.updateHealthTrackerRequest, requestObj)
-          .then(() => {
-            console.log('sucess on endpoint UpdateHealthTracker');
-          })
-          .catch((err) => { 
-            console.error('Error executing query', err.stack);
-        });
-        }
-        res.status(200).json({ responseStatus: 'SUCCESS', data: 'Successfully updated Health Tracker request', error: false });
-  }
-);
-
-// Endpoint
 router.get('/healthTracker/getHealthTracker/:veteranId', (req, res) => {
   const requestObj = [req.params.veteranId];
   pool
@@ -814,6 +757,16 @@ router.get('/healthTracker/getHealthTracker/:veteranId', (req, res) => {
     console.error('Error executing query', err.stack);
     res.status(501).json({ responseStatus: 'FAILURE', data: null, error: err });});
 });
+
+// Endpoint
+router.post(
+  '/healthTracker/updateHealthTracker/:veteranId',
+  async (req, res) => {
+     const trackerReq = req.body;
+     const healthTrackerDetails = await healthTrackerQueries(trackerReq[0],trackerReq[1],req.params.veteranId);
+    res.status(200).json({ responseStatus: 'SUCCESS', data: healthTrackerDetails, error: false });
+  }
+);
 
 // Endpoint
 router.get('/getVeteranId/:userName', (req, res) => {
