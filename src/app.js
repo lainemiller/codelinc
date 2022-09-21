@@ -925,6 +925,19 @@ router.get('/getInitialAssessment/page-1/:veteranId', (req, res) => {
     });
 });
 
+router.get('/initialAssessment/page-1/:veteranId', (req, res) => {
+  const vet = req.params.veteranId;
+  pool
+    .query(QUERIES.InitialAssessment.getPage1, [vet])
+    .then((resp) => {
+      console.log('success on endpoint get ia page 1');
+      res.json(resp.rows);
+    })
+    .catch((err) => {
+      console.error('Error exectuting query', err.stack);
+      res.status(501).json({ err });
+    });
+});
 // ia forms api testing page1
 router.post('/initialAssessment/page-1', (req, res) => {
   const personalDetails = [
@@ -1124,37 +1137,39 @@ router.post('/initialAssessment/page-3', (req, res) => {
 // ia forms api testing page4
 router.post('/initialAssessment/page-4', async (req, res) => {
   const legal = [
-    req.body.legalHistoryOrIssues.arrestedReason,
+    // req.body.legalHistoryOrIssues.arrestedReason,
     req.body.legalHistoryOrIssues.charges,
-    req.body.legalHistoryOrIssues.convictedReason,
-    req.body.legalHistoryOrIssues.currentPendingCharges,
-    req.body.legalHistoryOrIssues.everArrested,
-    req.body.legalHistoryOrIssues.everConvicted,
-    req.body.legalHistoryOrIssues.officerAddress,
-    req.body.legalHistoryOrIssues.officerName,
-    req.body.legalHistoryOrIssues.onProbationOrParole,
-    req.body.legalHistoryOrIssues.outstandingWarrants,
-    req.body.legalHistoryOrIssues.probationOrParoleTerms,
-    req.body.legalHistoryOrIssues.warrantReason
+    req.body.legalHistoryOrIssues.veteranId
+    // req.body.legalHistoryOrIssues.convictedReason,
+    // req.body.legalHistoryOrIssues.currentPendingCharges,
+    // req.body.legalHistoryOrIssues.everArrested,
+    // req.body.legalHistoryOrIssues.everConvicted,
+    // req.body.legalHistoryOrIssues.officerAddress,
+    // req.body.legalHistoryOrIssues.officerName,
+    // req.body.legalHistoryOrIssues.onProbationOrParole,
+    // req.body.legalHistoryOrIssues.outstandingWarrants,
+    // req.body.legalHistoryOrIssues.probationOrParoleTerms,
+    // req.body.legalHistoryOrIssues.warrantReason
   ];
 
   const subAbu = [
     req.body.substanceAbuseHistory.currentAlcoholIntakeFreq,
-    req.body.substanceAbuseHistory.currentCaffeineIntakeFreq,
-    req.body.substanceAbuseHistory.currentDrugAlcoholTreatment,
-    req.body.substanceAbuseHistory.currentDrugIntakeFreq,
-    req.body.substanceAbuseHistory.currentTobaccoIntakeFreq,
-    req.body.substanceAbuseHistory.currentlyConsumesAlcohol,
-    req.body.substanceAbuseHistory.currentlyConsumesCaffeine,
-    req.body.substanceAbuseHistory.currentlyConsumesDrugs,
-    req.body.substanceAbuseHistory.currentlyConsumesTobacco,
-    req.body.substanceAbuseHistory.histOfAlcohol,
-    req.body.substanceAbuseHistory.histOfCaffeine,
-    req.body.substanceAbuseHistory.histOfDrugs,
-    req.body.substanceAbuseHistory.histOfTobacco,
-    req.body.substanceAbuseHistory.lastUseOfDrugAlcohol,
-    req.body.substanceAbuseHistory.treatmentPrograms,
-    req.body.substanceAbuseHistory.withdrawalHistory
+    req.body.substanceAbuseHistory.veteranId
+    // req.body.substanceAbuseHistory.currentCaffeineIntakeFreq,
+    // req.body.substanceAbuseHistory.currentDrugAlcoholTreatment,
+    // req.body.substanceAbuseHistory.currentDrugIntakeFreq,
+    // req.body.substanceAbuseHistory.currentTobaccoIntakeFreq,
+    // req.body.substanceAbuseHistory.currentlyConsumesAlcohol,
+    // req.body.substanceAbuseHistory.currentlyConsumesCaffeine,
+    // req.body.substanceAbuseHistory.currentlyConsumesDrugs,
+    // req.body.substanceAbuseHistory.currentlyConsumesTobacco,
+    // req.body.substanceAbuseHistory.histOfAlcohol,
+    // req.body.substanceAbuseHistory.histOfCaffeine,
+    // req.body.substanceAbuseHistory.histOfDrugs,
+    // req.body.substanceAbuseHistory.histOfTobacco,
+    // req.body.substanceAbuseHistory.lastUseOfDrugAlcohol,
+    // req.body.substanceAbuseHistory.treatmentPrograms,
+    // req.body.substanceAbuseHistory.withdrawalHistory
   ];
   // const vet = req.params.veteranID;
   const resultssss = await iaFormsQueries(legal, subAbu);
