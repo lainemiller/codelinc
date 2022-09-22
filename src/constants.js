@@ -10,22 +10,21 @@ module.exports = Object.freeze({
     },
     calendarAPis: {
       getCurrentVeteranEmailId: 'SELECT email FROM codelinc.veteran_pi WHERE veteran_id = $1',
-      getCalendarEventsForVeteran:
-        "SELECT * FROM codelinc.calendar WHERE position( $1 in participants)>0 OR isappointment = false",
-      getCalendarEventsForCaseworker: "SELECT * FROM codelinc.calendar WHERE case_worker_id = $1 OR isappointment = false",
+      getCalendarEventsForVeteran: 'SELECT * FROM codelinc.calendar WHERE position( $1 in participants)>0 OR isappointment = false',
+      getCalendarEventsForCaseworker: 'SELECT * FROM codelinc.calendar WHERE case_worker_id = $1 OR isappointment = false',
 
       postEventsForCaseworker:
         'INSERT INTO codelinc.calendar(case_worker_id,participants,isappointment,title,description,eventstart,eventend) VALUES($1, $2, $3, $4, $5, $6, $7)'
     },
     ProgressNotes: {
       GetGoals:
-         'SELECT goal_status as "goalState", goal_title as "goalTitle", created_on as "addedDate", goal_description as "goalDescription", goal_type as "goalType" FROM codelinc.veteran_treatment_goals WHERE veteran_id = $1',
+         'SELECT goal_id as "goalId", goal_status as "goalState", goal_title as "goalTitle", created_on as "addedDate", goal_description as "goalDescription", goal_type as "goalType" FROM codelinc.veteran_treatment_goals WHERE veteran_id = $1',
       // 'SELECT * FROM codelinc.veteran_treatment_goals WHERE veteran_id = $1',
       AddGoal:
         'INSERT INTO codelinc.veteran_treatment_goals(veteran_id, goal_title, goal_type, goal_description, goal_status, created_on) VALUES($1, $2, $3, $4, $5, $6)',
       // UpdateGoalStatus: "INSERT INTO codelinc.veteran_treatment_goals(veteran_id, goal_id, goal_description) VALUES($1, $2, $3) ON CONFLICT (veteran_id) DO UPDATE SET goal_description = EXCLUDED.goal_description"
       UpdateGoalStatus:
-        'UPDATE codelinc.veteran_treatment_goals SET goal_status = $3 WHERE veteran_id = $1 AND goal_title = $2'
+        'UPDATE codelinc.veteran_treatment_goals SET goal_status = $3 WHERE veteran_id = $1 AND goal_id = $2'
     },
     UserProfile: {
       GetUserDetails: 'SELECT * from codelinc.veteran_pi where veteran_id = $1',
@@ -105,9 +104,13 @@ module.exports = Object.freeze({
       page1: 'select first_name from codelinc.veteran_pi where veteran_id = $1',
       page2: '',
       page3: '',
-      page4SubAbu: 'UPDATE codelinc.veteran_substances SET alcohol_history=$10, currently_consumes_alcohol=$6, current_alcohol_intake_freq=$1, drug_use_history=$12, currently_uses_drugs=$8, current_drug_use_freq=$4, drug_alcohol_last_use=$14, current_drug_alcohol_treatment=$3, withdrawal_history=$16, tobacco_use_history=$13 , currently_uses_tobacco=$9, current_tobacco_use_freq=$5, caffeine_use_history=$11, currently_uses_caffeine=$7, current_caffeine_use_freq=$2, treatment_programs=$15 where veteran_id  = 4;',
-      page4legal: 'UPDATE codelinc.veteran_legal_history  SET ever_arrested = $5, arrest_reason = $1, ever_convicted = $6, conviction_reason = $3, current_pending_charges = $4,charges=$2, outstanding_warrants=$10, warrant_reason=$12, on_probation_or_parole=$9, officer_name=$8, officer_address=$7, probation_or_parole_terms=$11 where veteran_id = 4',
-      page5: ''
+      // page4SubAbu: 'UPDATE codelinc.veteran_substances SET alcohol_history=$10, currently_consumes_alcohol=$6, current_alcohol_intake_freq=$1, drug_use_history=$12, currently_uses_drugs=$8, current_drug_use_freq=$4, drug_alcohol_last_use=$14, current_drug_alcohol_treatment=$3, withdrawal_history=$16, tobacco_use_history=$13 , currently_uses_tobacco=$9, current_tobacco_use_freq=$5, caffeine_use_history=$11, currently_uses_caffeine=$7, current_caffeine_use_freq=$2, treatment_programs=$15 where veteran_id  = 4;',
+      // page4legal: 'UPDATE codelinc.veteran_legal_history  SET ever_arrested = $5, arrest_reason = $1, ever_convicted = $6, conviction_reason = $3, current_pending_charges = $4,charges={$2}, outstanding_warrants=$10, warrant_reason=$12, on_probation_or_parole=$9, officer_name=$8, officer_address=$7, probation_or_parole_terms=$11 where veteran_id = 4',
+      page5: '',
+      page4SubAbu: 'UPDATE codelinc.veteran_substances SET current_alcohol_intake_freq=$1 where veteran_id=$2',
+      page4legal: 'UPDATE codelinc.veteran_legal_history SET charges=array_append(charges, $1) where veteran_id=$2',
+      // getPage1: 'select first_name, last_name, middle_initial, nick_name, date_of_birth, place_of_birth, ssn, gender, marital_status, race, primary_phone, primary_language, address_main, address_line_2, city, county, zip_code, contact_person, contact_person_relationship, contact_person_address, contact_person_phone, income, income_type from codelinc.veteran_pi vpi natural join codelinc.veteran_finance vfi where vpi.veteran_id = $1'
+      getPage1: 'select first_name, last_name, middle_initial, nick_name, date_of_birth, place_of_birth, ssn, gender, marital_status, race, primary_phone, primary_language, address_main, address_line_2, city, county, zip_code, contact_person, contact_person_relationship, contact_person_address, contact_person_phone, income, income_type, bank_account_type, bank_name, direct_deposit, other_assets, cash_benefits, non_cash_benefits, current_benefits, needed_benefits ,medicaid_coverage, va_coverage, childhood from codelinc.veteran_pi vpi natural join codelinc.veteran_finance vfi natural join codelinc.veteran_health_insurance vhi natural join codelinc.veteran_hist vhist where vpi.veteran_id = $1 and vhi.veteran_id = $1'
     }
   }
 });
