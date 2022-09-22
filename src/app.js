@@ -858,7 +858,7 @@ router.post('/addCaseWorker', (req, res) => {
 
 router.post('/api/v1/upload', upload.single('image'), async (req, res) => {
   /* This will be th 8e response sent from the backend to the frontend */
-  // console.log('req is =>',req)
+   console.log('req is =>',req)
   // console.log('res is =>',res)
   res.send({ image: req.file });
 });
