@@ -84,6 +84,7 @@ module.exports = async function (insertHealthTrackerObj,updateHealthTrackerObj,v
     if(updateHealthTrackerObj.length!=0){
         const result2 = await updateHealthTracker(updateHealthTrackerObj,veteranId);
     }
+    await new Promise(resolve => setTimeout(resolve, 1000));
     const result3 = await getHealthTracker(veteranId);
     return result3.rows;
   } catch (error) {
