@@ -669,6 +669,7 @@ router.put('/updateTreatmentPlanDetails/save/:veteran_id', (req, res) => {
 router.post('/transportationForm/saveTransportationRequest/', (req, res) => {
   const requestObj = [
     req.body.veteran_id,
+    req.body.contactNumber,
     req.body.appointmentDate,
     req.body.time,
     req.body.reason,
