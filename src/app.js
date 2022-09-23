@@ -15,6 +15,7 @@ const saveTreatmentPlan = require('./treatmentPlan-handler/treatmentIssue.js');
 const veteranEventsQueries = require('./veteranEvents-handler/veteranEvent.js');
 const iaFormsQueries = require('./initialAssessmentFormsHandler/iaForm.js');
 const iaFormsQueriesp2 = require('./initialAssessmentFormsHandler/iaFormP2');
+const iaFormP1Post = require('./initialAssessmentFormsHandler/iaFormP1');
 const secrets = require('./secret');
 const healthTrackerQueries = require('./healthTrackerHandler/healthTracker.js');
 
@@ -879,8 +880,9 @@ router.get('/initialAssessment/page-1/:veteranId', (req, res) => {
     });
 });
 // ia forms api testing page1
-router.post('/initialAssessment/page-1', (req, res) => {
+router.post('/initialAssessment/page-1', async (req, res) => {
   const personalDetails = [
+    req.body.personalDetails.veteranID,
     req.body.personalDetails.addressLine2,
     req.body.personalDetails.addressMain,
     req.body.personalDetails.age,
@@ -905,25 +907,25 @@ router.post('/initialAssessment/page-1', (req, res) => {
     req.body.personalDetails.zipcode
   ];
 
-  const benefits = [
-    req.body.benefits.receivingBenefits,
-    req.body.benefits.applyingBenefits
-  ];
-
   const income = [
+    req.body.personalDetails.veteranID,
     req.body.incomeAndResources.bankAccount,
     req.body.incomeAndResources.bankName,
     req.body.incomeAndResources.cashBenefits,
     req.body.incomeAndResources.directDeposit,
     req.body.incomeAndResources.income,
-    req.body.incomeAndResources.medicaid,
+    // req.body.incomeAndResources.medicaid,
+    // req.body.incomeAndResources.vaCoverage,
     req.body.incomeAndResources.nonCashBenefits,
     req.body.incomeAndResources.otherAssets,
-    req.body.incomeAndResources.otherBenefits,
-    req.body.incomeAndResources.type
+    // req.body.incomeAndResources.otherBenefits,
+    req.body.incomeAndResources.type,
+    req.body.incomeAndResources.receivingBenefits,
+    req.body.incomeAndResources.applyingBenefits
   ];
 
   const social = [
+    req.body.personalDetails.veteranID,
     req.body.socialAndFamilyHistory.childhood,
     req.body.socialAndFamilyHistory.children,
     req.body.socialAndFamilyHistory.currentMaritalStatus,
@@ -966,8 +968,9 @@ router.post('/initialAssessment/page-1', (req, res) => {
   //   res.status(501).json({ responseStatus: 'FAILURE', data: null, error: err });
   // })
 
+  const result = await iaFormP1Post(personalDetails, income);
+  res.status(200).json(result);
   console.log('Personal Details', personalDetails);
-  console.log('Benefits', benefits);
   console.log('Income and Resources', income);
   console.log('Social and Family', social);
 });
@@ -1043,7 +1046,6 @@ router.post('/initialAssessment/page-2', async (req, res) => {
 
   const result = await iaFormsQueriesp2(edu, mental, social);
   res.status(200).json(result);
-
   console.log('res', result);
   console.log('Education and Employment History', edu);
   console.log('Mental Health History', mental);
