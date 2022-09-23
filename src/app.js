@@ -15,6 +15,7 @@ const saveTreatmentPlan = require('./treatmentPlan-handler/treatmentIssue.js');
 const veteranEventsQueries = require('./veteranEvents-handler/veteranEvent.js');
 const iaFormsQueries = require('./initialAssessmentFormsHandler/iaForm.js');
 const secrets = require('./secret');
+const healthTrackerQueries = require('./healthTrackerHandler/healthTracker.js');
 
 const { Pool } = require('pg');
 const { QUERIES } = require('./constants');
@@ -119,8 +120,8 @@ router.get('/calendarEvents', (req, res) => {
   res.json(users);
 });
 
-router.post('/postCalendarEvents',(req,res)=>{
-  const requestObj =[
+router.post('/postCalendarEvents', (req, res) => {
+  const requestObj = [
 
     req.body.case_worker_id,
     req.body.participants,
@@ -482,7 +483,7 @@ router.post('/progressNotes/addGoal/:veteranId', (req, res) => {
 
 // Endpoint 9
 router.put('/progressNotes/updateGoalStatus/:veteranId', (req, res) => {
-  const requestObj = [req.params.veteranId, req.body.goalTitle, req.body.goalState];
+  const requestObj = [req.params.veteranId, req.body.goalId, req.body.goalState];
   pool
     .query(QUERIES.ProgressNotes.UpdateGoalStatus, requestObj)
     .then((resp) => {
@@ -668,6 +669,7 @@ router.put('/updateTreatmentPlanDetails/save/:veteran_id', (req, res) => {
 router.post('/transportationForm/saveTransportationRequest/', (req, res) => {
   const requestObj = [
     req.body.veteran_id,
+    req.body.contactNumber,
     req.body.appointmentDate,
     req.body.time,
     req.body.reason,
@@ -739,67 +741,8 @@ router.post('/transportationForm/approveTransportationRequests', (req, res) => {
     .catch((err) => {
       console.error('Error exectuting query', err.stack);
       res.status(501).json({ responseStatus: 'FAILURE', error: err });
-
     });
 });
-
-// Endpoint
-router.post(
-  '/healthTracker/saveHealthTrackerRequest/:veteranId',
-  (req, res) => {
-     const trackerReq = req.body;
-    for (let i = 0; i < trackerReq.length; i++) {
-      const requestParams = req.body[i];
-        const requestObj = [
-          req.params.veteranId,
-          requestParams.trackingSubject,
-          requestParams.date,
-          requestParams.measurement,
-          requestParams.comments,
-          requestParams.currentTracker
-        ];
-        console.log("insert",requestObj)
-       pool
-          .query(QUERIES.HealthTracker.saveHealthTrackerRequest, requestObj)
-          .then(() => {
-            console.log('sucess on endpoint SaveHealthTracker');
-          })
-          .catch((err) =>{ 
-            console.error('Error executing query', err.stack);
-        });
-      }
-      res.status(200).json({ responseStatus: 'SUCCESS', data: 'Successfully saved Health Tracker request', error: false });
-  }
-);
-
-// Endpoint
-router.post(
-  '/healthTracker/updateHealthTrackerRequest/:veteranId',
-  (req, res) => {
-     const trackerReq = req.body;
-    for (let i = 0; i < trackerReq.length; i++) {
-    const requestParams = req.body[i];
-     const requestObj = [
-      req.params.veteranId,
-      requestParams[0].tracking_subject,
-      requestParams[0].note_date,
-      requestParams[0].measurement,
-      requestParams[0].tracking_comments,
-      requestParams[0].current_tracker
-    ];
-    console.log("update",requestObj)
-       pool
-          .query(QUERIES.HealthTracker.updateHealthTrackerRequest, requestObj)
-          .then(() => {
-            console.log('sucess on endpoint UpdateHealthTracker');
-          })
-          .catch((err) => { 
-            console.error('Error executing query', err.stack);
-        });
-        }
-        res.status(200).json({ responseStatus: 'SUCCESS', data: 'Successfully updated Health Tracker request', error: false });
-  }
-);
 
 // Endpoint
 router.get('/healthTracker/getHealthTracker/:veteranId', (req, res) => {
@@ -810,10 +753,27 @@ router.get('/healthTracker/getHealthTracker/:veteranId', (req, res) => {
       console.log('Sucess on get HealthTracker');
       res.status(200).json({ responseStatus: 'SUCCESS', data: resp.rows, error: false });
     })
-    .catch((err) =>{ 
-    console.error('Error executing query', err.stack);
-    res.status(501).json({ responseStatus: 'FAILURE', data: null, error: err });});
+    .catch((err) => {
+      console.error('Error executing query', err.stack);
+      res.status(501).json({ responseStatus: 'FAILURE', data: null, error: err });
+    });
 });
+
+// Endpoint
+router.post(
+  '/healthTracker/updateHealthTracker/:veteranId',
+  async (req, res) => {
+     const trackerReq = req.body;
+     let healthTrackerResponse = await healthTrackerQueries(trackerReq[0],trackerReq[1],req.params.veteranId)
+     .then((response)=>{
+      res.status(200).json({ responseStatus: 'SUCCESS', data: response, error: false })
+     }).catch((err) => {
+        console.error('Error executing query', err.stack);
+        res.status(501).json({ responseStatus: 'FAILURE', data: null, error: err });
+      });
+    
+  }
+);
 
 // Endpoint
 router.get('/getVeteranId/:userName', (req, res) => {
@@ -905,7 +865,7 @@ router.post('/addCaseWorker', (req, res) => {
 
 router.post('/api/v1/upload', upload.single('image'), async (req, res) => {
   /* This will be th 8e response sent from the backend to the frontend */
-  // console.log('req is =>',req)
+   console.log('req is =>',req)
   // console.log('res is =>',res)
   res.send({ image: req.file });
 });
@@ -925,6 +885,19 @@ router.get('/getInitialAssessment/page-1/:veteranId', (req, res) => {
     });
 });
 
+router.get('/initialAssessment/page-1/:veteranId', (req, res) => {
+  const vet = req.params.veteranId;
+  pool
+    .query(QUERIES.InitialAssessment.getPage1, [vet])
+    .then((resp) => {
+      console.log('success on endpoint get ia page 1');
+      res.json(resp.rows);
+    })
+    .catch((err) => {
+      console.error('Error exectuting query', err.stack);
+      res.status(501).json({ err });
+    });
+});
 // ia forms api testing page1
 router.post('/initialAssessment/page-1', (req, res) => {
   const personalDetails = [
@@ -1124,37 +1097,39 @@ router.post('/initialAssessment/page-3', (req, res) => {
 // ia forms api testing page4
 router.post('/initialAssessment/page-4', async (req, res) => {
   const legal = [
-    req.body.legalHistoryOrIssues.arrestedReason,
+    // req.body.legalHistoryOrIssues.arrestedReason,
     req.body.legalHistoryOrIssues.charges,
-    req.body.legalHistoryOrIssues.convictedReason,
-    req.body.legalHistoryOrIssues.currentPendingCharges,
-    req.body.legalHistoryOrIssues.everArrested,
-    req.body.legalHistoryOrIssues.everConvicted,
-    req.body.legalHistoryOrIssues.officerAddress,
-    req.body.legalHistoryOrIssues.officerName,
-    req.body.legalHistoryOrIssues.onProbationOrParole,
-    req.body.legalHistoryOrIssues.outstandingWarrants,
-    req.body.legalHistoryOrIssues.probationOrParoleTerms,
-    req.body.legalHistoryOrIssues.warrantReason
+    req.body.legalHistoryOrIssues.veteranId
+    // req.body.legalHistoryOrIssues.convictedReason,
+    // req.body.legalHistoryOrIssues.currentPendingCharges,
+    // req.body.legalHistoryOrIssues.everArrested,
+    // req.body.legalHistoryOrIssues.everConvicted,
+    // req.body.legalHistoryOrIssues.officerAddress,
+    // req.body.legalHistoryOrIssues.officerName,
+    // req.body.legalHistoryOrIssues.onProbationOrParole,
+    // req.body.legalHistoryOrIssues.outstandingWarrants,
+    // req.body.legalHistoryOrIssues.probationOrParoleTerms,
+    // req.body.legalHistoryOrIssues.warrantReason
   ];
 
   const subAbu = [
     req.body.substanceAbuseHistory.currentAlcoholIntakeFreq,
-    req.body.substanceAbuseHistory.currentCaffeineIntakeFreq,
-    req.body.substanceAbuseHistory.currentDrugAlcoholTreatment,
-    req.body.substanceAbuseHistory.currentDrugIntakeFreq,
-    req.body.substanceAbuseHistory.currentTobaccoIntakeFreq,
-    req.body.substanceAbuseHistory.currentlyConsumesAlcohol,
-    req.body.substanceAbuseHistory.currentlyConsumesCaffeine,
-    req.body.substanceAbuseHistory.currentlyConsumesDrugs,
-    req.body.substanceAbuseHistory.currentlyConsumesTobacco,
-    req.body.substanceAbuseHistory.histOfAlcohol,
-    req.body.substanceAbuseHistory.histOfCaffeine,
-    req.body.substanceAbuseHistory.histOfDrugs,
-    req.body.substanceAbuseHistory.histOfTobacco,
-    req.body.substanceAbuseHistory.lastUseOfDrugAlcohol,
-    req.body.substanceAbuseHistory.treatmentPrograms,
-    req.body.substanceAbuseHistory.withdrawalHistory
+    req.body.substanceAbuseHistory.veteranId
+    // req.body.substanceAbuseHistory.currentCaffeineIntakeFreq,
+    // req.body.substanceAbuseHistory.currentDrugAlcoholTreatment,
+    // req.body.substanceAbuseHistory.currentDrugIntakeFreq,
+    // req.body.substanceAbuseHistory.currentTobaccoIntakeFreq,
+    // req.body.substanceAbuseHistory.currentlyConsumesAlcohol,
+    // req.body.substanceAbuseHistory.currentlyConsumesCaffeine,
+    // req.body.substanceAbuseHistory.currentlyConsumesDrugs,
+    // req.body.substanceAbuseHistory.currentlyConsumesTobacco,
+    // req.body.substanceAbuseHistory.histOfAlcohol,
+    // req.body.substanceAbuseHistory.histOfCaffeine,
+    // req.body.substanceAbuseHistory.histOfDrugs,
+    // req.body.substanceAbuseHistory.histOfTobacco,
+    // req.body.substanceAbuseHistory.lastUseOfDrugAlcohol,
+    // req.body.substanceAbuseHistory.treatmentPrograms,
+    // req.body.substanceAbuseHistory.withdrawalHistory
   ];
   // const vet = req.params.veteranID;
   const resultssss = await iaFormsQueries(legal, subAbu);
