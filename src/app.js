@@ -670,6 +670,7 @@ router.put('/updateTreatmentPlanDetails/save/:veteran_id', (req, res) => {
 router.post('/transportationForm/saveTransportationRequest/', (req, res) => {
   const requestObj = [
     req.body.veteran_id,
+    req.body.contactNumber,
     req.body.appointmentDate,
     req.body.time,
     req.body.reason,
@@ -763,9 +764,15 @@ router.get('/healthTracker/getHealthTracker/:veteranId', (req, res) => {
 router.post(
   '/healthTracker/updateHealthTracker/:veteranId',
   async (req, res) => {
-    const trackerReq = req.body;
-    const healthTrackerDetails = await healthTrackerQueries(trackerReq[0], trackerReq[1], req.params.veteranId);
-    res.status(200).json({ responseStatus: 'SUCCESS', data: healthTrackerDetails, error: false });
+     const trackerReq = req.body;
+     let healthTrackerResponse = await healthTrackerQueries(trackerReq[0],trackerReq[1],req.params.veteranId)
+     .then((response)=>{
+      res.status(200).json({ responseStatus: 'SUCCESS', data: response, error: false })
+     }).catch((err) => {
+        console.error('Error executing query', err.stack);
+        res.status(501).json({ responseStatus: 'FAILURE', data: null, error: err });
+      });
+    
   }
 );
 
@@ -859,7 +866,7 @@ router.post('/addCaseWorker', (req, res) => {
 
 router.post('/api/v1/upload', upload.single('image'), async (req, res) => {
   /* This will be th 8e response sent from the backend to the frontend */
-  // console.log('req is =>',req)
+   console.log('req is =>',req)
   // console.log('res is =>',res)
   res.send({ image: req.file });
 });
