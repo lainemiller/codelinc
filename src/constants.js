@@ -73,7 +73,7 @@ module.exports = Object.freeze({
       GetTreatmentPlanDetails:
       'SELECT vp.first_name,vp.last_name,vp.record_number,vp.date_of_birth,vp.intake_date,vp.hmis_id,vi.diagnosis,vi.supports,vi.strengths,vi.notes from codelinc.veteran_pi vp FULL OUTER JOIN codelinc.veteran_initial_treatment vi ON vp.veteran_id=vi.veteran_id where vp.veteran_id=$1',
       GetAllDetails:
-      'SELECT vp.veteran_id,vp.first_name,vp.last_name,vp.address_main,vp.date_of_birth,vi.intake_date,vp.hmis_id,vp.primary_phone,vi.diagnosis,vi.supports,vi.strengths,vi.notes from codelinc.veteran_pi vp FULL OUTER JOIN codelinc.veteran_initial_treatment vi ON vp.veteran_id=vi.veteran_id ',
+      'SELECT veteran_id,first_name,last_name,address_main,date_of_birth from codelinc.veteran_pi ',
       SaveTreatmentPlanDetails:
       'INSERT INTO codelinc.veteran_initial_treatment(veteran_id,diagnosis,supports,strengths,notes) VALUES ($1, $2, $3, $4, $5)',
       UpdateTreatmentPlanDetails:
