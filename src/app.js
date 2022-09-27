@@ -8,7 +8,8 @@ const compression = require('compression');
 const ejs = require('ejs').__express;
 const app = express();
 const router = express.Router();
-const upload = require('./imageUploadService/uploadImage.js');
+const multer = require('multer');
+const uploadToS3 = require('./imageUploadService/uploadImage.js');
 
 // const constants = require('./constants')
 const sequentialQueries = require('./assessment-handler/assessment.js');
@@ -865,11 +866,30 @@ router.post('/addCaseWorker', (req, res) => {
     });
 });
 
-router.post('/api/v1/upload', upload.single('image'), async (req, res) => {
-  /* This will be th 8e response sent from the backend to the frontend */
-  console.log('req is =>', req);
-  // console.log('res is =>',res)
-  res.send({ image: req.file });
+const upload = multer({
+  limits: 1024 * 5,
+  fileFilter: function (req, file, done) {
+    if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png' || file.mimetype === 'image/jpg') {
+      done(null, true);
+    } else {
+      done(new Error('Wrong file type, only upload JPEG and/or PNG !'),
+        false);
+    }
+  }
+});
+
+router.post('/api/v2/upload', upload.single('image'), async (req, res) => {
+  console.log('file data', req.file);
+  if (req.file) {
+    uploadToS3(req.file.buffer, req.file.originalname).then((result) => {
+      return res.json({
+        msg: 'uploaded',
+        imageUrl: result.location
+      });
+    }).catch((err) => {
+      console.log(err);
+    });
+  }
 });
 
 // get api for ia page 1
