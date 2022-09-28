@@ -1094,6 +1094,20 @@ router.post('/initialAssessment/page-2', async (req, res) => {
   console.log('Mental Health History', mental);
 });
 
+// get api for ia page 3
+router.get('/initialAssessment/page-3/:veteranId', (req, res) => {
+  const vet = req.params.veteranId;
+  pool
+    .query(QUERIES.InitialAssessment.getPage3, [vet])
+    .then((resp) => {
+      console.log('success on endpoint get ia page 3');
+      res.status(200).json(resp.rows);
+    })
+    .catch((err) => {
+      console.error('Error exectuting query', err.stack);
+      res.status(501).json({ err });
+    });
+});
 // ia forms api testing page3
 router.post('/initialAssessment/page-3', (req, res) => {
   const medInfo = [
