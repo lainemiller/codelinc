@@ -1132,18 +1132,48 @@ router.post('/initialAssessment/page-4', async (req, res) => {
   console.log('res', resultssss);
 });
 
+// get api for ia page 5
+router.get('/initialAssessment/page-5/:veteranId', (req, res) => {
+  const vet = req.params.veteranId;
+  pool
+    .query(QUERIES.InitialAssessment.page5, [vet])
+    .then((resp) => {
+      console.log('success on endpoint get ia page 5');
+      res.json(resp.rows);
+    })
+    .catch((err) => {
+      console.error('Error exectuting query', err.stack);
+      res.status(501).json({ err });
+    });
+});
+
 // ia forms api testing page5
-router.post('/initialAssessment/page-5', (req, res) => {
+router.post('/saveInitialAssessment/page-5/', (req, res) => {
+  //const vet = req.params.veteranId;
   const preliminary = [
+    req.body.preliminaryTreatmentGoals.veteranId,
     req.body.preliminaryTreatmentGoals.additionalComments,
-    req.body.preliminaryTreatmentGoals.hppenedInMyLifeLastYear,
+   // req.body.preliminaryTreatmentGoals.hppenedInMyLifeLastYear,
     req.body.preliminaryTreatmentGoals.longTermGoals,
-    req.body.preliminaryTreatmentGoals.needs,
-    req.body.preliminaryTreatmentGoals.preferences,
+   // req.body.preliminaryTreatmentGoals.needs,
+   // req.body.preliminaryTreatmentGoals.preferences,
     req.body.preliminaryTreatmentGoals.shortTermGoals,
     req.body.preliminaryTreatmentGoals.strengthAndResources,
-    req.body.preliminaryTreatmentGoals.supports
+    req.body.preliminaryTreatmentGoals.supports,
+   523
   ];
+  
+  pool
+    .query(QUERIES.InitialAssessment.updatePage5)
+    .then((resp) => {
+      console.log('success on endpoint save ia page 5');
+      res.json(resp.rows);
+    })
+    .catch((err) => {
+      console.error('Error exectuting query', err.stack);
+      res.status(501).json({ err });
+    });
+
   // pool.query(QUERIES.UiLayout.addCaseWorker,requestObject)
   // .then(()=>{
   //   console.log('Sucess on Add CaseWorker');

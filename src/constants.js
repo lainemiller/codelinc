@@ -104,9 +104,10 @@ module.exports = Object.freeze({
       page1: 'select first_name from codelinc.veteran_pi where veteran_id = $1',
       page2: '',
       page3: '',
+      page5:'select vtp.goal_plan_short_term, vtp.goal_plan_long_term, vtg.goal_title, vi.supports, vi.notes, vi.strengths from codelinc.veteran_initial_treatment vi inner join codelinc.veteran_treatment_goals vtg on vi.veteran_id= vtg.veteran_id inner join codelinc.veteran_treatment_plan vtp on vtg.goal_id=vtp.goal_id where vi.veteran_id=$1',
+      updatePage5:'BEGIN TRANSACTION; UPDATE codelinc.veteran_initial_treatment SET supports  = $6, strengths=$5, notes= $2 where veteran_id= $1; UPDATE codelinc.veteran_treatment_plan SET goal_plan_short_term= $4, goal_plan_long_term=$3 WHERE goal_id=$7; COMMIT;',
       // page4SubAbu: 'UPDATE codelinc.veteran_substances SET alcohol_history=$10, currently_consumes_alcohol=$6, current_alcohol_intake_freq=$1, drug_use_history=$12, currently_uses_drugs=$8, current_drug_use_freq=$4, drug_alcohol_last_use=$14, current_drug_alcohol_treatment=$3, withdrawal_history=$16, tobacco_use_history=$13 , currently_uses_tobacco=$9, current_tobacco_use_freq=$5, caffeine_use_history=$11, currently_uses_caffeine=$7, current_caffeine_use_freq=$2, treatment_programs=$15 where veteran_id  = 4;',
       // page4legal: 'UPDATE codelinc.veteran_legal_history  SET ever_arrested = $5, arrest_reason = $1, ever_convicted = $6, conviction_reason = $3, current_pending_charges = $4,charges={$2}, outstanding_warrants=$10, warrant_reason=$12, on_probation_or_parole=$9, officer_name=$8, officer_address=$7, probation_or_parole_terms=$11 where veteran_id = 4',
-      page5: '',
       page4SubAbu: 'UPDATE codelinc.veteran_substances SET current_alcohol_intake_freq=$1 where veteran_id=$2',
       page4legal: 'UPDATE codelinc.veteran_legal_history SET charges=array_append(charges, $1) where veteran_id=$2',
       // getPage1: 'select first_name, last_name, middle_initial, nick_name, date_of_birth, place_of_birth, ssn, gender, marital_status, race, primary_phone, primary_language, address_main, address_line_2, city, county, zip_code, contact_person, contact_person_relationship, contact_person_address, contact_person_phone, income, income_type from codelinc.veteran_pi vpi natural join codelinc.veteran_finance vfi where vpi.veteran_id = $1'
