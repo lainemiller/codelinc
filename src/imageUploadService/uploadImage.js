@@ -6,9 +6,6 @@ const s3 = new aws.S3({
   region: 'us-east-1'
 });
 
-// eslint-disable-next-line no-undef
-module.exports = upload;
-
 const uploadToS3 = (imageBody, fileName) => {
   return new Promise((resolve, reject) => {
     const uploadParams = {
