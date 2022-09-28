@@ -41,12 +41,45 @@ incomeResc = (personalDetails) => {
   });
 };
 
-module.exports = async function (personalDetails, income) {
+healthInsurance = (personalDetails) => {
+  return new Promise((resolve, reject) => {
+    pool.query(
+      QUERIES.InitialAssessment.postIAPage1HI,
+      personalDetails,
+      (error, results) => {
+        if (error) {
+          return reject(error);
+        }
+        return resolve(results);
+      }
+    );
+  });
+};
+FamilyHist = (hist) => {
+  return new Promise((resolve, reject) => {
+    pool.query(
+      QUERIES.InitialAssessment.postIAPage1FH,
+      hist,
+      (error, results) => {
+        if (error) {
+          return reject(error);
+        }
+        return resolve(results);
+      }
+    );
+  });
+};
+
+module.exports = async function (personalDetails, income, insu, hist) {
   try {
     const PI = await personalInfo(personalDetails);
     const IR = await incomeResc(income);
+    const HI = await healthInsurance(insu);
+    const FH = await FamilyHist(hist);
     console.log('leg', PI);
     console.log(IR);
+    console.log(HI);
+    console.log(FH);
   } catch (error) {
     console.log(error);
   }
