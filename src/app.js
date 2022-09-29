@@ -1160,7 +1160,6 @@ router.post('/saveInitialAssessment/page-5/', (req, res) => {
     req.body.preliminaryTreatmentGoals.shortTermGoals,
     req.body.preliminaryTreatmentGoals.strengthAndResources,
     req.body.preliminaryTreatmentGoals.supports,
-   523
   ];
   
   pool
