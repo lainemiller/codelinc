@@ -879,58 +879,56 @@ const upload = multer({
   }
 });
 
-//upload Veteran image end point
+// upload Veteran image end point
 router.post('/uploadImage/:loginId', upload.array('image'), async (req, res) => {
-   const imageFile=req.files[0];
-   const imageName=req.body.imageName;
-   const userGroup=req.body.userGroup;
-   console.log("imageName",imageName)
-   console.log("userGroup",userGroup)
-   console.log("imageFile",imageFile)
-   const requestObj=[
+  const imageFile = req.files[0];
+  const imageName = req.body.imageName;
+  const userGroup = req.body.userGroup;
+  console.log('imageName', imageName);
+  console.log('userGroup', userGroup);
+  console.log('imageFile', imageFile);
+  const requestObj = [
     req.params.loginId,
     imageName
   ];
-   if(imageFile){
-    profileImage.uploadToS3(imageFile.buffer,imageName).then(()=>{
-      if(userGroup.toUpperCase()==='VETERAN'){
-      pool
-      .query(QUERIES.UiLayout.updateVeteranPhotoName, requestObj).then(()=>{
-        res.status(200).json({ responseStatus: 'SUCCESS', data:'Veteran Profile image update sucessfully' , error: false });
+  if (imageFile) {
+    profileImage.uploadToS3(imageFile.buffer, imageName).then(() => {
+      if (userGroup.toUpperCase() === 'VETERAN') {
+        pool
+          .query(QUERIES.UiLayout.updateVeteranPhotoName, requestObj).then(() => {
+            res.status(200).json({ responseStatus: 'SUCCESS', data: 'Veteran Profile image update sucessfully', error: false });
+          }
+          ).catch((err) => {
+            console.log(err);
+            res.status(501).json({ responseStatus: 'FAILURE', data: null, error: err });
+          });
+      } else if (userGroup.toUpperCase() === 'CASEWORKER') {
+        pool
+          .query(QUERIES.UiLayout.updateCaseWorkerPhotoName, requestObj).then(() => {
+            res.status(200).json({ responseStatus: 'SUCCESS', data: 'Case Worker Profile image update sucessfully', error: false });
+          }
+          ).catch((err) => {
+            console.log(err);
+            res.status(501).json({ responseStatus: 'FAILURE', data: null, error: err });
+          });
       }
-      ).catch((err)=>{
-        console.log(err)
-        res.status(501).json({ responseStatus: 'FAILURE', data: null, error: err });
-      })
-    }else if(userGroup.toUpperCase()==='CASEWORKER'){
-      pool
-      .query(QUERIES.UiLayout.updateCaseWorkerPhotoName, requestObj).then(()=>{
-        res.status(200).json({ responseStatus: 'SUCCESS', data:'Case Worker Profile image update sucessfully' , error: false });
-      }
-      ).catch((err)=>{
-        console.log(err)
-        res.status(501).json({ responseStatus: 'FAILURE', data: null, error: err });
-      })
-    }
-       
-    }).catch((err)=>{
-      console.log(err)
+    }).catch((err) => {
+      console.log(err);
       res.status(501).json({ responseStatus: 'FAILURE', data: null, error: err });
-    })
-   }
+    });
+  }
 });
 
-//get image end point
-router.get('/profileImage/:imageName',async (req, res) => {
-    profileImage.getImageFromS3(req.params.imageName).then((response)=>{
-      res.status(200).json({ responseStatus: 'SUCCESS', data:response.Body.toString('base64') , error: false });
-    }).catch((err)=>{
-      console.log(err)
-      res.status(501).json({ responseStatus: 'FAILURE', data: null, error: err });
-    })
-   }
+// get image end point
+router.get('/profileImage/:imageName', async (req, res) => {
+  profileImage.getImageFromS3(req.params.imageName).then((response) => {
+    res.status(200).json({ responseStatus: 'SUCCESS', data: response.Body.toString('base64'), error: false });
+  }).catch((err) => {
+    console.log(err);
+    res.status(501).json({ responseStatus: 'FAILURE', data: null, error: err });
+  });
+}
 );
-
 
 // get api for ia page 1
 router.get('/initialAssessment/page-1/:veteranId', (req, res) => {
@@ -1299,19 +1297,19 @@ router.get('/initialAssessment/page-5/:veteranId', (req, res) => {
 
 // ia forms api testing page5
 router.post('/saveInitialAssessment/page-5/', (req, res) => {
-  //const vet = req.params.veteranId;
+  // const vet = req.params.veteranId;
   const preliminary = [
     req.body.preliminaryTreatmentGoals.veteranId,
     req.body.preliminaryTreatmentGoals.additionalComments,
-   // req.body.preliminaryTreatmentGoals.hppenedInMyLifeLastYear,
+    // req.body.preliminaryTreatmentGoals.hppenedInMyLifeLastYear,
     req.body.preliminaryTreatmentGoals.longTermGoals,
-   // req.body.preliminaryTreatmentGoals.needs,
-   // req.body.preliminaryTreatmentGoals.preferences,
+    // req.body.preliminaryTreatmentGoals.needs,
+    // req.body.preliminaryTreatmentGoals.preferences,
     req.body.preliminaryTreatmentGoals.shortTermGoals,
     req.body.preliminaryTreatmentGoals.strengthAndResources,
-    req.body.preliminaryTreatmentGoals.supports,
+    req.body.preliminaryTreatmentGoals.supports
   ];
-  
+
   pool
     .query(QUERIES.InitialAssessment.updatePage5)
     .then((resp) => {
