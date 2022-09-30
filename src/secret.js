@@ -4,5 +4,8 @@ module.exports = Object.freeze({
   USER: 'codelinc_api',
   PASSWORD: 'sjr930Qhy',
   DATABASE: 'codelinc',
-  PORT: '5432'
+  PORT: '5432',
+  SECRETACCESSKEY: '6v/hXrJj3YWllnobXYJxyNA7UVIy5P5MGp+KvAl3',
+  ACCESSKEYID: 'AKIASX4D4UGUWXQMLUUC',
+  BUCKET: 'servant-center-profileph-bucket'
 });
