@@ -1249,7 +1249,7 @@ router.post('/initialAssessment/page-4', async (req, res) => {
 router.get('/initialAssessment/page-5/:veteranId', (req, res) => {
   const vet = req.params.veteranId;
   pool
-    .query(QUERIES.InitialAssessment.page5, [vet])
+    .query(QUERIES.InitialAssessment.getpage5, [vet])
     .then((resp) => {
       console.log('success on endpoint get ia page 5');
       res.json(resp.rows);
