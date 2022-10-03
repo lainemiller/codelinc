@@ -1180,7 +1180,9 @@ router.post('/initialAssessment/page-3', async (req, res) => {
     req.body.mentalStatusAssessment.remoteMemory,
     req.body.mentalStatusAssessment.answeredByClient,
     req.body.mentalStatusAssessment.observedByInterviewer,
-    req.body.mentalStatusAssessment.thoughtForum
+    req.body.mentalStatusAssessment.thoughtForum,
+    req.body.mentalStatusAssessment.recentMemoComments,
+    req.body.mentalStatusAssessment.remoteMemoComments
   ];
 
   // const ideation = [
