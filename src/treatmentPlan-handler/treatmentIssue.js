@@ -50,7 +50,7 @@ const savetreatmentIssues = async (req) => {
   // SubstanceUse
   for (k = 0; k < 3; k++) {
     let requestObjIssuesSU = null;
-    const goal_type = 'other';
+    const goal_type = 'substance use';
     const goals = treatmentIssues.substanceUse[k].goals;
     const plans = treatmentIssues.substanceUse[k].plans;
     const strategies = treatmentIssues.substanceUse[k].strategies;
@@ -71,7 +71,7 @@ const savetreatmentIssues = async (req) => {
   // Housing
   for (l = 0; l < 3; l++) {
     let requestObjIssuesHO = null;
-    const goal_type = 'other';
+    const goal_type = 'housing';
     const goals = treatmentIssues.housing[l].goals;
     const plans = treatmentIssues.housing[l].plans;
     const strategies = treatmentIssues.housing[l].strategies;
@@ -155,7 +155,7 @@ const savetreatmentIssues = async (req) => {
   // Benefits/Medicaid/Snap
   for (p = 0; p < 3; p++) {
     let requestObjIssuesB = null;
-    const goal_type = 'other';
+    const goal_type = 'benefits';
     const goals = treatmentIssues.benefits[p].goals;
     const plans = treatmentIssues.benefits[p].plans;
     const strategies = treatmentIssues.benefits[p].strategies;
