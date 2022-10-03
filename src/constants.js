@@ -73,11 +73,13 @@ module.exports = Object.freeze({
     },
     TreatmentPlan: {
       GetTreatmentPlanDetails:
-      'SELECT vp.first_name,vp.last_name,vp.record_number,vp.date_of_birth,vp.intake_date,vp.hmis_id,vi.diagnosis,vi.supports,vi.strengths,vi.notes from codelinc.veteran_pi vp FULL OUTER JOIN codelinc.veteran_initial_treatment vi ON vp.veteran_id=vi.veteran_id where vp.veteran_id=$1',
+      'SELECT vp.first_name,vp.last_name,vp.record_number,vp.address_main,vp.date_of_birth,vp.intake_date,vp.hmis_id,vi.diagnosis,vi.supports,vi.strengths,vi.notes from codelinc.veteran_pi vp FULL OUTER JOIN codelinc.veteran_initial_treatment vi ON vp.veteran_id=vi.veteran_id where vp.veteran_id=$1',
       GetAllDetails:
       'SELECT veteran_id,first_name,last_name,address_main,date_of_birth from codelinc.veteran_pi ',
+      GetTreatmentIssues:
+      'SELECT vp.first_name,vp.last_name,vp.record_number,vp.address_main,vp.date_of_birth,vp.intake_date,vp.hmis_id,vi.diagnosis,vi.supports,vi.strengths,vi.notes,vtg.goal_id,vtg.goal_type,vtg.goal_title as goal,vtp.goal_plan_short_term as plan,vtp.goal_plan_long_term as strategy,vtg.target_date as targetDate from codelinc.veteran_pi vp FULL OUTER JOIN codelinc.veteran_initial_treatment vi ON vp.veteran_id=vi.veteran_id INNER JOIN codelinc.veteran_treatment_goals vtg ON vi.veteran_id=vtg.veteran_id INNER JOIN codelinc.veteran_treatment_plan vtp on vtg.goal_id = vtp.goal_id where vp.veteran_id = $1 order by goal_id asc',
       SaveTreatmentPlanDetails:
-      'INSERT INTO codelinc.veteran_initial_treatment(veteran_id,diagnosis,supports,strengths,notes) VALUES ($1, $2, $3, $4, $5)',
+      'INSERT INTO codelinc.veteran_initial_treatment(veteran_id,diagnosis,supports,strengths,notes) VALUES ($1, $2, $3, $4, $5) on conflict(veteran_id) do update SET diagnosis = $2, supports = $3, strengths= $4 ,notes= $5',
       UpdateTreatmentPlanDetails:
       'UPDATE codelinc.veteran_initial_treatment SET diagnosis = $2, supports = $3, strengths= $4 ,notes= $5 where veteran_id = $1'
     },

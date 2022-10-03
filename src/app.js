@@ -649,6 +649,21 @@ router.post('/postTreatmentPlanDetails/save/:veteran_id', async (req, res) => {
 });
 
 // Endpoint 15
+router.get('/residentSearch/getTreatmentPlanDetails/:veteran_id', (req, res) => {
+  const params = req.params.veteran_id;
+  pool
+    .query(QUERIES.TreatmentPlan.GetTreatmentIssues, [params])
+    .then((resp) => {
+      res.status(200).json({ responseStatus: 'SUCCESS', data: resp.rows, error: false });
+      console.log('success on endpoint GetCWTreatmentPlan');
+    })
+    .catch(err => {
+      res.status(501).json({ responseStatus: 'FAILURE', data: null, error: err });
+      console.error('Error executing query', err.stack);
+    });
+});
+
+// Endpoint 15.5
 // Case-Worker UpdateTreatmentPlan
 router.put('/updateTreatmentPlanDetails/save/:veteran_id', (req, res) => {
   const requestObj = [
