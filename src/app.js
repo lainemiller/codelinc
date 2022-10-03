@@ -18,6 +18,7 @@ const veteranEventsQueries = require('./veteranEvents-handler/veteranEvent.js');
 const iaFormsQueries = require('./initialAssessmentFormsHandler/iaForm.js');
 const iaFormsQueriesp2 = require('./initialAssessmentFormsHandler/iaFormP2');
 const iaFormP1Post = require('./initialAssessmentFormsHandler/iaFormP1');
+const iaFormP3Post = require('./initialAssessmentFormsHandler/iaFormP3.js');
 const secrets = require('./secret');
 const healthTrackerQueries = require('./healthTrackerHandler/healthTracker.js');
 
@@ -893,58 +894,56 @@ const upload = multer({
   }
 });
 
-//upload Veteran image end point
+// upload Veteran image end point
 router.post('/uploadImage/:loginId', upload.array('image'), async (req, res) => {
-   const imageFile=req.files[0];
-   const imageName=req.body.imageName;
-   const userGroup=req.body.userGroup;
-   console.log("imageName",imageName)
-   console.log("userGroup",userGroup)
-   console.log("imageFile",imageFile)
-   const requestObj=[
+  const imageFile = req.files[0];
+  const imageName = req.body.imageName;
+  const userGroup = req.body.userGroup;
+  console.log('imageName', imageName);
+  console.log('userGroup', userGroup);
+  console.log('imageFile', imageFile);
+  const requestObj = [
     req.params.loginId,
     imageName
   ];
-   if(imageFile){
-    profileImage.uploadToS3(imageFile.buffer,imageName).then(()=>{
-      if(userGroup.toUpperCase()==='VETERAN'){
-      pool
-      .query(QUERIES.UiLayout.updateVeteranPhotoName, requestObj).then(()=>{
-        res.status(200).json({ responseStatus: 'SUCCESS', data:'Veteran Profile image update sucessfully' , error: false });
+  if (imageFile) {
+    profileImage.uploadToS3(imageFile.buffer, imageName).then(() => {
+      if (userGroup.toUpperCase() === 'VETERAN') {
+        pool
+          .query(QUERIES.UiLayout.updateVeteranPhotoName, requestObj).then(() => {
+            res.status(200).json({ responseStatus: 'SUCCESS', data: 'Veteran Profile image update sucessfully', error: false });
+          }
+          ).catch((err) => {
+            console.log(err);
+            res.status(501).json({ responseStatus: 'FAILURE', data: null, error: err });
+          });
+      } else if (userGroup.toUpperCase() === 'CASEWORKER') {
+        pool
+          .query(QUERIES.UiLayout.updateCaseWorkerPhotoName, requestObj).then(() => {
+            res.status(200).json({ responseStatus: 'SUCCESS', data: 'Case Worker Profile image update sucessfully', error: false });
+          }
+          ).catch((err) => {
+            console.log(err);
+            res.status(501).json({ responseStatus: 'FAILURE', data: null, error: err });
+          });
       }
-      ).catch((err)=>{
-        console.log(err)
-        res.status(501).json({ responseStatus: 'FAILURE', data: null, error: err });
-      })
-    }else if(userGroup.toUpperCase()==='CASEWORKER'){
-      pool
-      .query(QUERIES.UiLayout.updateCaseWorkerPhotoName, requestObj).then(()=>{
-        res.status(200).json({ responseStatus: 'SUCCESS', data:'Case Worker Profile image update sucessfully' , error: false });
-      }
-      ).catch((err)=>{
-        console.log(err)
-        res.status(501).json({ responseStatus: 'FAILURE', data: null, error: err });
-      })
-    }
-       
-    }).catch((err)=>{
-      console.log(err)
+    }).catch((err) => {
+      console.log(err);
       res.status(501).json({ responseStatus: 'FAILURE', data: null, error: err });
-    })
-   }
+    });
+  }
 });
 
-//get image end point
-router.get('/profileImage/:imageName',async (req, res) => {
-    profileImage.getImageFromS3(req.params.imageName).then((response)=>{
-      res.status(200).json({ responseStatus: 'SUCCESS', data:response.Body.toString('base64') , error: false });
-    }).catch((err)=>{
-      console.log(err)
-      res.status(501).json({ responseStatus: 'FAILURE', data: null, error: err });
-    })
-   }
+// get image end point
+router.get('/profileImage/:imageName', async (req, res) => {
+  profileImage.getImageFromS3(req.params.imageName).then((response) => {
+    res.status(200).json({ responseStatus: 'SUCCESS', data: response.Body.toString('base64'), error: false });
+  }).catch((err) => {
+    console.log(err);
+    res.status(501).json({ responseStatus: 'FAILURE', data: null, error: err });
+  });
+}
 );
-
 
 // get api for ia page 1
 router.get('/initialAssessment/page-1/:veteranId', (req, res) => {
@@ -1148,47 +1147,70 @@ router.post('/initialAssessment/page-2', async (req, res) => {
   console.log('Mental Health History', mental);
 });
 
+// get api for ia page 3
+router.get('/initialAssessment/page-3/:veteranId', (req, res) => {
+  const vet = req.params.veteranId;
+  pool
+    .query(QUERIES.InitialAssessment.getPage3, [vet])
+    .then((resp) => {
+      console.log('success on endpoint get ia page 3');
+      res.status(200).json(resp.rows);
+    })
+    .catch((err) => {
+      console.error('Error exectuting query', err.stack);
+      res.status(501).json({ err });
+    });
+});
 // ia forms api testing page3
-router.post('/initialAssessment/page-3', (req, res) => {
+router.post('/initialAssessment/page-3', async (req, res) => {
   const medInfo = [
-    req.body.medicalInformation.clinic,
-    req.body.medicalInformation.currentMedication,
-    req.body.medicalInformation.diagnosisAndCurrentTreatment,
-    req.body.medicalInformation.hospital,
+    req.body.medicalInformation.veteranId,
+    req.body.medicalInformation.primaryPhysicianName,
     req.body.medicalInformation.phone,
-    req.body.medicalInformation.physicianSpecialist,
-    req.body.medicalInformation.primaryPhysicianName
+    req.body.medicalInformation.clinic,
+    req.body.medicalInformation.hospital,
+    req.body.medicalInformation.diagnosis,
+    req.body.medicalInformation.currentMedication,
+    req.body.medicalInformation.primaryCareProvider,
+    req.body.medicalInformation.priPhyscianPartOfGP,
+    req.body.medicalInformation.physcianGP,
+    req.body.medicalInformation.clinicLocation,
+    req.body.medicalInformation.hospitalLocation,
+    req.body.medicalInformation.underSpecialistCare,
+    req.body.medicalInformation.specialistType,
+    req.body.medicalInformation.specialistName,
+    req.body.medicalInformation.currentTreatment
   ];
 
   const menStaAssess = [
+    req.body.mentalStatusAssessment.veteranId,
     req.body.mentalStatusAssessment.affect,
     req.body.mentalStatusAssessment.generalAppearance,
-    req.body.mentalStatusAssessment.ideation.delusional,
-    req.body.mentalStatusAssessment.ideation.hallucinations,
-    req.body.mentalStatusAssessment.ideation.homicidePlan,
-    req.body.mentalStatusAssessment.ideation.paranoid,
-    req.body.mentalStatusAssessment.ideation.suicidePlan,
-    req.body.mentalStatusAssessment.ideation.thoughtsOfHomicide,
-    req.body.mentalStatusAssessment.ideation.thoughtsOfSuicide,
-    req.body.mentalStatusAssessment.memory.recentMemory,
-    req.body.mentalStatusAssessment.memory.remoteMemory,
-    req.body.mentalStatusAssessment.mood.answeredByClient,
-    req.body.mentalStatusAssessment.mood.observedByInterviewer,
-    req.body.mentalStatusAssessment.orientation.date,
-    req.body.mentalStatusAssessment.orientation.person,
-    req.body.mentalStatusAssessment.orientation.place,
-    req.body.mentalStatusAssessment.orientation.time,
-    req.body.mentalStatusAssessment.thoughtForum
+    req.body.mentalStatusAssessment.date,
+    req.body.mentalStatusAssessment.person,
+    req.body.mentalStatusAssessment.place,
+    req.body.mentalStatusAssessment.time,
+    req.body.mentalStatusAssessment.ideation,
+    req.body.mentalStatusAssessment.recentMemory,
+    req.body.mentalStatusAssessment.remoteMemory,
+    req.body.mentalStatusAssessment.answeredByClient,
+    req.body.mentalStatusAssessment.observedByInterviewer,
+    req.body.mentalStatusAssessment.thoughtForum,
+    req.body.mentalStatusAssessment.recentMemoComments,
+    req.body.mentalStatusAssessment.remoteMemoComments
   ];
-  // pool.query(QUERIES.UiLayout.addCaseWorker,requestObject)
-  // .then(()=>{
-  //   console.log('Sucess on Add CaseWorker');
-  //   res.status(200).json({ responseStatus: 'SUCCESS', data:'Caseworker Added Successfully', error: false });
-  // })
-  // .catch((err)=>{
-  //   console.error('Error executing query', err.stack);
-  //   res.status(501).json({ responseStatus: 'FAILURE', data: null, error: err });
-  // })
+
+  // const ideation = [
+  //   req.body.mentalStatusAssessment.ideation
+  // ];
+  const result = await iaFormP3Post(medInfo, menStaAssess)
+    .then((response) => {
+      res.status(200).json({ responseStatus: 'SUCCESS', data: response, error: false });
+    }).catch((err) => {
+      console.error('Error executing query', err.stack);
+      res.status(501).json({ responseStatus: 'FAILURE', data: null, error: err });
+    });
+  console.log('res', result);
 
   console.log('Medical Information', medInfo);
   console.log('Mental Status Assessment', menStaAssess);
@@ -1264,22 +1286,7 @@ router.post('/initialAssessment/page-4', async (req, res) => {
 router.get('/initialAssessment/page-5/:veteranId', (req, res) => {
   const vet = req.params.veteranId;
   pool
-    .query(QUERIES.InitialAssessment.getPage5, [vet])
-    .then((resp) => {
-      console.log('success on endpoint get ia page 5');
-      res.json(resp.rows);
-    })
-    .catch((err) => {
-      console.error('Error exectuting query', err.stack);
-      res.status(501).json({ err });
-    });
-});
-
-// get api for ia page 5
-router.get('/initialAssessment/page-5/:veteranId', (req, res) => {
-  const vet = req.params.veteranId;
-  pool
-    .query(QUERIES.InitialAssessment.page5, [vet])
+    .query(QUERIES.InitialAssessment.getpage5, [vet])
     .then((resp) => {
       console.log('success on endpoint get ia page 5');
       res.json(resp.rows);
@@ -1292,19 +1299,19 @@ router.get('/initialAssessment/page-5/:veteranId', (req, res) => {
 
 // ia forms api testing page5
 router.post('/saveInitialAssessment/page-5/', (req, res) => {
-  //const vet = req.params.veteranId;
+  // const vet = req.params.veteranId;
   const preliminary = [
     req.body.preliminaryTreatmentGoals.veteranId,
     req.body.preliminaryTreatmentGoals.additionalComments,
-   // req.body.preliminaryTreatmentGoals.hppenedInMyLifeLastYear,
+    // req.body.preliminaryTreatmentGoals.hppenedInMyLifeLastYear,
     req.body.preliminaryTreatmentGoals.longTermGoals,
-   // req.body.preliminaryTreatmentGoals.needs,
-   // req.body.preliminaryTreatmentGoals.preferences,
+    // req.body.preliminaryTreatmentGoals.needs,
+    // req.body.preliminaryTreatmentGoals.preferences,
     req.body.preliminaryTreatmentGoals.shortTermGoals,
     req.body.preliminaryTreatmentGoals.strengthAndResources,
-    req.body.preliminaryTreatmentGoals.supports,
+    req.body.preliminaryTreatmentGoals.supports
   ];
-  
+
   pool
     .query(QUERIES.InitialAssessment.updatePage5)
     .then((resp) => {
