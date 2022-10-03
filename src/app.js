@@ -649,6 +649,21 @@ router.post('/postTreatmentPlanDetails/save/:veteran_id', async (req, res) => {
 });
 
 // Endpoint 15
+router.get('/residentSearch/getTreatmentPlanDetails/:veteran_id', (req, res) => {
+  const params = req.params.veteran_id;
+  pool
+    .query(QUERIES.TreatmentPlan.GetTreatmentIssues, [params])
+    .then((resp) => {
+      res.status(200).json({ responseStatus: 'SUCCESS', data: resp.rows, error: false });
+      console.log('success on endpoint GetCWTreatmentPlan');
+    })
+    .catch(err => {
+      res.status(501).json({ responseStatus: 'FAILURE', data: null, error: err });
+      console.error('Error executing query', err.stack);
+    });
+});
+
+// Endpoint 15.5
 // Case-Worker UpdateTreatmentPlan
 router.put('/updateTreatmentPlanDetails/save/:veteran_id', (req, res) => {
   const requestObj = [
@@ -1271,22 +1286,7 @@ router.post('/initialAssessment/page-4', async (req, res) => {
 router.get('/initialAssessment/page-5/:veteranId', (req, res) => {
   const vet = req.params.veteranId;
   pool
-    .query(QUERIES.InitialAssessment.getPage5, [vet])
-    .then((resp) => {
-      console.log('success on endpoint get ia page 5');
-      res.json(resp.rows);
-    })
-    .catch((err) => {
-      console.error('Error exectuting query', err.stack);
-      res.status(501).json({ err });
-    });
-});
-
-// get api for ia page 5
-router.get('/initialAssessment/page-5/:veteranId', (req, res) => {
-  const vet = req.params.veteranId;
-  pool
-    .query(QUERIES.InitialAssessment.page5, [vet])
+    .query(QUERIES.InitialAssessment.getpage5, [vet])
     .then((resp) => {
       console.log('success on endpoint get ia page 5');
       res.json(resp.rows);
