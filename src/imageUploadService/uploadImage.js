@@ -1,5 +1,5 @@
 const aws = require('aws-sdk');
-const secrets = require('./secret');
+const secrets = require('../secret');
 
 const s3 = new aws.S3({
   secretAccessKey: secrets.SECRETACCESSKEY,
@@ -27,27 +27,23 @@ const uploadToS3 = (imageBody, fileName) => {
   });
 };
 
-const getImageFromS3=(fileName)=>{
-  return new Promise((resolve,reject)=>{
-      const getParams = {
-          Bucket:'servant-center-profileph-bucket',
-          Key: fileName
+const getImageFromS3 = (fileName) => {
+  return new Promise((resolve, reject) => {
+    const getParams = {
+      Bucket: 'servant-center-profileph-bucket',
+      Key: fileName
+    };
+    console.log('files resp', getParams);
+
+    s3.getObject(getParams, (err, data) => {
+      if (err) {
+        console.log(err);
+        reject(err);
       }
-      console.log("files resp", getParams)
+      console.log(data);
+      return resolve(data);
+    });
+  });
+};
 
-      s3.getObject(getParams,(err,data)=>{
-          if(err){
-              console.log(err);
-              reject(err);
-          }
-          console.log(data);
-          return resolve(data);
-      })
-  })
-
-}
-
-module.exports = {uploadToS3,getImageFromS3};
-
-
-
+module.exports = { uploadToS3, getImageFromS3 };
