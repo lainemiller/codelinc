@@ -1,5 +1,5 @@
 const aws = require('aws-sdk');
-const secrets = require('./secret');
+const secrets = require('../secret');
 
 const s3 = new aws.S3({
   secretAccessKey: secrets.SECRETACCESSKEY,
