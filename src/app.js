@@ -1026,7 +1026,7 @@ router.post('/initialAssessment/page-1', async (req, res) => {
     req.body.socialAndFamilyHistory.hivTestResult,
     req.body.socialAndFamilyHistory.hivTestedDate,
     req.body.socialAndFamilyHistory.hivTestedLocation,
-    req.body.socialAndFamilyHistory.married,
+    req.body.socialAndFamilyHistory.everMarried,
     // req.body.socialAndFamilyHistory.motherStatus,
     // req.body.socialAndFamilyHistory.mothersFullName,
     req.body.socialAndFamilyHistory.numberOfMarriages,
