@@ -14,6 +14,7 @@ const profileImage = require('./imageUploadService/uploadImage.js');
 // const constants = require('./constants')
 const sequentialQueries = require('./assessment-handler/assessment.js');
 const saveTreatmentPlan = require('./treatmentPlan-handler/treatmentIssue.js');
+const updateTreatmentPlan = require('./treatmentPlan-handler/updateTreatment.js');
 const veteranEventsQueries = require('./veteranEvents-handler/veteranEvent.js');
 const iaFormsQueries = require('./initialAssessmentFormsHandler/iaForm.js');
 const iaFormsQueriesp2 = require('./initialAssessmentFormsHandler/iaFormP2');
@@ -665,16 +666,16 @@ router.get('/residentSearch/getTreatmentPlanDetails/:veteran_id', (req, res) => 
 
 // Endpoint 15.5
 // Case-Worker UpdateTreatmentPlan
-router.put('/updateTreatmentPlanDetails/save/:veteran_id', (req, res) => {
-  const requestObj = [
-    req.params.veteran_id,
+router.put('/updateTreatmentPlanDetails/save/:veteran_id', async (req, res) => {
+  const vet = req.params.veteran_id;
+  const initialTreatmentObj = [
+    vet,
     req.body.veteranDiagnosis,
     req.body.veteranSupports,
     req.body.veteranStrengths,
     req.body.veteranNotes
   ];
-  pool
-    .query(QUERIES.TreatmentPlan.UpdateTreatmentPlanDetails, requestObj)
+  const result = await updateTreatmentPlan(initialTreatmentObj, req)
     .then(resp => {
       res.status(200).json({ responseStatus: 'SUCCESS', data: 'Updated Successfully', error: false });
       console.log('Successfully updated treatmentPlanDetails');
