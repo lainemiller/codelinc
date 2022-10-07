@@ -22,7 +22,7 @@ const uploadToS3 = (imageBody, fileName) => {
         reject(err);
       }
       console.log(data);
-      return resolve(data);
+      resolve(data);
     });
   });
 };
@@ -30,7 +30,7 @@ const uploadToS3 = (imageBody, fileName) => {
 const getImageFromS3 = (fileName) => {
   return new Promise((resolve, reject) => {
     const getParams = {
-      Bucket: 'servant-center-profileph-bucket',
+      Bucket: secrets.BUCKET,
       Key: fileName
     };
     console.log('files resp', getParams);
@@ -41,7 +41,7 @@ const getImageFromS3 = (fileName) => {
         reject(err);
       }
       console.log(data);
-      return resolve(data);
+      resolve(data);
     });
   });
 };
