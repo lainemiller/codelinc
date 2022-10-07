@@ -500,7 +500,7 @@ router.put('/progressNotes/updateGoalStatus/:veteranId', (req, res) => {
     .catch((err) => {
       console.error('Error executing query', err.stack);
       res
-        .status(200)
+        .status(500)
         .json({ responseStatus: 'FAILURE', data: null, error: err });
     });
 });
