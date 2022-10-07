@@ -885,24 +885,21 @@ router.post('/addCaseWorker', (req, res) => {
 const upload = multer({
   limits: 1024 * 5,
   fileFilter: function (req, file, done) {
-    if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png' || file.mimetype === 'image/jpg') {
+    if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
       done(null, true);
     } else {
-      done(new Error('Wrong file type, only upload JPEG and/or PNG !'),
+      done(new Error('Wrong file type, only file type JPEG, JPG and PNG are allowed'),
         false);
     }
   }
 });
 
-// upload Veteran image end point
-router.post('/uploadImage/:loginId', upload.array('image'), async (req, res) => {
-  const imageFile = req.files[0];
-  const imageName = req.body.imageName;
-  const userGroup = req.body.userGroup;
-  console.log('imageName', imageName);
-  console.log('userGroup', userGroup);
-  console.log('imageFile', imageFile);
-  const requestObj = [
+//upload Veteran image end point
+router.post('/uploadImage/:loginId', upload.array('image'), (req, res) => {
+   const imageFile=req.files[0];
+   const imageName=req.body.imageName;
+   const userGroup=req.body.userGroup;
+   const requestObj=[
     req.params.loginId,
     imageName
   ];
@@ -934,15 +931,15 @@ router.post('/uploadImage/:loginId', upload.array('image'), async (req, res) => 
   }
 });
 
-// get image end point
-router.get('/profileImage/:imageName', async (req, res) => {
-  profileImage.getImageFromS3(req.params.imageName).then((response) => {
-    res.status(200).json({ responseStatus: 'SUCCESS', data: response.Body.toString('base64'), error: false });
-  }).catch((err) => {
-    console.log(err);
-    res.status(501).json({ responseStatus: 'FAILURE', data: null, error: err });
-  });
-}
+//get image end point
+router.get('/profileImage/:imageName', (req, res) => {
+    profileImage.getImageFromS3(req.params.imageName).then((response)=>{
+      res.status(200).json({ responseStatus: 'SUCCESS', data:response.Body.toString('base64') , error: false });
+    }).catch((err)=>{
+      console.log(err)
+      res.status(501).json({ responseStatus: 'FAILURE', data: null, error: err });
+    })
+   }
 );
 
 // get api for ia page 1
