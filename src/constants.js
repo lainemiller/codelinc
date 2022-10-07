@@ -83,9 +83,13 @@ module.exports = Object.freeze({
       UpdateTreatmentPlanDetails:
       'UPDATE codelinc.veteran_initial_treatment SET diagnosis = $2, supports = $3, strengths= $4 ,notes= $5 where veteran_id = $1'
     },
-    SaveTreatmentPlan: {
-      TreatmentPlanDetailsPH:
-      'WITH ins1 as (INSERT into codelinc.veteran_treatment_goals(veteran_id,goal_type,goal_title,created_on,target_date) VALUES ($1, $2, $3, $4, $5) RETURNING goal_id as goalid) INSERT into codelinc.veteran_treatment_plan(goal_id,goal_plan_short_term,goal_plan_long_term) select  goalid, $6, $7 from ins1 '
+    TreatmentIssues: {
+      SaveTreatmentIssues:
+      'WITH ins1 as (INSERT into codelinc.veteran_treatment_goals(veteran_id,goal_type,goal_title,created_on,target_date) VALUES ($1, $2, $3, $4, $5) RETURNING goal_id as goalid) INSERT into codelinc.veteran_treatment_plan(goal_id,goal_plan_short_term,goal_plan_long_term) select  goalid, $6, $7 from ins1 ',
+      UpdateTreatmentGoals:
+      'UPDATE codelinc.veteran_treatment_goals SET goal_title = $3,target_date = $4 WHERE goal_id = $2 AND veteran_id = $1',
+      UpdateTreatmentPlans:
+      'UPDATE codelinc.veteran_treatment_plan tp SET goal_plan_short_term = $2, goal_plan_long_term = $3 WHERE tp.goal_id = $1'
     },
     TransportationRequest: {
       SaveTransportationDetails:
