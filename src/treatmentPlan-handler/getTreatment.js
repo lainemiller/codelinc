@@ -7,7 +7,7 @@
 // const pool = new Pool({
 //   host: secrets.HOST,
 //   user: secrets.USER,
-//   password: secrets.PASSWORD,
+//   password: secrets.DBENTRY,
 //   database: secrets.DATABASE,
 //   port: secrets.PORT
 // })

@@ -27,7 +27,7 @@ const { QUERIES } = require('./constants');
 const pool = new Pool({
   host: secrets.HOST,
   user: secrets.USER,
-  password: secrets.PASSWORD,
+  password: secrets.DBENTRY,
   database: secrets.DATABASE,
   port: secrets.PORT
 });
@@ -814,7 +814,7 @@ router.post('/addUser', (req, res) => {
   const requestObject = [
     req.body.userName,
     req.body.userGroup,
-    'Lincon#123', // password
+    'Lincon#123',
     req.body.partyId
   ];
   pool.query(QUERIES.UiLayout.addUser, requestObject)
