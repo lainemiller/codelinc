@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 const secrets = require('../secret');
 
 const { Pool } = require('pg');
@@ -11,7 +10,7 @@ const pool = new Pool({
   port: secrets.PORT
 });
 
-MentalHealth = (mental) => {
+const MentalHealth = (mental) => {
   return new Promise((resolve, reject) => {
     pool.query(
       QUERIES.InitialAssessment.page2MHPost,
@@ -26,7 +25,7 @@ MentalHealth = (mental) => {
   });
 };
 
-EmpAndEdu = (edu) => {
+const EmpAndEdu = (edu) => {
   return new Promise((resolve, reject) => {
     pool.query(
       QUERIES.InitialAssessment.page2EAEPost, edu,

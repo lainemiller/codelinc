@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 const secrets = require('../secret');
 const { Pool } = require('pg');
 const { QUERIES } = require('../constants');
@@ -17,7 +16,7 @@ const updateTreatment = async (req) => {
   // physical health
   for (i = 0; i < treatmentIssues.physicalHealth.length; i++) {
     let treatmentGoalObj; let treatmentPlanObj = null;
-    const goal_id = treatmentIssues.physicalHealth[i].goalid;
+    const goalId = treatmentIssues.physicalHealth[i].goalid;
     const goals = treatmentIssues.physicalHealth[i].goals;
     const plans = treatmentIssues.physicalHealth[i].plans;
     const strategies = treatmentIssues.physicalHealth[i].strategies;
@@ -25,12 +24,12 @@ const updateTreatment = async (req) => {
     if (goals) {
       treatmentGoalObj = [
         vet,
-        goal_id,
+        goalId,
         goals,
         targetDate
       ];
       treatmentPlanObj = [
-        goal_id,
+        goalId,
         plans,
         strategies
       ];
@@ -41,7 +40,7 @@ const updateTreatment = async (req) => {
   // mental health
   for (j = 0; j < treatmentIssues.mentalHealth.length; j++) {
     let treatmentGoalObj; let treatmentPlanObj = null;
-    const goal_id = treatmentIssues.mentalHealth[j].goalid;
+    const goalId = treatmentIssues.mentalHealth[j].goalid;
     const goals = treatmentIssues.mentalHealth[j].goals;
     const plans = treatmentIssues.mentalHealth[j].plans;
     const strategies = treatmentIssues.mentalHealth[j].strategies;
@@ -49,12 +48,12 @@ const updateTreatment = async (req) => {
     if (goals) {
       treatmentGoalObj = [
         vet,
-        goal_id,
+        goalId,
         goals,
         targetDate
       ];
       treatmentPlanObj = [
-        goal_id,
+        goalId,
         plans,
         strategies
       ];
@@ -65,7 +64,7 @@ const updateTreatment = async (req) => {
   // Substance Use
   for (k = 0; k < treatmentIssues.substanceUse.length; k++) {
     let treatmentGoalObj; let treatmentPlanObj = null;
-    const goal_id = treatmentIssues.substanceUse[k].goalid;
+    const goalId = treatmentIssues.substanceUse[k].goalid;
     const goals = treatmentIssues.substanceUse[k].goals;
     const plans = treatmentIssues.substanceUse[k].plans;
     const strategies = treatmentIssues.substanceUse[k].strategies;
@@ -73,12 +72,12 @@ const updateTreatment = async (req) => {
     if (goals) {
       treatmentGoalObj = [
         vet,
-        goal_id,
+        goalId,
         goals,
         targetDate
       ];
       treatmentPlanObj = [
-        goal_id,
+        goalId,
         plans,
         strategies
       ];
@@ -89,7 +88,7 @@ const updateTreatment = async (req) => {
   // Housing
   for (l = 0; l < treatmentIssues.housing.length; l++) {
     let treatmentGoalObj; let treatmentPlanObj = null;
-    const goal_id = treatmentIssues.housing[l].goalid;
+    const goalId = treatmentIssues.housing[l].goalid;
     const goals = treatmentIssues.housing[l].goals;
     const plans = treatmentIssues.housing[l].plans;
     const strategies = treatmentIssues.housing[l].strategies;
@@ -97,12 +96,12 @@ const updateTreatment = async (req) => {
     if (goals) {
       treatmentGoalObj = [
         vet,
-        goal_id,
+        goalId,
         goals,
         targetDate
       ];
       treatmentPlanObj = [
-        goal_id,
+        goalId,
         plans,
         strategies
       ];
@@ -113,7 +112,7 @@ const updateTreatment = async (req) => {
   // Income/Financial/Legal
   for (m = 0; m < treatmentIssues.incomeLegal.length; m++) {
     let treatmentGoalObj; let treatmentPlanObj = null;
-    const goal_id = treatmentIssues.incomeLegal[m].goalid;
+    const goalId = treatmentIssues.incomeLegal[m].goalid;
     const goals = treatmentIssues.incomeLegal[m].goals;
     const plans = treatmentIssues.incomeLegal[m].plans;
     const strategies = treatmentIssues.incomeLegal[m].strategies;
@@ -121,12 +120,12 @@ const updateTreatment = async (req) => {
     if (goals) {
       treatmentGoalObj = [
         vet,
-        goal_id,
+        goalId,
         goals,
         targetDate
       ];
       treatmentPlanObj = [
-        goal_id,
+        goalId,
         plans,
         strategies
       ];
@@ -137,7 +136,7 @@ const updateTreatment = async (req) => {
   // Relationships
   for (n = 0; n < treatmentIssues.relationships.length; n++) {
     let treatmentGoalObj; let treatmentPlanObj = null;
-    const goal_id = treatmentIssues.relationships[n].goalid;
+    const goalId = treatmentIssues.relationships[n].goalid;
     const goals = treatmentIssues.relationships[n].goals;
     const plans = treatmentIssues.relationships[n].plans;
     const strategies = treatmentIssues.relationships[n].strategies;
@@ -145,12 +144,12 @@ const updateTreatment = async (req) => {
     if (goals) {
       treatmentGoalObj = [
         vet,
-        goal_id,
+        goalId,
         goals,
         targetDate
       ];
       treatmentPlanObj = [
-        goal_id,
+        goalId,
         plans,
         strategies
       ];
@@ -161,7 +160,7 @@ const updateTreatment = async (req) => {
   // Education
   for (o = 0; o < treatmentIssues.education.length; o++) {
     let treatmentGoalObj; let treatmentPlanObj = null;
-    const goal_id = treatmentIssues.education[o].goalid;
+    const goalId = treatmentIssues.education[o].goalid;
     const goals = treatmentIssues.education[o].goals;
     const plans = treatmentIssues.education[o].plans;
     const strategies = treatmentIssues.education[o].strategies;
@@ -169,12 +168,12 @@ const updateTreatment = async (req) => {
     if (goals) {
       treatmentGoalObj = [
         vet,
-        goal_id,
+        goalId,
         goals,
         targetDate
       ];
       treatmentPlanObj = [
-        goal_id,
+        goalId,
         plans,
         strategies
       ];
@@ -185,7 +184,7 @@ const updateTreatment = async (req) => {
   // Benefits/MedicAid/Snap
   for (p = 0; p < treatmentIssues.benefits.length; p++) {
     let treatmentGoalObj; let treatmentPlanObj = null;
-    const goal_id = treatmentIssues.benefits[p].goalid;
+    const goalId = treatmentIssues.benefits[p].goalid;
     const goals = treatmentIssues.benefits[p].goals;
     const plans = treatmentIssues.benefits[p].plans;
     const strategies = treatmentIssues.benefits[p].strategies;
@@ -193,12 +192,12 @@ const updateTreatment = async (req) => {
     if (goals) {
       treatmentGoalObj = [
         vet,
-        goal_id,
+        goalId,
         goals,
         targetDate
       ];
       treatmentPlanObj = [
-        goal_id,
+        goalId,
         plans,
         strategies
       ];
@@ -208,7 +207,7 @@ const updateTreatment = async (req) => {
   }
 };
 
-headers = (initialTreatmentObj) => {
+const headers = (initialTreatmentObj) => {
   return new Promise((resolve, reject) => {
     pool.query(
       QUERIES.TreatmentPlan.UpdateTreatmentPlanDetails, initialTreatmentObj,
@@ -222,7 +221,7 @@ headers = (initialTreatmentObj) => {
   });
 };
 
-treatmentGoals = (treatmentGoalObj) => {
+const treatmentGoals = (treatmentGoalObj) => {
   return new Promise((resolve, reject) => {
     pool.query(
       QUERIES.TreatmentIssues.UpdateTreatmentGoals, treatmentGoalObj,
@@ -236,7 +235,7 @@ treatmentGoals = (treatmentGoalObj) => {
   });
 };
 
-treatmentPlans = (treatmentPlanObj) => {
+const treatmentPlans = (treatmentPlanObj) => {
   return new Promise((resolve, reject) => {
     pool.query(
       QUERIES.TreatmentIssues.UpdateTreatmentPlans, treatmentPlanObj,
@@ -252,8 +251,8 @@ treatmentPlans = (treatmentPlanObj) => {
 
 module.exports = async function (initialTreatmentObj, req) {
   try {
-    const result = await updateTreatment(req);
-    const IT = await headers(initialTreatmentObj);
+    await updateTreatment(req);
+    await headers(initialTreatmentObj);
     const updateStatement = console.log('Successfully updated TreatmentIssues');
     return updateStatement;
   } catch (error) {
