@@ -940,8 +940,7 @@ router.get('/profileImage/:imageName', (req, res) => {
     console.log(err);
     res.status(501).json({ responseStatus: 'FAILURE', data: null, error: err });
   });
-}
-);
+});
 
 // get api for ia page 1
 router.get('/initialAssessment/page-1/:veteranId', (req, res) => {
