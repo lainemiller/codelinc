@@ -5,7 +5,7 @@ module.exports = Object.freeze({
   DBENTRY: 'sjr930Qhy',
   DATABASE: 'codelinc',
   PORT: '5432',
-  SECRETACCESSKEY: '6v/hXrJj3YWllnobXYJxyNA7UVIy5P5MGp+KvAl3',
-  ACCESSKEYID: 'AKIASX4D4UGUWXQMLUUC',
+  SECRETACCESSKEY: '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',
+  ACCESSKEYID: 'AKIASX4D4UGUQGEF6AGO',
   BUCKET: 'servant-center-profileph-bucket'
 });

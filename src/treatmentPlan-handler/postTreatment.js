@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 const secrets = require('../secret');
 
 const { Pool } = require('pg');
@@ -11,7 +10,7 @@ const pool = new Pool({
   port: secrets.PORT
 });
 
-treatmentIssue = (requestObjIssues) => {
+const treatmentIssue = (requestObjIssues) => {
   return new Promise((resolve, reject) => {
     pool.query(
       QUERIES.TreatmentIssues.SaveTreatmentIssues, requestObjIssues,
