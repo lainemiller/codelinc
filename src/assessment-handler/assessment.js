@@ -1,6 +1,4 @@
-/* eslint-disable no-undef */
 const secrets = require('../secret');
-
 const { Pool } = require('pg');
 const { QUERIES } = require('../constants');
 const pool = new Pool({
@@ -11,7 +9,7 @@ const pool = new Pool({
   port: secrets.PORT
 });
 
-PIQuery = (vet) => {
+const PIQuery = (vet) => {
   return new Promise((resolve, reject) => {
     pool.query(
       QUERIES.UserProfile.UserAssessmentDetailsPI,
@@ -26,7 +24,7 @@ PIQuery = (vet) => {
   });
 };
 
-FIQuery = (vet) => {
+const FIQuery = (vet) => {
   return new Promise((resolve, reject) => {
     pool.query(
       QUERIES.UserProfile.UserAssessmentDetailsFinance,
@@ -41,7 +39,7 @@ FIQuery = (vet) => {
   });
 };
 
-FamilyQuery = (vet) => {
+const FamilyQuery = (vet) => {
   return new Promise((resolve, reject) => {
     pool.query(
       QUERIES.UserProfile.UserAssessmentDetailsFamily,
@@ -56,7 +54,7 @@ FamilyQuery = (vet) => {
   });
 };
 
-SubQuery = (vet) => {
+const SubQuery = (vet) => {
   return new Promise((resolve, reject) => {
     pool.query(
       QUERIES.UserProfile.UserAssessmentDetailsSAH,
@@ -71,7 +69,7 @@ SubQuery = (vet) => {
   });
 };
 
-LegalQuery = (vet) => {
+const LegalQuery = (vet) => {
   return new Promise((resolve, reject) => {
     pool.query(
       QUERIES.UserProfile.UserAssessmentDetailsLHI,
@@ -86,7 +84,7 @@ LegalQuery = (vet) => {
   });
 };
 
-EduQuery = (vet) => {
+const EduQuery = (vet) => {
   return new Promise((resolve, reject) => {
     pool.query(
       QUERIES.UserProfile.UserAssessmentDetailsEEH,
@@ -101,7 +99,7 @@ EduQuery = (vet) => {
   });
 };
 
-SocialQuery = (vet) => {
+const SocialQuery = (vet) => {
   return new Promise((resolve, reject) => {
     pool.query(
       QUERIES.UserProfile.UserAssessmentDetailsSocial,
