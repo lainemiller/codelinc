@@ -946,6 +946,21 @@ router.get('/profileImage/:imageName', async (req, res) => {
 }
 );
 
+// get api for ia page 1 family details
+router.get('/initialAssessment/page-1FD/:veteranId', (req, res) => {
+  const vet = req.params.veteranId;
+  pool
+    .query(QUERIES.InitialAssessment.getPage1FD, [vet])
+    .then((resp) => {
+      console.log('success on endpoint get ia page 1 FD');
+      res.json(resp.rows);
+    })
+    .catch((err) => {
+      console.error('Error exectuting query', err.stack);
+      res.status(501).json({ err });
+    });
+});
+
 // get api for ia page 1
 router.get('/initialAssessment/page-1/:veteranId', (req, res) => {
   const vet = req.params.veteranId;
