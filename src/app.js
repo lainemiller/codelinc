@@ -1,17 +1,13 @@
-/* eslint-disable no-unused-vars */
-// const path = require('path')
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const compression = require('compression');
-// const { getCurrentInvoke } = require('@vendia/serverless-express')
 const ejs = require('ejs').__express;
 const app = express();
 const router = express.Router();
 const multer = require('multer');
 const profileImage = require('./imageUploadService/uploadImage.js');
 
-// const constants = require('./constants')
 const sequentialQueries = require('./assessment-handler/assessment.js');
 const saveTreatmentPlan = require('./treatmentPlan-handler/treatmentIssue.js');
 const updateTreatmentPlan = require('./treatmentPlan-handler/updateTreatment.js');
@@ -675,7 +671,7 @@ router.put('/updateTreatmentPlanDetails/save/:veteran_id', async (req, res) => {
     req.body.veteranStrengths,
     req.body.veteranNotes
   ];
-  const result = await updateTreatmentPlan(initialTreatmentObj, req)
+  await updateTreatmentPlan(initialTreatmentObj, req)
     .then(resp => {
       res.status(200).json({ responseStatus: 'SUCCESS', data: 'Updated Successfully', error: false });
       console.log('Successfully updated treatmentPlanDetails');
@@ -785,7 +781,7 @@ router.post(
   '/healthTracker/updateHealthTracker/:veteranId',
   async (req, res) => {
     const trackerReq = req.body;
-    const healthTrackerResponse = await healthTrackerQueries(trackerReq[0], trackerReq[1], req.params.veteranId)
+    await healthTrackerQueries(trackerReq[0], trackerReq[1], req.params.veteranId)
       .then((response) => {
         res.status(200).json({ responseStatus: 'SUCCESS', data: response, error: false });
       }).catch((err) => {
@@ -896,13 +892,10 @@ const upload = multer({
 });
 
 // upload Veteran image end point
-router.post('/uploadImage/:loginId', upload.array('image'), async (req, res) => {
+router.post('/uploadImage/:loginId', upload.array('image'), (req, res) => {
   const imageFile = req.files[0];
   const imageName = req.body.imageName;
   const userGroup = req.body.userGroup;
-  console.log('imageName', imageName);
-  console.log('userGroup', userGroup);
-  console.log('imageFile', imageFile);
   const requestObj = [
     req.params.loginId,
     imageName
@@ -936,15 +929,14 @@ router.post('/uploadImage/:loginId', upload.array('image'), async (req, res) => 
 });
 
 // get image end point
-router.get('/profileImage/:imageName', async (req, res) => {
+router.get('/profileImage/:imageName', (req, res) => {
   profileImage.getImageFromS3(req.params.imageName).then((response) => {
     res.status(200).json({ responseStatus: 'SUCCESS', data: response.Body.toString('base64'), error: false });
   }).catch((err) => {
     console.log(err);
     res.status(501).json({ responseStatus: 'FAILURE', data: null, error: err });
   });
-}
-);
+});
 
 // get api for ia page 1 family details
 router.get('/initialAssessment/page-1FD/:veteranId', (req, res) => {
