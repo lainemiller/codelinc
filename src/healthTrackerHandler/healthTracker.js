@@ -1,6 +1,3 @@
-/* eslint-disable eqeqeq */
-/* eslint-disable no-unused-vars */
-/* eslint-disable no-undef */
 const secrets = require('../secret');
 
 const { Pool } = require('pg');
@@ -13,7 +10,7 @@ const pool = new Pool({
   port: secrets.PORT
 });
 
-insertHealthTracker = (insertHealthTrackerObj, veteranId) => {
+const insertHealthTracker = (insertHealthTrackerObj, veteranId) => {
   return new Promise((resolve, reject) => {
     for (let i = 0; i < insertHealthTrackerObj.length; i++) {
       const requestParams = insertHealthTrackerObj[i];
@@ -38,7 +35,7 @@ insertHealthTracker = (insertHealthTrackerObj, veteranId) => {
   });
 };
 
-updateHealthTracker = (updateHealthTrackerObj, veteranId) => {
+const updateHealthTracker = (updateHealthTrackerObj, veteranId) => {
   return new Promise((resolve, reject) => {
     for (let i = 0; i < updateHealthTrackerObj.length; i++) {
       const requestParams = updateHealthTrackerObj[i];
@@ -63,7 +60,7 @@ updateHealthTracker = (updateHealthTrackerObj, veteranId) => {
   });
 };
 
-getHealthTracker = (veteranId) => {
+const getHealthTracker = (veteranId) => {
   return new Promise((resolve, reject) => {
     const requestObj = [veteranId];
     pool.query(
@@ -80,11 +77,11 @@ getHealthTracker = (veteranId) => {
 
 module.exports = async function (insertHealthTrackerObj, updateHealthTrackerObj, veteranId) {
   try {
-    if (insertHealthTrackerObj.length != 0) {
-      const result1 = await insertHealthTracker(insertHealthTrackerObj, veteranId);
+    if (insertHealthTrackerObj.length !== 0) {
+      await insertHealthTracker(insertHealthTrackerObj, veteranId);
     }
-    if (updateHealthTrackerObj.length != 0) {
-      const result2 = await updateHealthTracker(updateHealthTrackerObj, veteranId);
+    if (updateHealthTrackerObj.length !== 0) {
+      await updateHealthTracker(updateHealthTrackerObj, veteranId);
     }
     await new Promise(resolve => setTimeout(resolve, 1000));
     const result3 = await getHealthTracker(veteranId);
