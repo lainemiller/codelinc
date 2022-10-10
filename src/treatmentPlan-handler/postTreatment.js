@@ -14,7 +14,7 @@ const pool = new Pool({
 treatmentIssue = (requestObjIssues) => {
   return new Promise((resolve, reject) => {
     pool.query(
-      QUERIES.SaveTreatmentPlan.TreatmentPlanDetailsPH, requestObjIssues,
+      QUERIES.TreatmentIssues.SaveTreatmentIssues, requestObjIssues,
       (error, results) => {
         if (error) {
           return reject(error);

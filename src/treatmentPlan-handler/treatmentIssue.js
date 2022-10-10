@@ -6,7 +6,7 @@ const savetreatmentIssues = async (req) => {
   const vet = req.params.veteran_id;
   const treatmentIssues = req.body.treatmentIssues[0];
   let i; let j; let k; let l; let m; let n; let o; let p = 0;
-  for (i = 0; i < 3; i++) {
+  for (i = 0; i < treatmentIssues.physicalHealth.length; i++) {
     let requestObjIssuesPH = null;
     const goal_type = 'physical health';
     const goals = treatmentIssues.physicalHealth[i].goals;
@@ -27,7 +27,7 @@ const savetreatmentIssues = async (req) => {
     }
   }
   // MentalHealth
-  for (j = 0; j < 3; j++) {
+  for (j = 0; j < treatmentIssues.mentalHealth.length; j++) {
     let requestObjIssuesMH = null;
     const goal_type = 'mental health';
     const goals = treatmentIssues.mentalHealth[j].goals;
@@ -48,7 +48,7 @@ const savetreatmentIssues = async (req) => {
     }
   }
   // SubstanceUse
-  for (k = 0; k < 3; k++) {
+  for (k = 0; k < treatmentIssues.substanceUse.length; k++) {
     let requestObjIssuesSU = null;
     const goal_type = 'substance use';
     const goals = treatmentIssues.substanceUse[k].goals;
@@ -69,7 +69,7 @@ const savetreatmentIssues = async (req) => {
     }
   }
   // Housing
-  for (l = 0; l < 3; l++) {
+  for (l = 0; l < treatmentIssues.housing.length; l++) {
     let requestObjIssuesHO = null;
     const goal_type = 'housing';
     const goals = treatmentIssues.housing[l].goals;
@@ -90,7 +90,7 @@ const savetreatmentIssues = async (req) => {
     }
   }
   // Income/Financial/Legal
-  for (m = 0; m < 3; m++) {
+  for (m = 0; m < treatmentIssues.incomeLegal.length; m++) {
     let requestObjIssuesIL = null;
     const goal_type = 'social';
     const goals = treatmentIssues.incomeLegal[m].goals;
@@ -111,7 +111,7 @@ const savetreatmentIssues = async (req) => {
     }
   }
   // Relationships
-  for (n = 0; n < 3; n++) {
+  for (n = 0; n < treatmentIssues.relationships.length; n++) {
     let requestObjIssuesR = null;
     const goal_type = 'family';
     const goals = treatmentIssues.relationships[n].goals;
@@ -132,7 +132,7 @@ const savetreatmentIssues = async (req) => {
     }
   }
   // Education
-  for (o = 0; o < 3; o++) {
+  for (o = 0; o < treatmentIssues.education.length; o++) {
     let requestObjIssuesE = null;
     const goal_type = 'career';
     const goals = treatmentIssues.education[o].goals;
@@ -153,7 +153,7 @@ const savetreatmentIssues = async (req) => {
     }
   }
   // Benefits/Medicaid/Snap
-  for (p = 0; p < 3; p++) {
+  for (p = 0; p < treatmentIssues.benefits.length; p++) {
     let requestObjIssuesB = null;
     const goal_type = 'benefits';
     const goals = treatmentIssues.benefits[p].goals;
