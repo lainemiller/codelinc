@@ -32,8 +32,8 @@ const getImageFromS3 = (fileName) => {
     const getParams = {
       Bucket: secrets.BUCKET,
       Key: fileName
-    }
-    console.log("files resp", getParams)
+    };
+    console.log('files resp', getParams);
 
     s3.getObject(getParams, (err, data) => {
       if (err) {
@@ -42,12 +42,8 @@ const getImageFromS3 = (fileName) => {
       }
       console.log(data);
       resolve(data);
-    })
-  })
-
-}
+    });
+  });
+};
 
 module.exports = { uploadToS3, getImageFromS3 };
-
-
-

@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable camelcase */
 /* eslint-disable no-undef */
 const secrets = require('../secret');
 const { Pool } = require('pg');

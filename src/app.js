@@ -895,12 +895,12 @@ const upload = multer({
   }
 });
 
-//upload Veteran image end point
+// upload Veteran image end point
 router.post('/uploadImage/:loginId', upload.array('image'), (req, res) => {
-   const imageFile=req.files[0];
-   const imageName=req.body.imageName;
-   const userGroup=req.body.userGroup;
-   const requestObj=[
+  const imageFile = req.files[0];
+  const imageName = req.body.imageName;
+  const userGroup = req.body.userGroup;
+  const requestObj = [
     req.params.loginId,
     imageName
   ];
@@ -932,15 +932,15 @@ router.post('/uploadImage/:loginId', upload.array('image'), (req, res) => {
   }
 });
 
-//get image end point
+// get image end point
 router.get('/profileImage/:imageName', (req, res) => {
-    profileImage.getImageFromS3(req.params.imageName).then((response)=>{
-      res.status(200).json({ responseStatus: 'SUCCESS', data:response.Body.toString('base64') , error: false });
-    }).catch((err)=>{
-      console.log(err)
-      res.status(501).json({ responseStatus: 'FAILURE', data: null, error: err });
-    })
-   }
+  profileImage.getImageFromS3(req.params.imageName).then((response) => {
+    res.status(200).json({ responseStatus: 'SUCCESS', data: response.Body.toString('base64'), error: false });
+  }).catch((err) => {
+    console.log(err);
+    res.status(501).json({ responseStatus: 'FAILURE', data: null, error: err });
+  });
+}
 );
 
 // get api for ia page 1
