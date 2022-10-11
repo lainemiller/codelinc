@@ -931,7 +931,11 @@ router.post('/uploadImage/:loginId', upload.array('image'), (req, res) => {
 // get image end point
 router.get('/profileImage/:imageName', (req, res) => {
   profileImage.getImageFromS3(req.params.imageName).then((response) => {
-    res.status(200).json({ responseStatus: 'SUCCESS', data: response.Body.toString('base64'), error: false });
+    const imageObj={
+      contentType:response.ContentType,
+      imageBody:response.Body.toString('base64')
+    }
+    res.status(200).json({ responseStatus: 'SUCCESS', data:imageObj , error: false });
   }).catch((err) => {
     console.log(err);
     res.status(501).json({ responseStatus: 'FAILURE', data: null, error: err });
