@@ -953,6 +953,72 @@ router.get('/initialAssessment/page-1FD/:veteranId', (req, res) => {
     });
 });
 
+// get api for ia page 1 family details
+router.delete('/initialAssessment/page-1FD/:veteranId/:memId', (req, res) => {
+  const requestObj = [
+    req.params.veteranId,
+    req.params.memId
+  ];
+  pool
+    .query(QUERIES.InitialAssessment.deleteMember, requestObj)
+    .then((resp) => {
+      console.log('success on endpoint delete ia page 1 FD');
+      res.status(200).json({ responseStatus: 'SUCCESS', data: resp, error: false });
+    })
+    .catch((err) => {
+      console.error('Error exectuting query', err.stack);
+      res.status(501).json({ responseStatus: 'FAILURE', data: null, error: true });
+    });
+  console.log('delete req', requestObj);
+});
+
+// add new member
+router.post('/initialAssessment/page-1FD/', (req, res) => {
+  const requestObj = [
+    req.body.veteranId,
+    req.body.name,
+    req.body.age,
+    req.body.relationship,
+    req.body.living,
+    req.body.location
+  ];
+  pool
+    .query(QUERIES.InitialAssessment.addMember, requestObj)
+    .then((resp) => {
+      console.log('success on endpoint add member ia page 1 FD');
+      res.status(200).json({ responseStatus: 'SUCCESS', data: resp, error: false });
+    })
+    .catch((err) => {
+      console.error('Error exectuting query', err.stack);
+      res.status(501).json({ responseStatus: 'FAILURE', data: null, error: true });
+    });
+  console.log('add req', requestObj);
+});
+
+// update api for ia page 1 family details
+router.put('/initialAssessment/page-1FD/:veteranId/:memId', (req, res) => {
+  const requestObj = [
+    req.params.veteranId,
+    req.params.memId,
+    req.body.name,
+    req.body.age,
+    req.body.living,
+    req.body.relationship,
+    req.body.location
+  ];
+  pool
+    .query(QUERIES.InitialAssessment.updateFamilyMemberDetails, requestObj)
+    .then((resp) => {
+      console.log('success on endpoint update ia page 1 FD');
+      res.status(200).json({ responseStatus: 'SUCCESS', data: resp, error: false });
+    })
+    .catch((err) => {
+      console.error('Error exectuting query', err.stack);
+      res.status(501).json({ responseStatus: 'FAILURE', data: null, error: true });
+    });
+  console.log('delete req', requestObj);
+});
+
 // get api for ia page 1
 router.get('/initialAssessment/page-1/:veteranId', (req, res) => {
   const vet = req.params.veteranId;
