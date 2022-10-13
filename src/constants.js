@@ -69,7 +69,7 @@ module.exports = Object.freeze({
       addVeteran: 'INSERT INTO codelinc.veteran_pi(veteran_id,first_name,last_name,address_main,city,state,zip_code,date_of_birth,place_of_birth,ssn,gender,marital_status,race,primary_language,religious_preference,contact_person,contact_person_relationship,contact_person_phone,consent_status,nick_name,email) values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21)',
       addCaseWorker: 'INSERT INTO codelinc.case_worker_info(case_worker_id,nick_name,email) values ($1,$2,$3)',
       updateVeteranPhotoName: 'UPDATE codelinc.veteran_pi SET photo=$2 WHERE veteran_id=$1',
-      updateCaseWorkerPhotoName: 'UPDATE codelinc.case_worker_info SET photo=$2 WHERE veteran_id=$1'
+      updateCaseWorkerPhotoName: 'UPDATE codelinc.case_worker_info SET photo=$2 WHERE case_worker_id=$1'
     },
     TreatmentPlan: {
       GetTreatmentPlanDetails:
