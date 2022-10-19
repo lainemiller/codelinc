@@ -42,63 +42,6 @@ router.use(cors());
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: true }));
 
-router.get('/', (req, res) => {
-  res.json({ answer: 'success' });
-});
-
-router.get('/users', (req, res) => {
-  res.json(users);
-});
-
-router.get('/queryString', (req, res) => {
-  const query = req.query;
-  res.json({
-    qs: query,
-    congratulate: true
-  });
-});
-
-router.get('/users/:userId', (req, res) => {
-  const user = getUser(req.params.userId);
-
-  if (!user) return res.status(404).json({});
-
-  return res.json(user);
-});
-
-router.post('/users', (req, res) => {
-  const user = {
-    id: ++userIdCounter,
-    name: req.body.name
-  };
-  users.push(user);
-  res.status(201).json(user);
-});
-
-router.put('/users/:userId', (req, res) => {
-  const user = getUser(req.params.userId);
-
-  if (!user) return res.status(404).json({});
-
-  user.name = req.body.name;
-  res.json(user);
-});
-
-router.delete('/users/:userId', (req, res) => {
-  const userIndex = getUserIndex(req.params.userId);
-
-  if (userIndex === -1) return res.status(404).json({});
-
-  users.splice(userIndex, 1);
-  res.json(users);
-});
-
-router.get('/cookie', (req, res) => {
-  res.cookie('Foo', 'bar');
-  res.cookie('Fizz', 'buzz');
-  res.json({});
-});
-
 router.get('/transportationForm/getTransportationRequests/', (req, res) => {
   pool
     .query(QUERIES.TransportationRequest.GetTransportationRequests)
@@ -217,68 +160,6 @@ router.get('/transportationRequestData', (req, res) => {
   res.json(users);
 });
 
-// column names
-router.get('/allTablesCol', (req, res) => {
-  let returnObj = null;
-  pool
-    .query(QUERIES.UiLayout.getTableColumns)
-    .then((res) => {
-      returnObj = res.rows;
-      console.log(res.rows);
-    })
-    .catch((err) => console.error('Error executing query', err.stack));
-
-  res.json(returnObj);
-});
-
-router.get('/allTables', (req, res) => {
-  let returnObj = null;
-  pool
-    .query(QUERIES.UiLayout.getTableNames)
-    .then((res) => {
-      returnObj = res.rows;
-      console.log(res.rows);
-    })
-    .catch((err) => console.error('Error executing query', err.stack));
-
-  res.json(returnObj);
-});
-
-// trying to get table data
-
-router.get('/tableData', (req, res) => {
-  let returnObj = null;
-  pool
-    .query(QUERIES.UiLayout.getTableData)
-    .then((res) => {
-      returnObj = res.rows;
-      console.log(res.rows);
-    })
-    .catch((err) => console.error('Error executing query', err.stack));
-
-  res.json(returnObj);
-});
-
-//
-
-// query check
-
-router.get('/queryCheck', (req, res) => {
-  let returnObj = null;
-  pool
-    .query(QUERIES.checkQuery.query)
-    .then((res) => {
-      returnObj = res.rows;
-      console.table(res.rows);
-    })
-    .catch((err) => console.error('Error executing query', err.stack));
-
-  res.json(returnObj);
-});
-
-//
-
-// pravin apis to get data from local mock files
 router.get('/userdetailsVeteran', (req, res) => {
   const users = require(QUERIES.myApisJsonUrls.GetUserDetailsForVet);
   // pool
@@ -296,68 +177,7 @@ router.get('/assessmentDetails/:veteranID', async (req, res) => {
   res.status(200).json(assessmentDetails);
 });
 
-// column names
-router.get('/allTablesCol', (req, res) => {
-  let returnObj = null;
-  pool
-    .query(QUERIES.UiLayout.getTableColumns)
-    .then((res) => {
-      returnObj = res.rows;
-      console.log(res.rows);
-    })
-    .catch((err) => console.error('Error executing query', err.stack));
 
-  res.json(returnObj);
-});
-
-router.get('/allTables', (req, res) => {
-  let returnObj = null;
-  pool
-    .query(QUERIES.UiLayout.getTableNames)
-    .then((res) => {
-      returnObj = res.rows;
-      console.log(res.rows);
-    })
-    .catch((err) => console.error('Error executing query', err.stack));
-
-  res.json(returnObj);
-});
-
-// trying to get table data
-
-router.get('/tableData', (req, res) => {
-  let returnObj = null;
-  pool
-    .query(QUERIES.UiLayout.getTableData)
-    .then((res) => {
-      returnObj = res.rows;
-      console.log(res.rows);
-    })
-    .catch((err) => console.error('Error executing query', err.stack));
-
-  res.json(returnObj);
-});
-
-//
-
-// query check
-
-router.get('/queryCheck', (req, res) => {
-  let returnObj = null;
-  pool
-    .query(QUERIES.checkQuery.query)
-    .then((res) => {
-      returnObj = res.rows;
-      console.table(res.rows);
-    })
-    .catch((err) => console.error('Error executing query', err.stack));
-
-  res.json(returnObj);
-});
-
-//
-
-// pravin apis to get data from local mock files
 router.get('/userdetailsVeteran', (req, res) => {
   const users = require(QUERIES.myApisJsonUrls.GetUserDetailsForVet);
   // pool
@@ -368,19 +188,6 @@ router.get('/userdetailsVeteran', (req, res) => {
   res.json(users);
 });
 
-// column names
-router.get('/allTablesCol', (req, res) => {
-  let returnObj = null;
-  pool
-    .query(QUERIES.UiLayout.getTableColumns)
-    .then((res) => {
-      returnObj = res.rows;
-      console.log(res.rows);
-    })
-    .catch((err) => console.error('Error executing query', err.stack));
-
-  res.json(returnObj);
-});
 
 // Endpoint 4
 router.get('/consentForm/getUserDetails/:loginId', (req, res) => {
@@ -444,18 +251,6 @@ router.get('/getGoals/:veteranId', (req, res) => {
     });
 });
 
-// progress notes get api for testing
-// router.get('/getGoalsTest/:veteranId', (req, res) => {
-// const vet = parseInt(req.params.veteranId);
-// pool.query(QUERIES.ProgressNotes.GetGoals, [vet], (error, results) => {
-//  if (error){
-//  throw error
-//  }
-// res.status(200).json(results.rows)
-// })
-
-// })
-
 // Endpoint 8
 router.post('/progressNotes/addGoal/:veteranId', (req, res) => {
   // let goalId = null
@@ -497,7 +292,7 @@ router.put('/progressNotes/updateGoalStatus/:veteranId', (req, res) => {
     .catch((err) => {
       console.error('Error executing query', err.stack);
       res
-        .status(200)
+        .status(500)
         .json({ responseStatus: 'FAILURE', data: null, error: err });
     });
 });
@@ -882,10 +677,10 @@ router.post('/addCaseWorker', (req, res) => {
 const upload = multer({
   limits: 1024 * 5,
   fileFilter: function (req, file, done) {
-    if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
+    if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png' || file.mimetype === 'image/jpg') {
       done(null, true);
     } else {
-      done(new Error('Wrong file type, only file type JPEG, JPG and PNG are allowed'),
+      done(new Error('Wrong file type, only upload JPEG and/or PNG !'),
         false);
     }
   }
@@ -940,6 +735,87 @@ router.get('/profileImage/:imageName', (req, res) => {
     console.log(err);
     res.status(501).json({ responseStatus: 'FAILURE', data: null, error: err });
   });
+});
+
+// get api for ia page 1 family details
+router.get('/initialAssessment/page-1FD/:veteranId', (req, res) => {
+  const vet = req.params.veteranId;
+  pool
+    .query(QUERIES.InitialAssessment.getPage1FD, [vet])
+    .then((resp) => {
+      console.log('success on endpoint get ia page 1 FD');
+      res.json(resp.rows);
+    })
+    .catch((err) => {
+      console.error('Error exectuting query', err.stack);
+      res.status(501).json({ err });
+    });
+});
+
+// get api for ia page 1 family details
+router.delete('/initialAssessment/page-1FD/:veteranId/:memId', (req, res) => {
+  const requestObj = [
+    req.params.veteranId,
+    req.params.memId
+  ];
+  pool
+    .query(QUERIES.InitialAssessment.deleteMember, requestObj)
+    .then((resp) => {
+      console.log('success on endpoint delete ia page 1 FD');
+      res.status(200).json({ responseStatus: 'SUCCESS', data: resp, error: false });
+    })
+    .catch((err) => {
+      console.error('Error exectuting query', err.stack);
+      res.status(501).json({ responseStatus: 'FAILURE', data: null, error: true });
+    });
+  console.log('delete req', requestObj);
+});
+
+// add new member
+router.post('/initialAssessment/page-1FD/', (req, res) => {
+  const requestObj = [
+    req.body.veteranId,
+    req.body.name,
+    req.body.age,
+    req.body.relationship,
+    req.body.living,
+    req.body.location
+  ];
+  pool
+    .query(QUERIES.InitialAssessment.addMember, requestObj)
+    .then((resp) => {
+      console.log('success on endpoint add member ia page 1 FD');
+      res.status(200).json({ responseStatus: 'SUCCESS', data: resp, error: false });
+    })
+    .catch((err) => {
+      console.error('Error exectuting query', err.stack);
+      res.status(501).json({ responseStatus: 'FAILURE', data: null, error: true });
+    });
+  console.log('add req', requestObj);
+});
+
+// update api for ia page 1 family details
+router.put('/initialAssessment/page-1FD/:veteranId/:memId', (req, res) => {
+  const requestObj = [
+    req.params.veteranId,
+    req.params.memId,
+    req.body.name,
+    req.body.age,
+    req.body.living,
+    req.body.relationship,
+    req.body.location
+  ];
+  pool
+    .query(QUERIES.InitialAssessment.updateFamilyMemberDetails, requestObj)
+    .then((resp) => {
+      console.log('success on endpoint update ia page 1 FD');
+      res.status(200).json({ responseStatus: 'SUCCESS', data: resp, error: false });
+    })
+    .catch((err) => {
+      console.error('Error exectuting query', err.stack);
+      res.status(501).json({ responseStatus: 'FAILURE', data: null, error: true });
+    });
+  console.log('delete req', requestObj);
 });
 
 // get api for ia page 1
@@ -1023,7 +899,7 @@ router.post('/initialAssessment/page-1', async (req, res) => {
     req.body.socialAndFamilyHistory.hivTestResult,
     req.body.socialAndFamilyHistory.hivTestedDate,
     req.body.socialAndFamilyHistory.hivTestedLocation,
-    req.body.socialAndFamilyHistory.married,
+    req.body.socialAndFamilyHistory.everMarried,
     // req.body.socialAndFamilyHistory.motherStatus,
     // req.body.socialAndFamilyHistory.mothersFullName,
     req.body.socialAndFamilyHistory.numberOfMarriages,
