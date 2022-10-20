@@ -1007,8 +1007,9 @@ router.post('/initialAssessment/page-1', async (req, res) => {
     req.body.personalDetails.phone,
     req.body.personalDetails.hobbiesInterests,
     req.body.personalDetails.religiousPreferences,
-    req.body.personalDetails.consent
-    //req.body.personalDetails.caseWorkerNickName
+    req.body.personalDetails.consent,
+    req.body.personalDetails.caseWorkerNickName,
+    req.body.personalDetails.caseWorkerUserName
   ];
 
   const income = [
