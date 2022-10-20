@@ -930,23 +930,16 @@ router.post('/uploadImage/:loginId', upload.array('image'), (req, res) => {
 
 // get image end point
 router.get('/profileImage/:imageName', (req, res) => {
-  profileImage
-    .getImageFromS3(req.params.imageName)
-    .then((response) => {
-      const imageObj = {
-        contentType: response.ContentType,
-        imageBody: response.Body.toString('base64')
-      };
-      res
-        .status(200)
-        .json({ responseStatus: 'SUCCESS', data: imageObj, error: false });
-    })
-    .catch((err) => {
-      console.log(err);
-      res
-        .status(501)
-        .json({ responseStatus: 'FAILURE', data: null, error: err });
-    });
+  profileImage.getImageFromS3(req.params.imageName).then((response) => {
+    const imageObj = {
+      contentType: response.ContentType,
+      imageBody: response.Body.toString('base64')
+    };
+    res.status(200).json({ responseStatus: 'SUCCESS', data: imageObj, error: false });
+  }).catch((err) => {
+    console.log(err);
+    res.status(501).json({ responseStatus: 'FAILURE', data: null, error: err });
+  });
 });
 
 // get api for ia page 1 family details
@@ -966,20 +959,19 @@ router.get('/initialAssessment/page-1FD/:veteranId', (req, res) => {
 
 // get api for ia page 1 family details
 router.delete('/initialAssessment/page-1FD/:veteranId/:memId', (req, res) => {
-  const requestObj = [req.params.veteranId, req.params.memId];
+  const requestObj = [
+    req.params.veteranId,
+    req.params.memId
+  ];
   pool
     .query(QUERIES.InitialAssessment.deleteMember, requestObj)
     .then((resp) => {
       console.log('success on endpoint delete ia page 1 FD');
-      res
-        .status(200)
-        .json({ responseStatus: 'SUCCESS', data: resp, error: false });
+      res.status(200).json({ responseStatus: 'SUCCESS', data: resp, error: false });
     })
     .catch((err) => {
       console.error('Error exectuting query', err.stack);
-      res
-        .status(501)
-        .json({ responseStatus: 'FAILURE', data: null, error: true });
+      res.status(501).json({ responseStatus: 'FAILURE', data: null, error: true });
     });
   console.log('delete req', requestObj);
 });
@@ -998,15 +990,11 @@ router.post('/initialAssessment/page-1FD/', (req, res) => {
     .query(QUERIES.InitialAssessment.addMember, requestObj)
     .then((resp) => {
       console.log('success on endpoint add member ia page 1 FD');
-      res
-        .status(200)
-        .json({ responseStatus: 'SUCCESS', data: resp, error: false });
+      res.status(200).json({ responseStatus: 'SUCCESS', data: resp, error: false });
     })
     .catch((err) => {
       console.error('Error exectuting query', err.stack);
-      res
-        .status(501)
-        .json({ responseStatus: 'FAILURE', data: null, error: true });
+      res.status(501).json({ responseStatus: 'FAILURE', data: null, error: true });
     });
   console.log('add req', requestObj);
 });
@@ -1026,15 +1014,11 @@ router.put('/initialAssessment/page-1FD/:veteranId/:memId', (req, res) => {
     .query(QUERIES.InitialAssessment.updateFamilyMemberDetails, requestObj)
     .then((resp) => {
       console.log('success on endpoint update ia page 1 FD');
-      res
-        .status(200)
-        .json({ responseStatus: 'SUCCESS', data: resp, error: false });
+      res.status(200).json({ responseStatus: 'SUCCESS', data: resp, error: false });
     })
     .catch((err) => {
       console.error('Error exectuting query', err.stack);
-      res
-        .status(501)
-        .json({ responseStatus: 'FAILURE', data: null, error: true });
+      res.status(501).json({ responseStatus: 'FAILURE', data: null, error: true });
     });
   console.log('delete req', requestObj);
 });
