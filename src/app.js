@@ -938,6 +938,33 @@ router.get('/profileImage/:imageName', (req, res) => {
   });
 });
 
+// get api for caseworker nickname
+router.get('/getCaseWorkerNickname',(req,res)=>{
+  pool
+  .query(QUERIES.InitialAssessment.getCwNickname)
+  .then((resp)=>{
+    res.status(200).json({ responseStatus: 'SUCCESS', data: resp.rows, error: false });
+    console.log('success on endpoint get cw nickname');
+  })
+  .catch((err) => {
+    console.error('Error exectuting query', err.stack);
+    res.status(501).json({ err });
+  });
+});
+
+router.get('/getWebpartyUsername',(req,res)=>{
+  pool
+  .query(QUERIES.InitialAssessment.getWebpartyUsername)
+  .then((resp)=>{
+    res.status(200).json({ responseStatus: 'SUCCESS', data: resp.rows, error: false });
+    console.log('success on endpoint get username');
+  })
+  .catch((err) => {
+    console.error('Error exectuting query', err.stack);
+    res.status(501).json({ err });
+  });
+});
+
 // get api for ia page 1
 router.get('/initialAssessment/page-1/:veteranId', (req, res) => {
   const vet = req.params.veteranId;
@@ -981,6 +1008,7 @@ router.post('/initialAssessment/page-1', async (req, res) => {
     req.body.personalDetails.hobbiesInterests,
     req.body.personalDetails.religiousPreferences,
     req.body.personalDetails.consent
+    //req.body.personalDetails.caseWorkerNickName
   ];
 
   const income = [
