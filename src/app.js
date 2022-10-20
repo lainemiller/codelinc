@@ -20,8 +20,8 @@ const secrets = require('./secret');
 const healthTrackerQueries = require('./healthTrackerHandler/healthTracker.js');
 
 
-const AWS = require('aws-sdk');
-const region = 'us-east-1';
+let AWS = require('aws-sdk');
+let region = 'us-east-1';
 let secret = '';
 let decodedBinarySecret = '';
 
