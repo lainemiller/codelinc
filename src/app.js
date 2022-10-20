@@ -408,7 +408,7 @@ router.put('/progressNotes/updateGoalStatus/:veteranId', (req, res) => {
     .catch((err) => {
       console.error('Error executing query', err.stack);
       res
-        .status(200)
+        .status(500)
         .json({ responseStatus: 'FAILURE', data: null, error: err });
     });
 });
@@ -793,10 +793,10 @@ router.post('/addCaseWorker', (req, res) => {
 const upload = multer({
   limits: 1024 * 5,
   fileFilter: function (req, file, done) {
-    if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
+    if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png' || file.mimetype === 'image/jpg') {
       done(null, true);
     } else {
-      done(new Error('Wrong file type, only file type JPEG, JPG and PNG are allowed'),
+      done(new Error('Wrong file type, only upload JPEG and/or PNG !'),
         false);
     }
   }
@@ -851,6 +851,87 @@ router.get('/profileImage/:imageName', (req, res) => {
     console.log(err);
     res.status(501).json({ responseStatus: 'FAILURE', data: null, error: err });
   });
+});
+
+// get api for ia page 1 family details
+router.get('/initialAssessment/page-1FD/:veteranId', (req, res) => {
+  const vet = req.params.veteranId;
+  pool
+    .query(QUERIES.InitialAssessment.getPage1FD, [vet])
+    .then((resp) => {
+      console.log('success on endpoint get ia page 1 FD');
+      res.json(resp.rows);
+    })
+    .catch((err) => {
+      console.error('Error exectuting query', err.stack);
+      res.status(501).json({ err });
+    });
+});
+
+// get api for ia page 1 family details
+router.delete('/initialAssessment/page-1FD/:veteranId/:memId', (req, res) => {
+  const requestObj = [
+    req.params.veteranId,
+    req.params.memId
+  ];
+  pool
+    .query(QUERIES.InitialAssessment.deleteMember, requestObj)
+    .then((resp) => {
+      console.log('success on endpoint delete ia page 1 FD');
+      res.status(200).json({ responseStatus: 'SUCCESS', data: resp, error: false });
+    })
+    .catch((err) => {
+      console.error('Error exectuting query', err.stack);
+      res.status(501).json({ responseStatus: 'FAILURE', data: null, error: true });
+    });
+  console.log('delete req', requestObj);
+});
+
+// add new member
+router.post('/initialAssessment/page-1FD/', (req, res) => {
+  const requestObj = [
+    req.body.veteranId,
+    req.body.name,
+    req.body.age,
+    req.body.relationship,
+    req.body.living,
+    req.body.location
+  ];
+  pool
+    .query(QUERIES.InitialAssessment.addMember, requestObj)
+    .then((resp) => {
+      console.log('success on endpoint add member ia page 1 FD');
+      res.status(200).json({ responseStatus: 'SUCCESS', data: resp, error: false });
+    })
+    .catch((err) => {
+      console.error('Error exectuting query', err.stack);
+      res.status(501).json({ responseStatus: 'FAILURE', data: null, error: true });
+    });
+  console.log('add req', requestObj);
+});
+
+// update api for ia page 1 family details
+router.put('/initialAssessment/page-1FD/:veteranId/:memId', (req, res) => {
+  const requestObj = [
+    req.params.veteranId,
+    req.params.memId,
+    req.body.name,
+    req.body.age,
+    req.body.living,
+    req.body.relationship,
+    req.body.location
+  ];
+  pool
+    .query(QUERIES.InitialAssessment.updateFamilyMemberDetails, requestObj)
+    .then((resp) => {
+      console.log('success on endpoint update ia page 1 FD');
+      res.status(200).json({ responseStatus: 'SUCCESS', data: resp, error: false });
+    })
+    .catch((err) => {
+      console.error('Error exectuting query', err.stack);
+      res.status(501).json({ responseStatus: 'FAILURE', data: null, error: true });
+    });
+  console.log('delete req', requestObj);
 });
 
 // get api for ia page 1
@@ -934,7 +1015,7 @@ router.post('/initialAssessment/page-1', async (req, res) => {
     req.body.socialAndFamilyHistory.hivTestResult,
     req.body.socialAndFamilyHistory.hivTestedDate,
     req.body.socialAndFamilyHistory.hivTestedLocation,
-    req.body.socialAndFamilyHistory.married,
+    req.body.socialAndFamilyHistory.everMarried,
     // req.body.socialAndFamilyHistory.motherStatus,
     // req.body.socialAndFamilyHistory.mothersFullName,
     req.body.socialAndFamilyHistory.numberOfMarriages,
