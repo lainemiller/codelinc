@@ -19,6 +19,122 @@ const iaFormP3Post = require('./initialAssessmentFormsHandler/iaFormP3.js');
 const secrets = require('./secret');
 const healthTrackerQueries = require('./healthTrackerHandler/healthTracker.js');
 
+
+// If you need more information about configurations or implementing the sample code, visit the AWS docs:
+// https://aws.amazon.com/developers/getting-started/nodejs/
+
+
+// Load the AWS SDK
+var AWS = require('aws-sdk');
+const region = "us-east-1";
+const  secretName = "photo/s3";
+ const  secret ='';
+ const decodedBinarySecret ='';
+
+
+// Create a Secrets Manager client
+var client = new AWS.SecretsManager({
+  region: region
+});
+
+// client.getSecretValue({SecretId: "photo/s3"},async function(err, data) {
+//   console.log('entereed inside getsecret');
+
+//   if (err) {
+//     console.log('errorrr',err);
+//       if (err.code === 'DecryptionFailureException')
+//           // Secrets Manager can't decrypt the protected secret text using the provided KMS key.
+//           // Deal with the exception here, and/or rethrow at your discretion.
+//           throw err;
+//       else if (err.code === 'InternalServiceErrorException')
+//           // An error occurred on the server side.
+//           // Deal with the exception here, and/or rethrow at your discretion.
+//           throw err;
+//       else if (err.code === 'InvalidParameterException')
+//           // You provided an invalid value for a parameter.
+//           // Deal with the exception here, and/or rethrow at your discretion.
+//           throw err;
+//       else if (err.code === 'InvalidRequestException')
+//           // You provided a parameter value that is not valid for the current state of the resource.
+//           // Deal with the exception here, and/or rethrow at your discretion.
+//           throw err;
+//       else if (err.code === 'ResourceNotFoundException')
+//           // We can't find the resource that you asked for.
+//           // Deal with the exception here, and/or rethrow at your discretion.
+//           throw err;
+//   }
+//   else {
+//     console.log('successss');
+//       // Decrypts secret using the associated KMS key.
+//       // Depending on whether the secret is a string or binary, one of these fields will be populated.
+//       if ('SecretString' in data) {
+//           secret = data.SecretString;
+//           console.log('secret---->',secret)
+//       } else {
+//           let buff = new Buffer(data.SecretBinary, 'base64');
+//           decodedBinarySecret = buff.toString('ascii');
+//           console.log('secret---->',decodedBinarySecret)
+//       }
+//   }
+  
+//   // Your code goes here.
+// });
+
+
+
+router.get('/getSecret', (req, res) => {
+console.log('entereed getsecret');
+  client.getSecretValue({SecretId: "photo/s3"}, function(err, data) {
+    console.log('entereed inside getsecret');
+
+    if (err) {
+      console.log('errorrr',err);
+      
+        if (err.code === 'DecryptionFailureException')
+            // Secrets Manager can't decrypt the protected secret text using the provided KMS key.
+            // Deal with the exception here, and/or rethrow at your discretion.
+            throw err;
+        else if (err.code === 'InternalServiceErrorException')
+            // An error occurred on the server side.
+            // Deal with the exception here, and/or rethrow at your discretion.
+            throw err;
+        else if (err.code === 'InvalidParameterException')
+            // You provided an invalid value for a parameter.
+            // Deal with the exception here, and/or rethrow at your discretion.
+            throw err;
+        else if (err.code === 'InvalidRequestException')
+            // You provided a parameter value that is not valid for the current state of the resource.
+            // Deal with the exception here, and/or rethrow at your discretion.
+            throw err;
+        else if (err.code === 'ResourceNotFoundException')
+            // We can't find the resource that you asked for.
+            // Deal with the exception here, and/or rethrow at your discretion.
+            throw err;
+    }
+    else {
+      console.log('successss');
+        // Decrypts secret using the associated KMS key.
+        // Depending on whether the secret is a string or binary, one of these fields will be populated.
+        if ('SecretString' in data) {
+            secret = data.SecretString;
+            console.log('secret---->',secret)
+        } else {
+            let buff = new Buffer(data.SecretBinary, 'base64');
+            decodedBinarySecret = buff.toString('ascii');
+            console.log('secret---->',decodedBinarySecret)
+        }
+
+    }
+    
+    res.json({
+      error:err,
+      message:secret,
+      decoded:decodedBinarySecret
+    })
+    // Your code goes here.
+  });
+  
+});
 const { Pool } = require('pg');
 const { QUERIES } = require('./constants');
 const pool = new Pool({
@@ -726,11 +842,11 @@ router.post('/uploadImage/:loginId', upload.array('image'), (req, res) => {
 // get image end point
 router.get('/profileImage/:imageName', (req, res) => {
   profileImage.getImageFromS3(req.params.imageName).then((response) => {
-    const imageObj={
-      contentType:response.ContentType,
-      imageBody:response.Body.toString('base64')
+    const imageObj = {
+      contentType: response.ContentType,
+      imageBody: response.Body.toString('base64')
     }
-    res.status(200).json({ responseStatus: 'SUCCESS', data:imageObj , error: false });
+    res.status(200).json({ responseStatus: 'SUCCESS', data: imageObj, error: false });
   }).catch((err) => {
     console.log(err);
     res.status(501).json({ responseStatus: 'FAILURE', data: null, error: err });
