@@ -177,7 +177,6 @@ router.get('/assessmentDetails/:veteranID', async (req, res) => {
   res.status(200).json(assessmentDetails);
 });
 
-
 router.get('/userdetailsVeteran', (req, res) => {
   const users = require(QUERIES.myApisJsonUrls.GetUserDetailsForVet);
   // pool
@@ -187,7 +186,6 @@ router.get('/userdetailsVeteran', (req, res) => {
 
   res.json(users);
 });
-
 
 // Endpoint 4
 router.get('/consentForm/getUserDetails/:loginId', (req, res) => {
@@ -1178,10 +1176,8 @@ router.post('/initialAssessment/page-5/', (req, res) => {
     req.body.preliminaryTreatmentGoals.hppenedInMyLifeLastYear,
     req.body.preliminaryTreatmentGoals.shortTermGoals,
     req.body.preliminaryTreatmentGoals.longTermGoals,
-    req.body.preliminaryTreatmentGoals.goodAtDoing,
     req.body.preliminaryTreatmentGoals.admiredAboutMe,
     req.body.preliminaryTreatmentGoals.talents,
-    req.body.preliminaryTreatmentGoals.importantToMe,
     req.body.preliminaryTreatmentGoals.people,
     req.body.preliminaryTreatmentGoals.activities,
     req.body.preliminaryTreatmentGoals.places,
@@ -1191,7 +1187,9 @@ router.post('/initialAssessment/page-5/', (req, res) => {
     req.body.preliminaryTreatmentGoals.changeAboutMyself,
     req.body.preliminaryTreatmentGoals.activePartCommunity,
     req.body.preliminaryTreatmentGoals.healthyAndSafe,
-    req.body.preliminaryTreatmentGoals.othersDoBest
+    req.body.preliminaryTreatmentGoals.othersDoBest,
+    req.body.preliminaryTreatmentGoals.whatAreMyStrengths,
+    req.body.preliminaryTreatmentGoals.peopleSeeingMeAsImportant
   ];
 
   pool.query(QUERIES.InitialAssessment.postIAPage5, preliminary)
