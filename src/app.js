@@ -177,7 +177,6 @@ router.get('/assessmentDetails/:veteranID', async (req, res) => {
   res.status(200).json(assessmentDetails);
 });
 
-
 router.get('/userdetailsVeteran', (req, res) => {
   const users = require(QUERIES.myApisJsonUrls.GetUserDetailsForVet);
   // pool
@@ -187,7 +186,6 @@ router.get('/userdetailsVeteran', (req, res) => {
 
   res.json(users);
 });
-
 
 // Endpoint 4
 router.get('/consentForm/getUserDetails/:loginId', (req, res) => {
@@ -726,11 +724,11 @@ router.post('/uploadImage/:loginId', upload.array('image'), (req, res) => {
 // get image end point
 router.get('/profileImage/:imageName', (req, res) => {
   profileImage.getImageFromS3(req.params.imageName).then((response) => {
-    const imageObj={
-      contentType:response.ContentType,
-      imageBody:response.Body.toString('base64')
-    }
-    res.status(200).json({ responseStatus: 'SUCCESS', data:imageObj , error: false });
+    const imageObj = {
+      contentType: response.ContentType,
+      imageBody: response.Body.toString('base64')
+    };
+    res.status(200).json({ responseStatus: 'SUCCESS', data: imageObj, error: false });
   }).catch((err) => {
     console.log(err);
     res.status(501).json({ responseStatus: 'FAILURE', data: null, error: err });
@@ -1171,40 +1169,38 @@ router.get('/initialAssessment/page-5/:veteranId', (req, res) => {
 });
 
 // ia forms api testing page5
-router.post('/saveInitialAssessment/page-5/', (req, res) => {
+router.post('/initialAssessment/page-5/', (req, res) => {
   // const vet = req.params.veteranId;
   const preliminary = [
     req.body.preliminaryTreatmentGoals.veteranId,
-    req.body.preliminaryTreatmentGoals.additionalComments,
-    // req.body.preliminaryTreatmentGoals.hppenedInMyLifeLastYear,
-    req.body.preliminaryTreatmentGoals.longTermGoals,
-    // req.body.preliminaryTreatmentGoals.needs,
-    // req.body.preliminaryTreatmentGoals.preferences,
+    req.body.preliminaryTreatmentGoals.hppenedInMyLifeLastYear,
     req.body.preliminaryTreatmentGoals.shortTermGoals,
-    req.body.preliminaryTreatmentGoals.strengthAndResources,
-    req.body.preliminaryTreatmentGoals.supports
+    req.body.preliminaryTreatmentGoals.longTermGoals,
+    req.body.preliminaryTreatmentGoals.admiredAboutMe,
+    req.body.preliminaryTreatmentGoals.talents,
+    req.body.preliminaryTreatmentGoals.people,
+    req.body.preliminaryTreatmentGoals.activities,
+    req.body.preliminaryTreatmentGoals.places,
+    req.body.preliminaryTreatmentGoals.peopleNotNeeded,
+    req.body.preliminaryTreatmentGoals.thingsNotNeeded,
+    req.body.preliminaryTreatmentGoals.notWorkingInLife,
+    req.body.preliminaryTreatmentGoals.changeAboutMyself,
+    req.body.preliminaryTreatmentGoals.activePartCommunity,
+    req.body.preliminaryTreatmentGoals.healthyAndSafe,
+    req.body.preliminaryTreatmentGoals.othersDoBest,
+    req.body.preliminaryTreatmentGoals.whatAreMyStrengths,
+    req.body.preliminaryTreatmentGoals.peopleSeeingMeAsImportant
   ];
 
-  pool
-    .query(QUERIES.InitialAssessment.updatePage5)
+  pool.query(QUERIES.InitialAssessment.postIAPage5, preliminary)
     .then((resp) => {
-      console.log('success on endpoint save ia page 5');
-      res.json(resp.rows);
+      console.log('Sucess on post page 5 details');
+      res.status(200).json({ responseStatus: 'SUCCESS', data: resp, error: false });
     })
     .catch((err) => {
-      console.error('Error exectuting query', err.stack);
-      res.status(501).json({ err });
+      console.error('Error executing query', err.stack);
+      res.status(501).json({ responseStatus: 'FAILURE', data: null, error: true });
     });
-
-  // pool.query(QUERIES.UiLayout.addCaseWorker,requestObject)
-  // .then(()=>{
-  //   console.log('Sucess on Add CaseWorker');
-  //   res.status(200).json({ responseStatus: 'SUCCESS', data:'Caseworker Added Successfully', error: false });
-  // })
-  // .catch((err)=>{
-  //   console.error('Error executing query', err.stack);
-  //   res.status(501).json({ responseStatus: 'FAILURE', data: null, error: err });
-  // })
 
   console.log('Preliminary Treatment Goals', preliminary);
 });
