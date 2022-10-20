@@ -26,10 +26,10 @@ const healthTrackerQueries = require('./healthTrackerHandler/healthTracker.js');
 
 // Load the AWS SDK
 var AWS = require('aws-sdk');
-const region = "us-east-1";
-const  secretName = "photo/s3";
- const  secret ='';
- const decodedBinarySecret ='';
+let region = "us-east-1";
+let  secretName = "photo/s3";
+ let  secret ='';
+ let decodedBinarySecret ='';
 
 
 // Create a Secrets Manager client
