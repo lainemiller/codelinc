@@ -25,11 +25,11 @@ const personalInfo = (personalDetails) => {
   });
 };
 
-const incomeResc = (personalDetails) => {
+const incomeResc = (incomeResources) => {
   return new Promise((resolve, reject) => {
     pool.query(
       QUERIES.InitialAssessment.postIAPage1IR,
-      personalDetails,
+      incomeResources,
       (error, results) => {
         if (error) {
           return reject(error);
@@ -40,11 +40,11 @@ const incomeResc = (personalDetails) => {
   });
 };
 
-const healthInsurance = (personalDetails) => {
+const healthInsurance = (healthInsurance) => {
   return new Promise((resolve, reject) => {
     pool.query(
       QUERIES.InitialAssessment.postIAPage1HI,
-      personalDetails,
+      healthInsurance,
       (error, results) => {
         if (error) {
           return reject(error);
