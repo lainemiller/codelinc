@@ -27,7 +27,9 @@ module.exports = Object.freeze({
         'UPDATE codelinc.veteran_treatment_goals SET goal_status = $3 WHERE veteran_id = $1 AND goal_id = $2'
     },
     UserProfile: {
-      GetUserDetails: 'SELECT * from codelinc.veteran_pi where veteran_id = $1',
+      GetUserDetailsWithCaseworker: 'SELECT vp.veteran_id,vp.first_name,vp.address_line_2,vp.photo,vp.address_main,vp.city,vp.contact_person,vp.contact_person_address,vp.contact_person_phone,vp.contact_person_relationship,vp.county,vp.date_of_birth,vp.email,vp.gender,vp.hmis_id,vp.hobbies,vp.intake_date,vp.last_name,vp.marital_status,vp.middle_initial,vp.nick_name,vp.place_of_birth,vp.primary_language,vp.primary_phone,vp.race,vp.record_number,vp.religious_preference,vp.ssn,vp.state,vp.zip_code,cwi.nick_name as case_worker_nick_name from codelinc.veteran_pi vp join codelinc.case_worker_info cwi on cwi.case_worker_id=vp.case_worker_id where vp.veteran_id =$1',
+      GetUserDetailsWithoutCaseworker:'SELECT * from codelinc.veteran_pi where veteran_id=$1',
+      CheckCaseWorkerId:'SELECT case_worker_id FROM codelinc.veteran_pi where veteran_id =$1',
       UpdateUserDetails:
         'UPDATE codelinc.veteran_pi SET first_name = $2,middle_initial = $3,last_name = $4, nick_name = $5, date_of_birth =$6, place_of_birth = $7, primary_phone = $8, contact_person = $9, hobbies = $10, address_main = $11, city = $12, state = $13, contact_person_relationship= $14, county = $15, address_line_2 = $16, zip_code = $17, gender = $18, marital_status = $19, ssn = $20, hmis_id = $21, race = $22, primary_language = $23, religious_preference = $24, contact_person_address = $25, contact_person_phone =$26  WHERE veteran_id = $1',
       UserAssessmentDetailsPI:

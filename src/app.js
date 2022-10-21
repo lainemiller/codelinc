@@ -420,11 +420,38 @@ router.put('/progressNotes/updateGoalStatus/:veteranId', (req, res) => {
 // Endpoint 10
 router.get('/userProfile/getUserDetails/:veteranID', (req, res) => {
   pool
-    .query(QUERIES.UserProfile.GetUserDetails, [req.params.veteranID])
+    .query(QUERIES.UserProfile.CheckCaseWorkerId, [req.params.veteranID])
     .then((resp) => {
-      res
-        .status(200)
-        .json({ responseStatus: 'SUCCESS', data: resp.rows, error: false });
+      if (resp.rows[0].case_worker_id) {
+        pool
+          .query(QUERIES.UserProfile.GetUserDetailsWithCaseworker, [req.params.veteranID])
+          .then((resp) => {
+            res
+              .status(200)
+              .json({ responseStatus: 'SUCCESS', data: resp.rows, error: false });
+          })
+          .catch((err) => {
+            console.error('Error executing query', err.stack);
+            res
+              .status(501)
+              .json({ responseStatus: 'FAILURE', data: null, error: err });
+          });
+      } else {
+        pool
+          .query(QUERIES.UserProfile.GetUserDetailsWithoutCaseworker, [req.params.veteranID])
+          .then((resp) => {
+            res
+              .status(200)
+              .json({ responseStatus: 'SUCCESS', data: resp.rows, error: false });
+          })
+          .catch((err) => {
+            console.error('Error executing query', err.stack);
+            res
+              .status(501)
+              .json({ responseStatus: 'FAILURE', data: null, error: err });
+          });
+
+      }
     })
     .catch((err) => {
       console.error('Error executing query', err.stack);
