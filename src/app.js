@@ -1,3 +1,5 @@
+/* eslint-disable n/no-deprecated-api */
+/* eslint-disable brace-style */
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
@@ -19,9 +21,8 @@ const iaFormP3Post = require('./initialAssessmentFormsHandler/iaFormP3.js');
 const secrets = require('./secret');
 const healthTrackerQueries = require('./healthTrackerHandler/healthTracker.js');
 
-
-let AWS = require('aws-sdk');
-let region = 'us-east-1';
+const AWS = require('aws-sdk');
+const region = 'us-east-1';
 let secret = '';
 let decodedBinarySecret = '';
 
@@ -69,64 +70,55 @@ const client = new AWS.SecretsManager({
 //           console.log('secret---->',decodedBinarySecret)
 //       }
 //   }
-  
+
 //   // Your code goes here.
 // });
 
-
-
 router.get('/getSecret', (req, res) => {
-console.log('entereed getsecret');
-  client.getSecretValue({SecretId: "photo/s3"}, function(err, data) {
+  console.log('entereed getsecret');
+  client.getSecretValue({ SecretId: 'photo/s3' }, function (err, data) {
     console.log('entereed inside getsecret');
 
     if (err) {
-      console.log('errorrr',err);
-      
-        if (err.code === 'DecryptionFailureException')
-            // Secrets Manager can't decrypt the protected secret text using the provided KMS key.
-            // Deal with the exception here, and/or rethrow at your discretion.
-            throw err;
-        else if (err.code === 'InternalServiceErrorException')
-            // An error occurred on the server side.
-            // Deal with the exception here, and/or rethrow at your discretion.
-            throw err;
-        else if (err.code === 'InvalidParameterException')
-            // You provided an invalid value for a parameter.
-            // Deal with the exception here, and/or rethrow at your discretion.
-            throw err;
-        else if (err.code === 'InvalidRequestException')
-            // You provided a parameter value that is not valid for the current state of the resource.
-            // Deal with the exception here, and/or rethrow at your discretion.
-            throw err;
-        else if (err.code === 'ResourceNotFoundException')
-            // We can't find the resource that you asked for.
-            // Deal with the exception here, and/or rethrow at your discretion.
-            throw err;
-    }
-    else {
-      console.log('successss');
-        // Decrypts secret using the associated KMS key.
-        // Depending on whether the secret is a string or binary, one of these fields will be populated.
-        if ('SecretString' in data) {
-            secret = data.SecretString;
-            console.log('secret---->',secret)
-        } else {
-            let buff = new Buffer(data.SecretBinary, 'base64');
-            decodedBinarySecret = buff.toString('ascii');
-            console.log('secret---->',decodedBinarySecret)
-        }
+      console.log('errorrr', err);
 
+      if (err.code === 'DecryptionFailureException')
+      // Secrets Manager can't decrypt the protected secret text using the provided KMS key.
+      // Deal with the exception here, and/or rethrow at your discretion.
+      { throw err; } else if (err.code === 'InternalServiceErrorException')
+      // An error occurred on the server side.
+      // Deal with the exception here, and/or rethrow at your discretion.
+      { throw err; } else if (err.code === 'InvalidParameterException')
+      // You provided an invalid value for a parameter.
+      // Deal with the exception here, and/or rethrow at your discretion.
+      { throw err; } else if (err.code === 'InvalidRequestException')
+      // You provided a parameter value that is not valid for the current state of the resource.
+      // Deal with the exception here, and/or rethrow at your discretion.
+      { throw err; } else if (err.code === 'ResourceNotFoundException')
+      // We can't find the resource that you asked for.
+      // Deal with the exception here, and/or rethrow at your discretion.
+      { throw err; }
+    } else {
+      console.log('successss');
+      // Decrypts secret using the associated KMS key.
+      // Depending on whether the secret is a string or binary, one of these fields will be populated.
+      if ('SecretString' in data) {
+        secret = data.SecretString;
+        console.log('secret---->', secret);
+      } else {
+        const buff = new Buffer(data.SecretBinary, 'base64');
+        decodedBinarySecret = buff.toString('ascii');
+        console.log('secret---->', decodedBinarySecret);
+      }
     }
-    
+
     res.json({
-      error:err,
-      message:secret,
-      decoded:decodedBinarySecret
-    })
+      error: err,
+      message: secret,
+      decoded: decodedBinarySecret
+    });
     // Your code goes here.
   });
-  
 });
 const { Pool } = require('pg');
 const { QUERIES } = require('./constants');
@@ -944,30 +936,155 @@ router.get('/profileImage/:imageName', (req, res) => {
 });
 
 // get api for caseworker nickname
-router.get('/getCaseWorkerNickname',(req,res)=>{
+router.get('/getCaseWorkerNickname', (req, res) => {
   pool
-  .query(QUERIES.InitialAssessment.getCwNickname)
-  .then((resp)=>{
-    res.status(200).json({ responseStatus: 'SUCCESS', data: resp.rows, error: false });
-    console.log('success on endpoint get cw nickname');
+    .query(QUERIES.InitialAssessment.getCwNickname)
+    .then((resp) => {
+      res.status(200).json({ responseStatus: 'SUCCESS', data: resp.rows, error: false });
+      console.log('success on endpoint get cw nickname');
+    })
+    .catch((err) => {
+      console.error('Error exectuting query', err.stack);
+      res.status(501).json({ err });
+    });
+});
+
+router.get('/getWebpartyUsername', (req, res) => {
+  pool
+    .query(QUERIES.InitialAssessment.getWebpartyUsername)
+    .then((resp) => {
+      res.status(200).json({ responseStatus: 'SUCCESS', data: resp.rows, error: false });
+      console.log('success on endpoint get username');
+    })
+    .catch((err) => {
+      console.error('Error exectuting query', err.stack);
+      res.status(501).json({ err });
+    });
+});
+
+// post api for adding new veteran from resident search
+router.post('/addNewVeteran',(req,res)=>{
+  requestObj = [
+    req.body.party_type, //send from front end
+    req.body.party_id,
+    req.body.caseWorkerUserName, //both cw and veteran
+    req.body.password,  //how?
+    req.body.pFirstName,
+    req.body.middleInitial,
+    req.body.pLastName,
+    req.body.nickName,
+    req.body.addressMain,
+    req.body.addressLine2,
+    req.body.city,
+    req.body.state,
+    req.body.county,
+    req.body.zipcode,
+    req.body.primaryPhone,
+    req.body.pdob,
+    req.body.placeOfBirth,
+    req.body.ssn,
+    req.body.sex,
+    req.body.maritalStatus,
+    req.body.race,
+    req.body.primaryLanguage,
+    req.body.contactPerson,
+    req.body.relationship,
+    req.body.contactPersonAddress,
+    req.body.phone, //check if its contact_person_phone
+    req.body.consent,
+    req.body.caseWorkerId
+  ];
+  pool
+  .query(QUERIES.InitialAssessment.addNewVeteran, requestObj)
+  .then((resp) => {
+    console.log('success on endpoint addnewVeteranRS');
+    res.status(200).json({ responseStatus: 'SUCCESS', data: resp, error: false });
   })
   .catch((err) => {
     console.error('Error exectuting query', err.stack);
-    res.status(501).json({ err });
+    res.status(501).json({ responseStatus: 'FAILURE', data: null, error: true });
   });
 });
 
-router.get('/getWebpartyUsername',(req,res)=>{
+// get api for ia page 1 family details
+router.get('/initialAssessment/page-1FD/:veteranId', (req, res) => {
+  const vet = req.params.veteranId;
   pool
-  .query(QUERIES.InitialAssessment.getWebpartyUsername)
-  .then((resp)=>{
-    res.status(200).json({ responseStatus: 'SUCCESS', data: resp.rows, error: false });
-    console.log('success on endpoint get username');
-  })
-  .catch((err) => {
-    console.error('Error exectuting query', err.stack);
-    res.status(501).json({ err });
-  });
+    .query(QUERIES.InitialAssessment.getPage1FD, [vet])
+    .then((resp) => {
+      console.log('success on endpoint get ia page 1 FD');
+      res.json(resp.rows);
+    })
+    .catch((err) => {
+      console.error('Error exectuting query', err.stack);
+      res.status(501).json({ err });
+    });
+});
+
+// get api for ia page 1 family details
+router.delete('/initialAssessment/page-1FD/:veteranId/:memId', (req, res) => {
+  const requestObj = [
+    req.params.veteranId,
+    req.params.memId
+  ];
+  pool
+    .query(QUERIES.InitialAssessment.deleteMember, requestObj)
+    .then((resp) => {
+      console.log('success on endpoint delete ia page 1 FD');
+      res.status(200).json({ responseStatus: 'SUCCESS', data: resp, error: false });
+    })
+    .catch((err) => {
+      console.error('Error exectuting query', err.stack);
+      res.status(501).json({ responseStatus: 'FAILURE', data: null, error: true });
+    });
+  console.log('delete req', requestObj);
+});
+
+// add new member
+router.post('/initialAssessment/page-1FD/', (req, res) => {
+  const requestObj = [
+    req.body.veteranId,
+    req.body.name,
+    req.body.age,
+    req.body.relationship,
+    req.body.living,
+    req.body.location
+  ];
+  pool
+    .query(QUERIES.InitialAssessment.addMember, requestObj)
+    .then((resp) => {
+      console.log('success on endpoint add member ia page 1 FD');
+      res.status(200).json({ responseStatus: 'SUCCESS', data: resp, error: false });
+    })
+    .catch((err) => {
+      console.error('Error exectuting query', err.stack);
+      res.status(501).json({ responseStatus: 'FAILURE', data: null, error: true });
+    });
+  console.log('add req', requestObj);
+});
+
+// update api for ia page 1 family details
+router.put('/initialAssessment/page-1FD/:veteranId/:memId', (req, res) => {
+  const requestObj = [
+    req.params.veteranId,
+    req.params.memId,
+    req.body.name,
+    req.body.age,
+    req.body.living,
+    req.body.relationship,
+    req.body.location
+  ];
+  pool
+    .query(QUERIES.InitialAssessment.updateFamilyMemberDetails, requestObj)
+    .then((resp) => {
+      console.log('success on endpoint update ia page 1 FD');
+      res.status(200).json({ responseStatus: 'SUCCESS', data: resp, error: false });
+    })
+    .catch((err) => {
+      console.error('Error exectuting query', err.stack);
+      res.status(501).json({ responseStatus: 'FAILURE', data: null, error: true });
+    });
+  console.log('delete req', requestObj);
 });
 
 // get api for ia page 1
@@ -984,8 +1101,10 @@ router.get('/initialAssessment/page-1/:veteranId', (req, res) => {
       res.status(501).json({ err });
     });
 });
-// ia forms api testing page1
+
+// post api for ia forms page1
 router.post('/initialAssessment/page-1', async (req, res) => {
+  //const caseworkerId = req.body.personalDetails.caseWorkerId;
   const personalDetails = [
     req.body.personalDetails.veteranID,
     req.body.personalDetails.firstName,
@@ -1013,8 +1132,8 @@ router.post('/initialAssessment/page-1', async (req, res) => {
     req.body.personalDetails.hobbiesInterests,
     req.body.personalDetails.religiousPreferences,
     req.body.personalDetails.consent,
-    req.body.personalDetails.caseWorkerNickName,
-    req.body.personalDetails.caseWorkerUserName
+    req.body.personalDetails.caseWorkerId
+    //req.body.personalDetails.caseWorkerNickName,
   ];
 
   const income = [
