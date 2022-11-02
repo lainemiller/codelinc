@@ -1,5 +1,5 @@
-/* eslint-disable n/no-deprecated-api */
 /* eslint-disable brace-style */
+/* eslint-disable n/no-deprecated-api */
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
@@ -412,11 +412,38 @@ router.put('/progressNotes/updateGoalStatus/:veteranId', (req, res) => {
 // Endpoint 10
 router.get('/userProfile/getUserDetails/:veteranID', (req, res) => {
   pool
-    .query(QUERIES.UserProfile.GetUserDetails, [req.params.veteranID])
+    .query(QUERIES.UserProfile.CheckCaseWorkerId, [req.params.veteranID])
     .then((resp) => {
-      res
-        .status(200)
-        .json({ responseStatus: 'SUCCESS', data: resp.rows, error: false });
+      if (resp.rows[0].case_worker_id) {
+        pool
+          .query(QUERIES.UserProfile.GetUserDetailsWithCaseworker, [req.params.veteranID])
+          .then((resp) => {
+            res
+              .status(200)
+              .json({ responseStatus: 'SUCCESS', data: resp.rows, error: false });
+          })
+          .catch((err) => {
+            console.error('Error executing query', err.stack);
+            res
+              .status(501)
+              .json({ responseStatus: 'FAILURE', data: null, error: err });
+          });
+      } else {
+        pool
+          .query(QUERIES.UserProfile.GetUserDetailsWithoutCaseworker, [req.params.veteranID])
+          .then((resp) => {
+            res
+              .status(200)
+              .json({ responseStatus: 'SUCCESS', data: resp.rows, error: false });
+          })
+          .catch((err) => {
+            console.error('Error executing query', err.stack);
+            res
+              .status(501)
+              .json({ responseStatus: 'FAILURE', data: null, error: err });
+          });
+
+      }
     })
     .catch((err) => {
       console.error('Error executing query', err.stack);
@@ -1022,7 +1049,7 @@ router.get('/initialAssessment/page-1FD/:veteranId', (req, res) => {
     });
 });
 
-// get api for ia page 1 family details
+// delete api for ia page 1 family details
 router.delete('/initialAssessment/page-1FD/:veteranId/:memId', (req, res) => {
   const requestObj = [
     req.params.veteranId,
@@ -1102,7 +1129,6 @@ router.get('/initialAssessment/page-1/:veteranId', (req, res) => {
       res.status(501).json({ err });
     });
 });
-
 // post api for ia forms page1
 router.post('/initialAssessment/page-1', async (req, res) => {
   const personalDetails = [
