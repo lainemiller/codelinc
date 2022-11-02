@@ -3,7 +3,7 @@ const treatmentQueries = require('./postTreatment.js');
 const savetreatmentIssues = async (req) => {
   const vet = req.params.veteran_id;
   const treatmentIssues = req.body.treatmentIssues[0];
-  let i=0;
+  let i = 0;
   for (i = 0; i < treatmentIssues.physicalHealth.length; i++) {
     let requestObjIssuesPH = null;
     const goalType = 'physical health';

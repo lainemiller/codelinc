@@ -963,12 +963,12 @@ router.get('/getWebpartyUsername', (req, res) => {
 });
 
 // post api for adding new veteran from resident search
-router.post('/addNewVeteran',(req,res)=>{
-  requestObj = [
-    req.body.party_type, //send from front end
+router.post('/addNewVeteran', (req, res) => {
+  const requestObj = [
+    req.body.party_type,
     req.body.party_id,
-    req.body.caseWorkerUserName, //both cw and veteran
-    req.body.password,  //how?
+    req.body.caseWorkerUserName,
+    'Lincoln#1',
     req.body.pFirstName,
     req.body.middleInitial,
     req.body.pLastName,
@@ -990,20 +990,21 @@ router.post('/addNewVeteran',(req,res)=>{
     req.body.contactPerson,
     req.body.relationship,
     req.body.contactPersonAddress,
-    req.body.phone, //check if its contact_person_phone
+    req.body.phone,
     req.body.consent,
-    req.body.caseWorkerId
+    req.body.caseWorkerId,
+    req.body.religiousPreferences
   ];
   pool
-  .query(QUERIES.InitialAssessment.addNewVeteran, requestObj)
-  .then((resp) => {
-    console.log('success on endpoint addnewVeteranRS');
-    res.status(200).json({ responseStatus: 'SUCCESS', data: resp, error: false });
-  })
-  .catch((err) => {
-    console.error('Error exectuting query', err.stack);
-    res.status(501).json({ responseStatus: 'FAILURE', data: null, error: true });
-  });
+    .query(QUERIES.InitialAssessment.addNewVeteran, requestObj)
+    .then((resp) => {
+      console.log('New Veteran added successfully');
+      res.status(200).json({ responseStatus: 'SUCCESS', data: resp, error: false });
+    })
+    .catch((err) => {
+      console.error('Error exectuting query', err.stack);
+      res.status(501).json({ responseStatus: 'FAILURE', data: null, error: true });
+    });
 });
 
 // get api for ia page 1 family details
@@ -1104,7 +1105,6 @@ router.get('/initialAssessment/page-1/:veteranId', (req, res) => {
 
 // post api for ia forms page1
 router.post('/initialAssessment/page-1', async (req, res) => {
-  //const caseworkerId = req.body.personalDetails.caseWorkerId;
   const personalDetails = [
     req.body.personalDetails.veteranID,
     req.body.personalDetails.firstName,
@@ -1133,7 +1133,6 @@ router.post('/initialAssessment/page-1', async (req, res) => {
     req.body.personalDetails.religiousPreferences,
     req.body.personalDetails.consent,
     req.body.personalDetails.caseWorkerId
-    //req.body.personalDetails.caseWorkerNickName,
   ];
 
   const income = [
