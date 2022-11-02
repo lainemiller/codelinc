@@ -962,6 +962,78 @@ router.get('/profileImage/:imageName', (req, res) => {
   });
 });
 
+// get api for caseworker nickname
+router.get('/getCaseWorkerNickname', (req, res) => {
+  pool
+    .query(QUERIES.InitialAssessment.getCwNickname)
+    .then((resp) => {
+      res.status(200).json({ responseStatus: 'SUCCESS', data: resp.rows, error: false });
+      console.log('success on endpoint get cw nickname');
+    })
+    .catch((err) => {
+      console.error('Error exectuting query', err.stack);
+      res.status(501).json({ err });
+    });
+});
+
+router.get('/getWebpartyUsername', (req, res) => {
+  pool
+    .query(QUERIES.InitialAssessment.getWebpartyUsername)
+    .then((resp) => {
+      res.status(200).json({ responseStatus: 'SUCCESS', data: resp.rows, error: false });
+      console.log('success on endpoint get username');
+    })
+    .catch((err) => {
+      console.error('Error exectuting query', err.stack);
+      res.status(501).json({ err });
+    });
+});
+
+// post api for adding new veteran from resident search
+router.post('/addNewVeteran', (req, res) => {
+  const requestObj = [
+    req.body.party_type,
+    req.body.party_id,
+    req.body.caseWorkerUserName,
+    'Lincoln#1',
+    req.body.pFirstName,
+    req.body.middleInitial,
+    req.body.pLastName,
+    req.body.nickName,
+    req.body.addressMain,
+    req.body.addressLine2,
+    req.body.city,
+    req.body.state,
+    req.body.county,
+    req.body.zipcode,
+    req.body.primaryPhone,
+    req.body.pdob,
+    req.body.placeOfBirth,
+    req.body.ssn,
+    req.body.sex,
+    req.body.maritalStatus,
+    req.body.race,
+    req.body.primaryLanguage,
+    req.body.contactPerson,
+    req.body.relationship,
+    req.body.contactPersonAddress,
+    req.body.phone,
+    req.body.consent,
+    req.body.caseWorkerId,
+    req.body.religiousPreferences
+  ];
+  pool
+    .query(QUERIES.InitialAssessment.addNewVeteran, requestObj)
+    .then((resp) => {
+      console.log('New Veteran added successfully');
+      res.status(200).json({ responseStatus: 'SUCCESS', data: resp, error: false });
+    })
+    .catch((err) => {
+      console.error('Error exectuting query', err.stack);
+      res.status(501).json({ responseStatus: 'FAILURE', data: null, error: true });
+    });
+});
+
 // get api for ia page 1 family details
 router.get('/initialAssessment/page-1FD/:veteranId', (req, res) => {
   const vet = req.params.veteranId;
@@ -1085,7 +1157,8 @@ router.post('/initialAssessment/page-1', async (req, res) => {
     req.body.personalDetails.phone,
     req.body.personalDetails.hobbiesInterests,
     req.body.personalDetails.religiousPreferences,
-    req.body.personalDetails.consent
+    req.body.personalDetails.consent,
+    req.body.personalDetails.caseWorkerId
   ];
 
   const income = [
