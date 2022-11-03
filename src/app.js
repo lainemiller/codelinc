@@ -1004,7 +1004,7 @@ router.post('/addNewVeteran', (req, res) => {
     req.body.addressLine2,
     req.body.city,
     req.body.state,
-    req.body.county,
+    req.body.country,
     req.body.zipcode,
     req.body.primaryPhone,
     req.body.pdob,
@@ -1020,7 +1020,11 @@ router.post('/addNewVeteran', (req, res) => {
     req.body.phone,
     req.body.consent,
     req.body.caseWorkerId,
-    req.body.religiousPreferences
+    req.body.religiousPreferences,
+    req.body.hmisId,
+    req.body.email,
+    req.body.intakeDate,
+    req.body.recordNo
   ];
   pool
     .query(QUERIES.InitialAssessment.addNewVeteran, requestObj)
