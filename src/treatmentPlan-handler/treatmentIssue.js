@@ -3,7 +3,7 @@ const treatmentQueries = require('./postTreatment.js');
 const savetreatmentIssues = async (req) => {
   const vet = req.params.veteran_id;
   const treatmentIssues = req.body.treatmentIssues[0];
-  let i; let j; let k; let l; let m; let n; let o; let p = 0;
+  let i = 0;
   for (i = 0; i < treatmentIssues.physicalHealth.length; i++) {
     let requestObjIssuesPH = null;
     const goalType = 'physical health';
@@ -25,13 +25,13 @@ const savetreatmentIssues = async (req) => {
     }
   }
   // MentalHealth
-  for (j = 0; j < treatmentIssues.mentalHealth.length; j++) {
+  for (i = 0; i < treatmentIssues.mentalHealth.length; i++) {
     let requestObjIssuesMH = null;
     const goalType = 'mental health';
-    const goals = treatmentIssues.mentalHealth[j].goals;
-    const plans = treatmentIssues.mentalHealth[j].plans;
-    const strategies = treatmentIssues.mentalHealth[j].strategies;
-    const targetDate = treatmentIssues.mentalHealth[j].targetDate;
+    const goals = treatmentIssues.mentalHealth[i].goals;
+    const plans = treatmentIssues.mentalHealth[i].plans;
+    const strategies = treatmentIssues.mentalHealth[i].strategies;
+    const targetDate = treatmentIssues.mentalHealth[i].targetDate;
     if (goals) {
       requestObjIssuesMH = [
         vet,
@@ -46,13 +46,13 @@ const savetreatmentIssues = async (req) => {
     }
   }
   // SubstanceUse
-  for (k = 0; k < treatmentIssues.substanceUse.length; k++) {
+  for (i = 0; i < treatmentIssues.substanceUse.length; i++) {
     let requestObjIssuesSU = null;
     const goalType = 'substance use';
-    const goals = treatmentIssues.substanceUse[k].goals;
-    const plans = treatmentIssues.substanceUse[k].plans;
-    const strategies = treatmentIssues.substanceUse[k].strategies;
-    const targetDate = treatmentIssues.substanceUse[k].targetDate;
+    const goals = treatmentIssues.substanceUse[i].goals;
+    const plans = treatmentIssues.substanceUse[i].plans;
+    const strategies = treatmentIssues.substanceUse[i].strategies;
+    const targetDate = treatmentIssues.substanceUse[i].targetDate;
     if (goals) {
       requestObjIssuesSU = [
         vet,
@@ -67,13 +67,13 @@ const savetreatmentIssues = async (req) => {
     }
   }
   // Housing
-  for (l = 0; l < treatmentIssues.housing.length; l++) {
+  for (i = 0; i < treatmentIssues.housing.length; i++) {
     let requestObjIssuesHO = null;
     const goalType = 'housing';
-    const goals = treatmentIssues.housing[l].goals;
-    const plans = treatmentIssues.housing[l].plans;
-    const strategies = treatmentIssues.housing[l].strategies;
-    const targetDate = treatmentIssues.housing[l].targetDate;
+    const goals = treatmentIssues.housing[i].goals;
+    const plans = treatmentIssues.housing[i].plans;
+    const strategies = treatmentIssues.housing[i].strategies;
+    const targetDate = treatmentIssues.housing[i].targetDate;
     if (goals) {
       requestObjIssuesHO = [
         vet,
@@ -88,13 +88,13 @@ const savetreatmentIssues = async (req) => {
     }
   }
   // Income/Financial/Legal
-  for (m = 0; m < treatmentIssues.incomeLegal.length; m++) {
+  for (i = 0; i < treatmentIssues.incomeLegal.length; i++) {
     let requestObjIssuesIL = null;
     const goalType = 'social';
-    const goals = treatmentIssues.incomeLegal[m].goals;
-    const plans = treatmentIssues.incomeLegal[m].plans;
-    const strategies = treatmentIssues.incomeLegal[m].strategies;
-    const targetDate = treatmentIssues.incomeLegal[m].targetDate;
+    const goals = treatmentIssues.incomeLegal[i].goals;
+    const plans = treatmentIssues.incomeLegal[i].plans;
+    const strategies = treatmentIssues.incomeLegal[i].strategies;
+    const targetDate = treatmentIssues.incomeLegal[i].targetDate;
     if (goals) {
       requestObjIssuesIL = [
         vet,
@@ -109,13 +109,13 @@ const savetreatmentIssues = async (req) => {
     }
   }
   // Relationships
-  for (n = 0; n < treatmentIssues.relationships.length; n++) {
+  for (i = 0; i < treatmentIssues.relationships.length; i++) {
     let requestObjIssuesR = null;
     const goalType = 'family';
-    const goals = treatmentIssues.relationships[n].goals;
-    const plans = treatmentIssues.relationships[n].plans;
-    const strategies = treatmentIssues.relationships[n].strategies;
-    const targetDate = treatmentIssues.relationships[n].targetDate;
+    const goals = treatmentIssues.relationships[i].goals;
+    const plans = treatmentIssues.relationships[i].plans;
+    const strategies = treatmentIssues.relationships[i].strategies;
+    const targetDate = treatmentIssues.relationships[i].targetDate;
     if (goals) {
       requestObjIssuesR = [
         vet,
@@ -130,13 +130,13 @@ const savetreatmentIssues = async (req) => {
     }
   }
   // Education
-  for (o = 0; o < treatmentIssues.education.length; o++) {
+  for (i = 0; i < treatmentIssues.education.length; i++) {
     let requestObjIssuesE = null;
     const goalType = 'career';
-    const goals = treatmentIssues.education[o].goals;
-    const plans = treatmentIssues.education[o].plans;
-    const strategies = treatmentIssues.education[o].strategies;
-    const targetDate = treatmentIssues.education[o].targetDate;
+    const goals = treatmentIssues.education[i].goals;
+    const plans = treatmentIssues.education[i].plans;
+    const strategies = treatmentIssues.education[i].strategies;
+    const targetDate = treatmentIssues.education[i].targetDate;
     if (goals) {
       requestObjIssuesE = [
         vet,
@@ -151,13 +151,13 @@ const savetreatmentIssues = async (req) => {
     }
   }
   // Benefits/Medicaid/Snap
-  for (p = 0; p < treatmentIssues.benefits.length; p++) {
+  for (i = 0; i < treatmentIssues.benefits.length; i++) {
     let requestObjIssuesB = null;
     const goalType = 'benefits';
-    const goals = treatmentIssues.benefits[p].goals;
-    const plans = treatmentIssues.benefits[p].plans;
-    const strategies = treatmentIssues.benefits[p].strategies;
-    const targetDate = treatmentIssues.benefits[p].targetDate;
+    const goals = treatmentIssues.benefits[i].goals;
+    const plans = treatmentIssues.benefits[i].plans;
+    const strategies = treatmentIssues.benefits[i].strategies;
+    const targetDate = treatmentIssues.benefits[i].targetDate;
     if (goals) {
       requestObjIssuesB = [
         vet,
