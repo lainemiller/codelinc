@@ -1,9 +1,26 @@
 const aws = require('aws-sdk');
 const secrets = require('../secret');
+const region = 'us-east-1';
+var photoCredential = {};
+
+const client = new aws.SecretsManager({
+  region
+});
+
+client.getSecretValue({ SecretId: 'photo/s3' }, function (err, data) {
+  if (err) {
+    if (err.code === 'DecryptionFailureException') { throw err; } else if (err.code === 'InternalServiceErrorException') { throw err; } else if (err.code === 'InvalidParameterException') { throw err; } else if (err.code === 'InvalidRequestException') { throw err; } else if (err.code === 'ResourceNotFoundException') { throw err; }
+  } else {
+    if ('SecretString' in data) {
+      let secret = data.SecretString;
+      photoCredential = JSON.parse(secret);
+    }
+  }
+});
 
 const s3 = new aws.S3({
-  secretAccessKey: secrets.SECRETACCESSKEY,
-  accessKeyId: secrets.ACCESSKEYID,
+  secretAccessKey: photoCredential.secretKey,
+  accessKeyId: photoCredential.accessKey,
   region: secrets.REGION
 });
 
