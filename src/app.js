@@ -24,7 +24,7 @@ const healthTrackerQueries = require('./healthTrackerHandler/healthTracker.js');
 const AWS = require('aws-sdk');
 const region = 'us-east-1';
 let secret = '';
-let decodedBinarySecret = '';
+let secretManagerCredential='';
 
 // Create a Secrets Manager client
 const client = new AWS.SecretsManager({
@@ -32,32 +32,30 @@ const client = new AWS.SecretsManager({
 });
 
 
-// router.get('/getSecret', (req, res) => {
-//   console.log('entereed getsecret');
-//   client.getSecretValue({ SecretId: 'photo/s3' }, function (err, data) {
-//     console.log('entereed inside getsecret');
-//     if (err) {
-//       console.log('errorrr', err);
-//       if (err.code === 'DecryptionFailureException') { throw err; } else if (err.code === 'InternalServiceErrorException') { throw err; } else if (err.code === 'InvalidParameterException') { throw err; } else if (err.code === 'InvalidRequestException') { throw err; } else if (err.code === 'ResourceNotFoundException') { throw err; }
-//     } else {
-//       console.log('successss');
-//       if ('SecretString' in data) {
-//         secret = data.SecretString;
-//         console.log('secret---->', secret);
-//         secretManagerCredential = JSON.parse(secret);
-//         console.log('secretManager cred', secretManagerCredential)
-//       }
-//     }
+router.get('/getDbSecret', (req, res) => {
+  console.log('entereed getsecret');
+  client.getSecretValue({ SecretId: 'dev/postgres/codelinc/db' }, function (err, data) {
+    console.log('entereed inside getsecret');
+    if (err) {
+      console.log('errorrr', err);
+      if (err.code === 'DecryptionFailureException') { throw err; } else if (err.code === 'InternalServiceErrorException') { throw err; } else if (err.code === 'InvalidParameterException') { throw err; } else if (err.code === 'InvalidRequestException') { throw err; } else if (err.code === 'ResourceNotFoundException') { throw err; }
+    } else {
+      console.log('successss');
+      if ('SecretString' in data) {
+        secret = data.SecretString;
+        console.log('secret---->', secret);
+        secretManagerCredential = JSON.parse(secret);
+        console.log('secretManager cred', secretManagerCredential)
+      }
+    }
 
-//     res.json({
-//       error: err,
-//       message: secret,
-//       accessKey: secretManagerCredential.accessKey,
-//       secretKey: secretManagerCredential.secretKey,
-//       value:secretManagerCredential
-//     });
-//   });
-// });
+    res.json({
+      error: err,
+      message: secret,
+      value:secretManagerCredential
+    });
+  });
+});
 
 const { Pool } = require('pg');
 const { QUERIES } = require('./constants');
