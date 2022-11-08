@@ -32,32 +32,32 @@ const client = new AWS.SecretsManager({
 });
 
 
-router.get('/getSecret', (req, res) => {
-  console.log('entereed getsecret');
-  client.getSecretValue({ SecretId: 'photo/s3' }, function (err, data) {
-    console.log('entereed inside getsecret');
-    if (err) {
-      console.log('errorrr', err);
-      if (err.code === 'DecryptionFailureException') { throw err; } else if (err.code === 'InternalServiceErrorException') { throw err; } else if (err.code === 'InvalidParameterException') { throw err; } else if (err.code === 'InvalidRequestException') { throw err; } else if (err.code === 'ResourceNotFoundException') { throw err; }
-    } else {
-      console.log('successss');
-      if ('SecretString' in data) {
-        secret = data.SecretString;
-        console.log('secret---->', secret);
-        secretManagerCredential = JSON.parse(secret);
-        console.log('secretManager cred', secretManagerCredential)
-      }
-    }
+// router.get('/getSecret', (req, res) => {
+//   console.log('entereed getsecret');
+//   client.getSecretValue({ SecretId: 'photo/s3' }, function (err, data) {
+//     console.log('entereed inside getsecret');
+//     if (err) {
+//       console.log('errorrr', err);
+//       if (err.code === 'DecryptionFailureException') { throw err; } else if (err.code === 'InternalServiceErrorException') { throw err; } else if (err.code === 'InvalidParameterException') { throw err; } else if (err.code === 'InvalidRequestException') { throw err; } else if (err.code === 'ResourceNotFoundException') { throw err; }
+//     } else {
+//       console.log('successss');
+//       if ('SecretString' in data) {
+//         secret = data.SecretString;
+//         console.log('secret---->', secret);
+//         secretManagerCredential = JSON.parse(secret);
+//         console.log('secretManager cred', secretManagerCredential)
+//       }
+//     }
 
-    res.json({
-      error: err,
-      message: secret,
-      accessKey: secretManagerCredential.accessKey,
-      secretKey: secretManagerCredential.secretKey,
-      value:secretManagerCredential
-    });
-  });
-});
+//     res.json({
+//       error: err,
+//       message: secret,
+//       accessKey: secretManagerCredential.accessKey,
+//       secretKey: secretManagerCredential.secretKey,
+//       value:secretManagerCredential
+//     });
+//   });
+// });
 
 const { Pool } = require('pg');
 const { QUERIES } = require('./constants');
