@@ -21,50 +21,59 @@ const iaFormP3Post = require('./initialAssessmentFormsHandler/iaFormP3.js');
 const secrets = require('./secret');
 const healthTrackerQueries = require('./healthTrackerHandler/healthTracker.js');
 
+
+// router.get('/getDbSecret', (req, res) => {
+//   console.log('entereed getsecret');
+//   client.getSecretValue({ SecretId: 'dev/postgres/codelinc/db' }, function (err, data) {
+//     console.log('entereed inside getsecret');
+//     if (err) {
+//       console.log('errorrr', err);
+//       if (err.code === 'DecryptionFailureException') { throw err; } else if (err.code === 'InternalServiceErrorException') { throw err; } else if (err.code === 'InvalidParameterException') { throw err; } else if (err.code === 'InvalidRequestException') { throw err; } else if (err.code === 'ResourceNotFoundException') { throw err; }
+//     } else {
+//       console.log('successss');
+//       if ('SecretString' in data) {
+//         secret = data.SecretString;
+//         console.log('secret---->', secret);
+//         secretManagerCredential = JSON.parse(secret);
+//         console.log('secretManager cred', secretManagerCredential)
+//       }
+//     }
+
+//     res.json({
+//       error: err,
+//       message: secret,
+//       value:secretManagerCredential
+//     });
+//   });
+// });
+
 const AWS = require('aws-sdk');
 const region = 'us-east-1';
-let secret = '';
-let secretManagerCredential='';
+var dbCredential = {};
 
-// Create a Secrets Manager client
 const client = new AWS.SecretsManager({
   region
 });
 
-
-router.get('/getDbSecret', (req, res) => {
-  console.log('entereed getsecret');
-  client.getSecretValue({ SecretId: 'dev/postgres/codelinc/db' }, function (err, data) {
-    console.log('entereed inside getsecret');
-    if (err) {
-      console.log('errorrr', err);
-      if (err.code === 'DecryptionFailureException') { throw err; } else if (err.code === 'InternalServiceErrorException') { throw err; } else if (err.code === 'InvalidParameterException') { throw err; } else if (err.code === 'InvalidRequestException') { throw err; } else if (err.code === 'ResourceNotFoundException') { throw err; }
-    } else {
-      console.log('successss');
-      if ('SecretString' in data) {
-        secret = data.SecretString;
-        console.log('secret---->', secret);
-        secretManagerCredential = JSON.parse(secret);
-        console.log('secretManager cred', secretManagerCredential)
-      }
+client.getSecretValue({ SecretId: 'dev/postgres/codelinc/db' }, function (err, data) {
+  if (err) {
+    if (err.code === 'DecryptionFailureException') { throw err; } else if (err.code === 'InternalServiceErrorException') { throw err; } else if (err.code === 'InvalidParameterException') { throw err; } else if (err.code === 'InvalidRequestException') { throw err; } else if (err.code === 'ResourceNotFoundException') { throw err; }
+  } else {
+    if ('SecretString' in data) {
+      let secret = data.SecretString;
+      dbCredential = JSON.parse(secret);
     }
-
-    res.json({
-      error: err,
-      message: secret,
-      value:secretManagerCredential
-    });
-  });
+  }
 });
 
 const { Pool } = require('pg');
 const { QUERIES } = require('./constants');
 const pool = new Pool({
-  host: secrets.HOST,
-  user: secrets.USER,
-  password: secrets.DBENTRY,
-  database: secrets.DATABASE,
-  port: secrets.PORT
+  host: dbCredential.host,
+  user: dbCredential.username,
+  password: dbCredential.password,
+  database: dbCredential.dbname,
+  port: dbCredential.port
 });
 
 pool.on('error', (err, client) => {
