@@ -33,7 +33,9 @@ const client = new AWS.SecretsManager({
 const { Pool } = require('pg');
 const { QUERIES } = require('./constants');
 
-async () => {
+getCredential();
+
+async function getCredential() {
   await client.getSecretValue({ SecretId: 'dev/postgres/codelinc/db' }, function (err, data) {
     if (err) {
       console.log(err)
@@ -50,7 +52,7 @@ async () => {
 
 let pool;
 function dbConnection() {
-   pool = new Pool({
+  pool = new Pool({
     host: dbCredential.host,
     user: dbCredential.username,
     password: dbCredential.password,
