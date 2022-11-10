@@ -21,113 +21,34 @@ const iaFormP3Post = require('./initialAssessmentFormsHandler/iaFormP3.js');
 const secrets = require('./secret');
 const healthTrackerQueries = require('./healthTrackerHandler/healthTracker.js');
 
+
 const AWS = require('aws-sdk');
 const region = 'us-east-1';
-let secret = '';
-let decodedBinarySecret = '';
+var dbCredential = {};
 
-// Create a Secrets Manager client
 const client = new AWS.SecretsManager({
   region
 });
 
-// client.getSecretValue({SecretId: "photo/s3"},async function(err, data) {
-//   console.log('entereed inside getsecret');
-
-//   if (err) {
-//     console.log('errorrr',err);
-//       if (err.code === 'DecryptionFailureException')
-//           // Secrets Manager can't decrypt the protected secret text using the provided KMS key.
-//           // Deal with the exception here, and/or rethrow at your discretion.
-//           throw err;
-//       else if (err.code === 'InternalServiceErrorException')
-//           // An error occurred on the server side.
-//           // Deal with the exception here, and/or rethrow at your discretion.
-//           throw err;
-//       else if (err.code === 'InvalidParameterException')
-//           // You provided an invalid value for a parameter.
-//           // Deal with the exception here, and/or rethrow at your discretion.
-//           throw err;
-//       else if (err.code === 'InvalidRequestException')
-//           // You provided a parameter value that is not valid for the current state of the resource.
-//           // Deal with the exception here, and/or rethrow at your discretion.
-//           throw err;
-//       else if (err.code === 'ResourceNotFoundException')
-//           // We can't find the resource that you asked for.
-//           // Deal with the exception here, and/or rethrow at your discretion.
-//           throw err;
-//   }
-//   else {
-//     console.log('successss');
-//       // Decrypts secret using the associated KMS key.
-//       // Depending on whether the secret is a string or binary, one of these fields will be populated.
-//       if ('SecretString' in data) {
-//           secret = data.SecretString;
-//           console.log('secret---->',secret)
-//       } else {
-//           let buff = new Buffer(data.SecretBinary, 'base64');
-//           decodedBinarySecret = buff.toString('ascii');
-//           console.log('secret---->',decodedBinarySecret)
-//       }
-//   }
-
-//   // Your code goes here.
-// });
-
-router.get('/getSecret', (req, res) => {
-  console.log('entereed getsecret');
-  client.getSecretValue({ SecretId: 'photo/s3' }, function (err, data) {
-    console.log('entereed inside getsecret');
-
-    if (err) {
-      console.log('errorrr', err);
-
-      if (err.code === 'DecryptionFailureException')
-      // Secrets Manager can't decrypt the protected secret text using the provided KMS key.
-      // Deal with the exception here, and/or rethrow at your discretion.
-      { throw err; } else if (err.code === 'InternalServiceErrorException')
-      // An error occurred on the server side.
-      // Deal with the exception here, and/or rethrow at your discretion.
-      { throw err; } else if (err.code === 'InvalidParameterException')
-      // You provided an invalid value for a parameter.
-      // Deal with the exception here, and/or rethrow at your discretion.
-      { throw err; } else if (err.code === 'InvalidRequestException')
-      // You provided a parameter value that is not valid for the current state of the resource.
-      // Deal with the exception here, and/or rethrow at your discretion.
-      { throw err; } else if (err.code === 'ResourceNotFoundException')
-      // We can't find the resource that you asked for.
-      // Deal with the exception here, and/or rethrow at your discretion.
-      { throw err; }
-    } else {
-      console.log('successss');
-      // Decrypts secret using the associated KMS key.
-      // Depending on whether the secret is a string or binary, one of these fields will be populated.
-      if ('SecretString' in data) {
-        secret = data.SecretString;
-        console.log('secret---->', secret);
-      } else {
-        const buff = new Buffer(data.SecretBinary, 'base64');
-        decodedBinarySecret = buff.toString('ascii');
-        console.log('secret---->', decodedBinarySecret);
-      }
+client.getSecretValue({ SecretId: 'dev/postgres/codelinc/db' }, function (err, data) {
+  if (err) {
+    if (err.code === 'DecryptionFailureException') { throw err; } else if (err.code === 'InternalServiceErrorException') { throw err; } else if (err.code === 'InvalidParameterException') { throw err; } else if (err.code === 'InvalidRequestException') { throw err; } else if (err.code === 'ResourceNotFoundException') { throw err; }
+  } else {
+    if ('SecretString' in data) {
+      let secret = data.SecretString;
+      dbCredential = JSON.parse(secret);
     }
-
-    res.json({
-      error: err,
-      message: secret,
-      decoded: decodedBinarySecret
-    });
-    // Your code goes here.
-  });
+  }
 });
+
 const { Pool } = require('pg');
 const { QUERIES } = require('./constants');
 const pool = new Pool({
-  host: secrets.HOST,
-  user: secrets.USER,
-  password: secrets.DBENTRY,
-  database: secrets.DATABASE,
-  port: secrets.PORT
+  host: dbCredential.host,
+  user: dbCredential.username,
+  password: dbCredential.password,
+  database: dbCredential.dbname,
+  port: dbCredential.port
 });
 
 pool.on('error', (err, client) => {
@@ -142,6 +63,35 @@ router.use(compression());
 router.use(cors());
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: true }));
+
+router.get('/testSecretManager',(req,res)=>{
+  res.json({
+    host: dbCredential.host,
+    user: dbCredential.username,
+    password: dbCredential.password,
+    database: dbCredential.dbname,
+    port: dbCredential.port,
+    credential:dbCredential
+    });
+})
+
+router.get('/getDbSecret', (req, res) => {
+  let dbSecretData={};
+  client.getSecretValue({ SecretId: 'dev/postgres/codelinc/db' }, function (err, data) {
+    if (err) {
+      if (err.code === 'DecryptionFailureException') { throw err; } else if (err.code === 'InternalServiceErrorException') { throw err; } else if (err.code === 'InvalidParameterException') { throw err; } else if (err.code === 'InvalidRequestException') { throw err; } else if (err.code === 'ResourceNotFoundException') { throw err; }
+    } else {
+      if ('SecretString' in data) {
+        let secret = data.SecretString;
+        dbSecretData = JSON.parse(secret);
+      }
+    }
+  });
+
+  res.json({
+    data:dbSecretData
+    });
+});
 
 router.get('/transportationForm/getTransportationRequests/', (req, res) => {
   pool
