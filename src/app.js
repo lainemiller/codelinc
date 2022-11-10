@@ -30,30 +30,39 @@ const client = new AWS.SecretsManager({
   region
 });
 
-client.getSecretValue({ SecretId: 'dev/postgres/codelinc/db' }, function (err, data) {
-  if (err) {
-    if (err.code === 'DecryptionFailureException') { throw err; } else if (err.code === 'InternalServiceErrorException') { throw err; } else if (err.code === 'InvalidParameterException') { throw err; } else if (err.code === 'InvalidRequestException') { throw err; } else if (err.code === 'ResourceNotFoundException') { throw err; }
-  } else {
-    if ('SecretString' in data) {
-      let secret = data.SecretString;
-      dbCredential = JSON.parse(secret);
-    }
-  }
-});
-
 const { Pool } = require('pg');
 const { QUERIES } = require('./constants');
-const pool = new Pool({
-  host: dbCredential.host,
-  user: dbCredential.username,
-  password: dbCredential.password,
-  database: dbCredential.dbname,
-  port: dbCredential.port
-});
 
-pool.on('error', (err, client) => {
-  console.error('unexpected error in postress conection pool', err);
-});
+getCredential();
+
+async function getCredential() {
+  await client.getSecretValue({ SecretId: 'dev/postgres/codelinc/db' }, function (err, data) {
+    if (err) {
+      console.log(err)
+      if (err.code === 'DecryptionFailureException') { throw err; } else if (err.code === 'InternalServiceErrorException') { throw err; } else if (err.code === 'InvalidParameterException') { throw err; } else if (err.code === 'InvalidRequestException') { throw err; } else if (err.code === 'ResourceNotFoundException') { throw err; }
+    } else {
+      if ('SecretString' in data) {
+        let secret = data.SecretString;
+        dbCredential = JSON.parse(secret);
+      }
+    }
+  });
+  await dbConnection();
+}
+
+let pool;
+function dbConnection() {
+  pool = new Pool({
+    host: dbCredential.host,
+    user: dbCredential.username,
+    password: dbCredential.password,
+    database: dbCredential.dbname,
+    port: dbCredential.port
+  });
+  pool.on('error', (err, client) => {
+    console.error('unexpected error in postress conection pool', err);
+  });
+}
 
 app.set('view engine', 'ejs');
 app.engine('.ejs', ejs);
@@ -64,33 +73,33 @@ router.use(cors());
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: true }));
 
-router.get('/testSecretManager',(req,res)=>{
+router.get('/testSecretManager', (req, res) => {
   res.json({
     host: dbCredential.host,
     user: dbCredential.username,
     password: dbCredential.password,
     database: dbCredential.dbname,
     port: dbCredential.port,
-    credential:dbCredential
-    });
+    credential: dbCredential
+  });
 })
 
 router.get('/getDbSecret', (req, res) => {
-  let dbSecretData={};
+  let dbSecret = {};
   client.getSecretValue({ SecretId: 'dev/postgres/codelinc/db' }, function (err, data) {
     if (err) {
       if (err.code === 'DecryptionFailureException') { throw err; } else if (err.code === 'InternalServiceErrorException') { throw err; } else if (err.code === 'InvalidParameterException') { throw err; } else if (err.code === 'InvalidRequestException') { throw err; } else if (err.code === 'ResourceNotFoundException') { throw err; }
     } else {
       if ('SecretString' in data) {
         let secret = data.SecretString;
-        dbSecretData = JSON.parse(secret);
+        dbSecret = JSON.parse(secret);
       }
     }
   });
 
   res.json({
-    data:dbSecretData
-    });
+    data: dbSecret
+  });
 });
 
 router.get('/transportationForm/getTransportationRequests/', (req, res) => {
