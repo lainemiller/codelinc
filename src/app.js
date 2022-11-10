@@ -22,31 +22,6 @@ const secrets = require('./secret');
 const healthTrackerQueries = require('./healthTrackerHandler/healthTracker.js');
 
 
-// router.get('/getDbSecret', (req, res) => {
-//   console.log('entereed getsecret');
-//   client.getSecretValue({ SecretId: 'dev/postgres/codelinc/db' }, function (err, data) {
-//     console.log('entereed inside getsecret');
-//     if (err) {
-//       console.log('errorrr', err);
-//       if (err.code === 'DecryptionFailureException') { throw err; } else if (err.code === 'InternalServiceErrorException') { throw err; } else if (err.code === 'InvalidParameterException') { throw err; } else if (err.code === 'InvalidRequestException') { throw err; } else if (err.code === 'ResourceNotFoundException') { throw err; }
-//     } else {
-//       console.log('successss');
-//       if ('SecretString' in data) {
-//         secret = data.SecretString;
-//         console.log('secret---->', secret);
-//         secretManagerCredential = JSON.parse(secret);
-//         console.log('secretManager cred', secretManagerCredential)
-//       }
-//     }
-
-//     res.json({
-//       error: err,
-//       message: secret,
-//       value:secretManagerCredential
-//     });
-//   });
-// });
-
 const AWS = require('aws-sdk');
 const region = 'us-east-1';
 var dbCredential = {};
@@ -88,6 +63,35 @@ router.use(compression());
 router.use(cors());
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: true }));
+
+router.get('/testSecretManager',(req,res)=>{
+  res.json({
+    host: dbCredential.host,
+    user: dbCredential.username,
+    password: dbCredential.password,
+    database: dbCredential.dbname,
+    port: dbCredential.port,
+    credential:dbCredential
+    });
+})
+
+router.get('/getDbSecret', (req, res) => {
+  let dbSecretData={};
+  client.getSecretValue({ SecretId: 'dev/postgres/codelinc/db' }, function (err, data) {
+    if (err) {
+      if (err.code === 'DecryptionFailureException') { throw err; } else if (err.code === 'InternalServiceErrorException') { throw err; } else if (err.code === 'InvalidParameterException') { throw err; } else if (err.code === 'InvalidRequestException') { throw err; } else if (err.code === 'ResourceNotFoundException') { throw err; }
+    } else {
+      if ('SecretString' in data) {
+        let secret = data.SecretString;
+        dbSecretData = JSON.parse(secret);
+      }
+    }
+  });
+
+  res.json({
+    data:dbSecretData
+    });
+});
 
 router.get('/transportationForm/getTransportationRequests/', (req, res) => {
   pool
