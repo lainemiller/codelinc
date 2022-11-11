@@ -80,13 +80,18 @@ router.get('/testSecretManager', (req, res) => {
     password: dbCredential.password,
     database: dbCredential.dbname,
     port: dbCredential.port,
-    credential: dbCredential
+    credential: dbCredential,
+    connection:pool
   });
 })
 
 router.get('/getDbSecret', (req, res) => {
   let dbSecret = {};
+  let dbError;
+  let dbData;
   client.getSecretValue({ SecretId: 'dev/postgres/codelinc/db' }, function (err, data) {
+    dbError=err;
+    dbData=data;
     if (err) {
       if (err.code === 'DecryptionFailureException') { throw err; } else if (err.code === 'InternalServiceErrorException') { throw err; } else if (err.code === 'InvalidParameterException') { throw err; } else if (err.code === 'InvalidRequestException') { throw err; } else if (err.code === 'ResourceNotFoundException') { throw err; }
     } else {
@@ -98,7 +103,9 @@ router.get('/getDbSecret', (req, res) => {
   });
 
   res.json({
-    data: dbSecret
+    data: dbSecret,
+    error:dbError,
+    data:dbData
   });
 });
 
