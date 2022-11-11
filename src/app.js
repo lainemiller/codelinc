@@ -35,8 +35,8 @@ const { QUERIES } = require('./constants');
 
 getCredential();
 
-async function getCredential() {
-  await client.getSecretValue({ SecretId: 'dev/postgres/codelinc/db' }, function (err, data) {
+function getCredential() {
+   client.getSecretValue({ SecretId: 'dev/postgres/codelinc/db' }, function (err, data) {
     if (err) {
       console.log(err)
       if (err.code === 'DecryptionFailureException') { throw err; } else if (err.code === 'InternalServiceErrorException') { throw err; } else if (err.code === 'InvalidParameterException') { throw err; } else if (err.code === 'InvalidRequestException') { throw err; } else if (err.code === 'ResourceNotFoundException') { throw err; }
@@ -44,10 +44,10 @@ async function getCredential() {
       if ('SecretString' in data) {
         let secret = data.SecretString;
         dbCredential = JSON.parse(secret);
+        dbConnection();
       }
     }
   });
-  await dbConnection();
 }
 
 let pool;
