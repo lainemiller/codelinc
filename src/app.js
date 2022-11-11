@@ -38,9 +38,11 @@ getCredential();
 function getCredential() {
    client.getSecretValue({ SecretId: 'dev/postgres/codelinc/db' }, function (err, data) {
     if (err) {
+      console.log("ERROR")
       console.log(err)
       if (err.code === 'DecryptionFailureException') { throw err; } else if (err.code === 'InternalServiceErrorException') { throw err; } else if (err.code === 'InvalidParameterException') { throw err; } else if (err.code === 'InvalidRequestException') { throw err; } else if (err.code === 'ResourceNotFoundException') { throw err; }
     } else {
+      console.log("SUCCESS")
       if ('SecretString' in data) {
         let secret = data.SecretString;
         dbCredential = JSON.parse(secret);
@@ -60,7 +62,7 @@ function dbConnection() {
     port: dbCredential.port
   });
   pool.on('error', (err, client) => {
-    console.error('unexpected error in postress conection pool', err);
+    console.error('unexpected error in postgress connection pool', err);
   });
 }
 
