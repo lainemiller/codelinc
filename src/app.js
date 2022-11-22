@@ -323,15 +323,18 @@ router.put('/consentForm/acceptConsent/:loginId', (req, res) => {
 // Endpoint 6
 router.get('/uiLayout/getUserDetails/:veteranId', (req, res) => {
   const vet = req.params.veteranId;
-  let returnObj = null;
-
   pool
-    .query(QUERIES.ConsentForm.GetUserDetails, vet)
-    .then((res) => (returnObj = res.rows))
-    .catch((err) => console.error('Error executing query', err.stack));
+    .query(QUERIES.ConsentForm.GetUserDetails, [vet])
+    .then((resp) => {
+      console.log('success on endpoint add progress notes');
+      res.status(200).json({ responseStatus: 'SUCCESS', data: resp.rows, error: false });
+    })
+    .catch((err) => {
+      console.error('Error executing query', err.stack);
+      res.status(500).json({ responseStatus: 'FAILURE', data: null, error: err });
+    });
+  });
 
-  res.json(returnObj);
-});
 
 // Endpoint 7
 router.get('/getGoals/:veteranId', (req, res) => {
