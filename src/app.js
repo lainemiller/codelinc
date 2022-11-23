@@ -64,6 +64,7 @@ function dbConnection() {
   pool.on('error', (err, client) => {
     console.error('unexpected error in postgress connection pool', err);
   });
+  res.json({Connection:'Connected'}) 
 }
 
 app.set('view engine', 'ejs');
@@ -109,6 +110,25 @@ router.get('/getDbSecret', (req, res) => {
     error:dbError,
     data:dbData
   });
+});
+
+// Endpoint
+router.get('/getVeteranId/:userName', (req, res) => {
+  const requestObj = [req.params.userName];
+  pool
+    .query(QUERIES.UiLayout.getVeteranId, requestObj)
+    .then((resp) => {
+      console.log('Sucess on get Veteran Id');
+      res
+        .status(200)
+        .json({ responseStatus: 'SUCCESS', data: resp.rows, error: false });
+    })
+    .catch((err) => {
+      console.error('Error executing query', err.stack);
+      res
+        .status(501)
+        .json({ responseStatus: 'FAILURE', data: null, error: err });
+    });
 });
 
 router.get('/transportationForm/getTransportationRequests/', (req, res) => {
@@ -303,15 +323,18 @@ router.put('/consentForm/acceptConsent/:loginId', (req, res) => {
 // Endpoint 6
 router.get('/uiLayout/getUserDetails/:veteranId', (req, res) => {
   const vet = req.params.veteranId;
-  let returnObj = null;
-
   pool
-    .query(QUERIES.ConsentForm.GetUserDetails, vet)
-    .then((res) => (returnObj = res.rows))
-    .catch((err) => console.error('Error executing query', err.stack));
+    .query(QUERIES.ConsentForm.GetUserDetails, [vet])
+    .then((resp) => {
+      console.log('success on endpoint add progress notes');
+      res.status(200).json({ responseStatus: 'SUCCESS', data: resp.rows, error: false });
+    })
+    .catch((err) => {
+      console.error('Error executing query', err.stack);
+      res.status(500).json({ responseStatus: 'FAILURE', data: null, error: err });
+    });
+  });
 
-  res.json(returnObj);
-});
 
 // Endpoint 7
 router.get('/getGoals/:veteranId', (req, res) => {
@@ -734,25 +757,6 @@ router.post(
       });
   }
 );
-
-// Endpoint
-router.get('/getVeteranId/:userName', (req, res) => {
-  const requestObj = [req.params.userName];
-  pool
-    .query(QUERIES.UiLayout.getVeteranId, requestObj)
-    .then((resp) => {
-      console.log('Sucess on get Veteran Id');
-      res
-        .status(200)
-        .json({ responseStatus: 'SUCCESS', data: resp.rows, error: false });
-    })
-    .catch((err) => {
-      console.error('Error executing query', err.stack);
-      res
-        .status(501)
-        .json({ responseStatus: 'FAILURE', data: null, error: err });
-    });
-});
 
 // Endpoint
 router.post('/addUser', (req, res) => {
