@@ -135,8 +135,8 @@ router.get('/getDbSecret', (req, res) => {
 router.get('/getVeteranId/:userName', (req, res) => {
   const requestObj = [req.params.userName];
   getCredential();
-  pool.connect().then((client) => {
-    return client
+  pool.on('connect', (client) => {
+    client
       .query(QUERIES.UiLayout.getVeteranId, requestObj)
       .then((resp) => {
         console.log('Sucess on get Veteran Id');
