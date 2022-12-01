@@ -1,5 +1,3 @@
-/* eslint-disable brace-style */
-/* eslint-disable n/no-deprecated-api */
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
@@ -18,13 +16,11 @@ const iaFormsQueries = require('./initialAssessmentFormsHandler/iaForm.js');
 const iaFormsQueriesp2 = require('./initialAssessmentFormsHandler/iaFormP2');
 const iaFormP1Post = require('./initialAssessmentFormsHandler/iaFormP1');
 const iaFormP3Post = require('./initialAssessmentFormsHandler/iaFormP3.js');
-const secrets = require('./secret');
 const healthTrackerQueries = require('./healthTrackerHandler/healthTracker.js');
-
 
 const AWS = require('aws-sdk');
 const region = 'us-east-1';
-var dbCredential = {};
+let dbCredential = {};
 
 const client = new AWS.SecretsManager({
   region
@@ -33,27 +29,38 @@ const client = new AWS.SecretsManager({
 const { Pool } = require('pg');
 const { QUERIES } = require('./constants');
 
-getCredential();
-
-function getCredential() {
-   client.getSecretValue({ SecretId: 'dev/postgres/codelinc/db' }, function (err, data) {
-    if (err) {
-      console.log("ERROR")
-      console.log(err)
-      if (err.code === 'DecryptionFailureException') { throw err; } else if (err.code === 'InternalServiceErrorException') { throw err; } else if (err.code === 'InvalidParameterException') { throw err; } else if (err.code === 'InvalidRequestException') { throw err; } else if (err.code === 'ResourceNotFoundException') { throw err; }
-    } else {
-      console.log("SUCCESS")
-      if ('SecretString' in data) {
-        let secret = data.SecretString;
-        dbCredential = JSON.parse(secret);
-        dbConnection();
+function getCredential () {
+  client.getSecretValue(
+    { SecretId: 'dev/postgres/codelinc/db' },
+    function (err, data) {
+      if (err) {
+        console.log('ERROR');
+        console.log(err);
+        if (err.code === 'DecryptionFailureException') {
+          throw err;
+        } else if (err.code === 'InternalServiceErrorException') {
+          throw err;
+        } else if (err.code === 'InvalidParameterException') {
+          throw err;
+        } else if (err.code === 'InvalidRequestException') {
+          throw err;
+        } else if (err.code === 'ResourceNotFoundException') {
+          throw err;
+        }
+      } else {
+        console.log('SUCCESS');
+        if ('SecretString' in data) {
+          const secret = data.SecretString;
+          dbCredential = JSON.parse(secret);
+          dbConnection();
+        }
       }
     }
-  });
+  );
 }
 
 let pool;
-function dbConnection() {
+function dbConnection () {
   pool = new Pool({
     host: dbCredential.host,
     user: dbCredential.username,
@@ -61,10 +68,9 @@ function dbConnection() {
     database: dbCredential.dbname,
     port: dbCredential.port
   });
-  pool.on('error', (err, client) => {
+  pool.on('error', (err) => {
     console.error('unexpected error in postgress connection pool', err);
   });
-  res.json({Connection:'Connected'}) 
 }
 
 app.set('view engine', 'ejs');
@@ -84,51 +90,67 @@ router.get('/testSecretManager', (req, res) => {
     database: dbCredential.dbname,
     port: dbCredential.port,
     credential: dbCredential,
-    connection:pool
+    connection: pool
   });
-})
+});
 
 router.get('/getDbSecret', (req, res) => {
   let dbSecret = {};
   let dbError;
   let dbData;
-  client.getSecretValue({ SecretId: 'dev/postgres/codelinc/db' }, function (err, data) {
-    dbError=err;
-    dbData=data;
-    if (err) {
-      if (err.code === 'DecryptionFailureException') { throw err; } else if (err.code === 'InternalServiceErrorException') { throw err; } else if (err.code === 'InvalidParameterException') { throw err; } else if (err.code === 'InvalidRequestException') { throw err; } else if (err.code === 'ResourceNotFoundException') { throw err; }
-    } else {
-      if ('SecretString' in data) {
-        let secret = data.SecretString;
-        dbSecret = JSON.parse(secret);
+  client.getSecretValue(
+    { SecretId: 'dev/postgres/codelinc/db' },
+    function (err, data) {
+      dbError = err;
+      dbData = data;
+      if (err) {
+        if (err.code === 'DecryptionFailureException') {
+          throw err;
+        } else if (err.code === 'InternalServiceErrorException') {
+          throw err;
+        } else if (err.code === 'InvalidParameterException') {
+          throw err;
+        } else if (err.code === 'InvalidRequestException') {
+          throw err;
+        } else if (err.code === 'ResourceNotFoundException') {
+          throw err;
+        }
+      } else {
+        if ('SecretString' in data) {
+          const secret = data.SecretString;
+          dbSecret = JSON.parse(secret);
+        }
       }
     }
-  });
+  );
 
   res.json({
-    data: dbSecret,
-    error:dbError,
-    data:dbData
+    secr: dbSecret,
+    error: dbError,
+    data: dbData
   });
 });
 
 // Endpoint
 router.get('/getVeteranId/:userName', (req, res) => {
   const requestObj = [req.params.userName];
-  pool
-    .query(QUERIES.UiLayout.getVeteranId, requestObj)
-    .then((resp) => {
-      console.log('Sucess on get Veteran Id');
-      res
-        .status(200)
-        .json({ responseStatus: 'SUCCESS', data: resp.rows, error: false });
-    })
-    .catch((err) => {
-      console.error('Error executing query', err.stack);
-      res
-        .status(501)
-        .json({ responseStatus: 'FAILURE', data: null, error: err });
-    });
+  getCredential();
+  pool.connect().then((client) => {
+    return client
+      .query(QUERIES.UiLayout.getVeteranId, requestObj)
+      .then((resp) => {
+        console.log('Sucess on get Veteran Id');
+        res
+          .status(200)
+          .json({ responseStatus: 'SUCCESS', data: resp.rows, error: false });
+      })
+      .catch((err) => {
+        console.error('Error executing query', err.stack);
+        res
+          .status(501)
+          .json({ responseStatus: 'FAILURE', data: null, error: err });
+      });
+  });
 });
 
 router.get('/transportationForm/getTransportationRequests/', (req, res) => {
@@ -327,14 +349,17 @@ router.get('/uiLayout/getUserDetails/:veteranId', (req, res) => {
     .query(QUERIES.ConsentForm.GetUserDetails, [vet])
     .then((resp) => {
       console.log('success on endpoint add progress notes');
-      res.status(200).json({ responseStatus: 'SUCCESS', data: resp.rows, error: false });
+      res
+        .status(200)
+        .json({ responseStatus: 'SUCCESS', data: resp.rows, error: false });
     })
     .catch((err) => {
       console.error('Error executing query', err.stack);
-      res.status(500).json({ responseStatus: 'FAILURE', data: null, error: err });
+      res
+        .status(500)
+        .json({ responseStatus: 'FAILURE', data: null, error: err });
     });
-  });
-
+});
 
 // Endpoint 7
 router.get('/getGoals/:veteranId', (req, res) => {
@@ -407,11 +432,15 @@ router.get('/userProfile/getUserDetails/:veteranID', (req, res) => {
     .then((resp) => {
       if (resp.rows[0].case_worker_id) {
         pool
-          .query(QUERIES.UserProfile.GetUserDetailsWithCaseworker, [req.params.veteranID])
+          .query(QUERIES.UserProfile.GetUserDetailsWithCaseworker, [
+            req.params.veteranID
+          ])
           .then((resp) => {
-            res
-              .status(200)
-              .json({ responseStatus: 'SUCCESS', data: resp.rows, error: false });
+            res.status(200).json({
+              responseStatus: 'SUCCESS',
+              data: resp.rows,
+              error: false
+            });
           })
           .catch((err) => {
             console.error('Error executing query', err.stack);
@@ -421,11 +450,15 @@ router.get('/userProfile/getUserDetails/:veteranID', (req, res) => {
           });
       } else {
         pool
-          .query(QUERIES.UserProfile.GetUserDetailsWithoutCaseworker, [req.params.veteranID])
+          .query(QUERIES.UserProfile.GetUserDetailsWithoutCaseworker, [
+            req.params.veteranID
+          ])
           .then((resp) => {
-            res
-              .status(200)
-              .json({ responseStatus: 'SUCCESS', data: resp.rows, error: false });
+            res.status(200).json({
+              responseStatus: 'SUCCESS',
+              data: resp.rows,
+              error: false
+            });
           })
           .catch((err) => {
             console.error('Error executing query', err.stack);
@@ -433,7 +466,6 @@ router.get('/userProfile/getUserDetails/:veteranID', (req, res) => {
               .status(501)
               .json({ responseStatus: 'FAILURE', data: null, error: err });
           });
-
       }
     })
     .catch((err) => {
@@ -566,7 +598,7 @@ router.post('/postTreatmentPlanDetails/save/:veteran_id', async (req, res) => {
   ];
   pool
     .query(QUERIES.TreatmentPlan.SaveTreatmentPlanDetails, requestObj)
-    .then((resp) => {
+    .then(() => {
       res.status(200).json({
         responseStatus: 'SUCCESS',
         data: 'saved Successfully',
@@ -620,7 +652,7 @@ router.put('/updateTreatmentPlanDetails/save/:veteran_id', async (req, res) => {
     req.body.veteranNotes
   ];
   await updateTreatmentPlan(initialTreatmentObj, req)
-    .then((resp) => {
+    .then(() => {
       res.status(200).json({
         responseStatus: 'SUCCESS',
         data: 'Updated Successfully',
@@ -655,7 +687,7 @@ router.post('/transportationForm/saveTransportationRequest/', (req, res) => {
 
   pool
     .query(QUERIES.TransportationRequest.SaveTransportationDetails, requestObj)
-    .then((resp) => {
+    .then(() => {
       console.log('success on endpoint SaveTransportationDetails');
       res.status(200).json({
         responseStatus: 'SUCCESS',
@@ -701,7 +733,7 @@ router.post('/transportationForm/approveTransportationRequests', (req, res) => {
       QUERIES.TransportationRequest.ApproveTransportationRequests,
       requestObj
     )
-    .then((resp) => {
+    .then(() => {
       console.log('success on endpoint ApproveTransportationDetails');
       res.status(200).json({
         responseStatus: 'SUCCESS',
@@ -768,7 +800,7 @@ router.post('/addUser', (req, res) => {
   ];
   pool
     .query(QUERIES.UiLayout.addUser, requestObject)
-    .then((resp) => {
+    .then(() => {
       console.log('Sucess on Add User');
       res.status(200).json({
         responseStatus: 'SUCCESS',
@@ -922,16 +954,23 @@ router.post('/uploadImage/:loginId', upload.array('image'), (req, res) => {
 
 // get image end point
 router.get('/profileImage/:imageName', (req, res) => {
-  profileImage.getImageFromS3(req.params.imageName).then((response) => {
-    const imageObj = {
-      contentType: response.ContentType,
-      imageBody: response.Body.toString('base64')
-    };
-    res.status(200).json({ responseStatus: 'SUCCESS', data: imageObj, error: false });
-  }).catch((err) => {
-    console.log(err);
-    res.status(501).json({ responseStatus: 'FAILURE', data: null, error: err });
-  });
+  profileImage
+    .getImageFromS3(req.params.imageName)
+    .then((response) => {
+      const imageObj = {
+        contentType: response.ContentType,
+        imageBody: response.Body.toString('base64')
+      };
+      res
+        .status(200)
+        .json({ responseStatus: 'SUCCESS', data: imageObj, error: false });
+    })
+    .catch((err) => {
+      console.log(err);
+      res
+        .status(501)
+        .json({ responseStatus: 'FAILURE', data: null, error: err });
+    });
 });
 
 // get api for caseworker nickname
@@ -939,7 +978,9 @@ router.get('/getCaseWorkerNickname', (req, res) => {
   pool
     .query(QUERIES.InitialAssessment.getCwNickname)
     .then((resp) => {
-      res.status(200).json({ responseStatus: 'SUCCESS', data: resp.rows, error: false });
+      res
+        .status(200)
+        .json({ responseStatus: 'SUCCESS', data: resp.rows, error: false });
       console.log('success on endpoint get cw nickname');
     })
     .catch((err) => {
@@ -952,7 +993,9 @@ router.get('/getWebpartyUsername', (req, res) => {
   pool
     .query(QUERIES.InitialAssessment.getWebpartyUsername)
     .then((resp) => {
-      res.status(200).json({ responseStatus: 'SUCCESS', data: resp.rows, error: false });
+      res
+        .status(200)
+        .json({ responseStatus: 'SUCCESS', data: resp.rows, error: false });
       console.log('success on endpoint get username');
     })
     .catch((err) => {
@@ -1002,11 +1045,15 @@ router.post('/addNewVeteran', (req, res) => {
     .query(QUERIES.InitialAssessment.addNewVeteran, requestObj)
     .then((resp) => {
       console.log('New Veteran added successfully');
-      res.status(200).json({ responseStatus: 'SUCCESS', data: resp, error: false });
+      res
+        .status(200)
+        .json({ responseStatus: 'SUCCESS', data: resp, error: false });
     })
     .catch((err) => {
       console.error('Error exectuting query', err.stack);
-      res.status(501).json({ responseStatus: 'FAILURE', data: null, error: true });
+      res
+        .status(501)
+        .json({ responseStatus: 'FAILURE', data: null, error: true });
     });
 });
 
@@ -1027,19 +1074,20 @@ router.get('/initialAssessment/page-1FD/:veteranId', (req, res) => {
 
 // delete api for ia page 1 family details
 router.delete('/initialAssessment/page-1FD/:veteranId/:memId', (req, res) => {
-  const requestObj = [
-    req.params.veteranId,
-    req.params.memId
-  ];
+  const requestObj = [req.params.veteranId, req.params.memId];
   pool
     .query(QUERIES.InitialAssessment.deleteMember, requestObj)
     .then((resp) => {
       console.log('success on endpoint delete ia page 1 FD');
-      res.status(200).json({ responseStatus: 'SUCCESS', data: resp, error: false });
+      res
+        .status(200)
+        .json({ responseStatus: 'SUCCESS', data: resp, error: false });
     })
     .catch((err) => {
       console.error('Error exectuting query', err.stack);
-      res.status(501).json({ responseStatus: 'FAILURE', data: null, error: true });
+      res
+        .status(501)
+        .json({ responseStatus: 'FAILURE', data: null, error: true });
     });
   console.log('delete req', requestObj);
 });
@@ -1058,11 +1106,15 @@ router.post('/initialAssessment/page-1FD/', (req, res) => {
     .query(QUERIES.InitialAssessment.addMember, requestObj)
     .then((resp) => {
       console.log('success on endpoint add member ia page 1 FD');
-      res.status(200).json({ responseStatus: 'SUCCESS', data: resp, error: false });
+      res
+        .status(200)
+        .json({ responseStatus: 'SUCCESS', data: resp, error: false });
     })
     .catch((err) => {
       console.error('Error exectuting query', err.stack);
-      res.status(501).json({ responseStatus: 'FAILURE', data: null, error: true });
+      res
+        .status(501)
+        .json({ responseStatus: 'FAILURE', data: null, error: true });
     });
   console.log('add req', requestObj);
 });
@@ -1082,11 +1134,15 @@ router.put('/initialAssessment/page-1FD/:veteranId/:memId', (req, res) => {
     .query(QUERIES.InitialAssessment.updateFamilyMemberDetails, requestObj)
     .then((resp) => {
       console.log('success on endpoint update ia page 1 FD');
-      res.status(200).json({ responseStatus: 'SUCCESS', data: resp, error: false });
+      res
+        .status(200)
+        .json({ responseStatus: 'SUCCESS', data: resp, error: false });
     })
     .catch((err) => {
       console.error('Error exectuting query', err.stack);
-      res.status(501).json({ responseStatus: 'FAILURE', data: null, error: true });
+      res
+        .status(501)
+        .json({ responseStatus: 'FAILURE', data: null, error: true });
     });
   console.log('delete req', requestObj);
 });
