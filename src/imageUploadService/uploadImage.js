@@ -1,7 +1,7 @@
 const aws = require('aws-sdk');
 const secrets = require('../secret');
 const region = 'us-east-1';
-var photoCredential = {};
+let photoCredential = {};
 
 const client = new aws.SecretsManager({
   region
@@ -9,10 +9,20 @@ const client = new aws.SecretsManager({
 
 client.getSecretValue({ SecretId: 'photo/s3' }, function (err, data) {
   if (err) {
-    if (err.code === 'DecryptionFailureException') { throw err; } else if (err.code === 'InternalServiceErrorException') { throw err; } else if (err.code === 'InvalidParameterException') { throw err; } else if (err.code === 'InvalidRequestException') { throw err; } else if (err.code === 'ResourceNotFoundException') { throw err; }
+    if (err.code === 'DecryptionFailureException') {
+      throw err;
+    } else if (err.code === 'InternalServiceErrorException') {
+      throw err;
+    } else if (err.code === 'InvalidParameterException') {
+      throw err;
+    } else if (err.code === 'InvalidRequestException') {
+      throw err;
+    } else if (err.code === 'ResourceNotFoundException') {
+      throw err;
+    }
   } else {
     if ('SecretString' in data) {
-      let secret = data.SecretString;
+      const secret = data.SecretString;
       photoCredential = JSON.parse(secret);
     }
   }
