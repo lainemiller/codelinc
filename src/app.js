@@ -56,7 +56,7 @@ async function getCredential () {
         }
       }
     }
-  );
+  ).catch((e) => console.log('Not able to get the connection details'));
 }
 
 let pool;
