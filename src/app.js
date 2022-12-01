@@ -29,8 +29,8 @@ const client = new AWS.SecretsManager({
 const { Pool } = require('pg');
 const { QUERIES } = require('./constants');
 
-function getCredential () {
-  client.getSecretValue(
+async function getCredential () {
+  await client.getSecretValue(
     { SecretId: 'dev/postgres/codelinc/db' },
     function (err, data) {
       if (err) {
@@ -56,7 +56,7 @@ function getCredential () {
         }
       }
     }
-  );
+  ).catch((e) => console.log('Not able to get the connection details'));
 }
 
 let pool;
