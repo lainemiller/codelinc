@@ -30,37 +30,7 @@ const { Pool } = require('pg');
 const { QUERIES } = require('./constants');
 
 async function getCredential () {
-  await new Promise((resolve, reject) => {
-    client.getSecretValue(
-      { SecretId: 'dev/postgres/codelinc/db' },
-      function (err, data) {
-        if (err) {
-          console.log('ERROR');
-          console.log(err);
-          if (err.code === 'DecryptionFailureException') {
-            throw err;
-          } else if (err.code === 'InternalServiceErrorException') {
-            throw err;
-          } else if (err.code === 'InvalidParameterException') {
-            throw err;
-          } else if (err.code === 'InvalidRequestException') {
-            throw err;
-          } else if (err.code === 'ResourceNotFoundException') {
-            throw err;
-          }
-          reject(err);
-        } else {
-          console.log('SUCCESS');
-          if ('SecretString' in data) {
-            const secret = data.SecretString;
-            dbCredential = JSON.parse(secret);
-            dbConnection();
-            resolve();
-          }
-        }
-      }
-    );
-  });
+  await client.getSecretValue({ SecretId: 'dev/postgres/codelinc/db' }).promise;
 }
 
 let pool;
@@ -145,22 +115,45 @@ router.get('/getDbSecret', (req, res) => {
 // Endpoint
 router.get('/getVeteranId/:userName', (req, res) => {
   const requestObj = [req.params.userName];
-  getCredential();
-  pool.on('connect', (client) => {
-    client
-      .query(QUERIES.UiLayout.getVeteranId, requestObj)
-      .then((resp) => {
-        console.log('Sucess on get Veteran Id');
-        res
-          .status(200)
-          .json({ responseStatus: 'SUCCESS', data: resp.rows, error: false });
-      })
-      .catch((err) => {
-        console.error('Error executing query', err.stack);
-        res
-          .status(501)
-          .json({ responseStatus: 'FAILURE', data: null, error: err });
-      });
+  getCredential().then((err, data) => {
+    if (err) {
+      console.log('ERROR');
+      console.log(err);
+      if (err.code === 'DecryptionFailureException') {
+        throw err;
+      } else if (err.code === 'InternalServiceErrorException') {
+        throw err;
+      } else if (err.code === 'InvalidParameterException') {
+        throw err;
+      } else if (err.code === 'InvalidRequestException') {
+        throw err;
+      } else if (err.code === 'ResourceNotFoundException') {
+        throw err;
+      }
+    } else {
+      console.log('SUCCESS');
+      if ('SecretString' in data) {
+        const secret = data.SecretString;
+        dbCredential = JSON.parse(secret);
+        dbConnection();
+        pool.on('connect', (client) => {
+          client
+            .query(QUERIES.UiLayout.getVeteranId, requestObj)
+            .then((resp) => {
+              console.log('Sucess on get Veteran Id');
+              res
+                .status(200)
+                .json({ responseStatus: 'SUCCESS', data: resp.rows, error: false });
+            })
+            .catch((err) => {
+              console.error('Error executing query', err.stack);
+              res
+                .status(501)
+                .json({ responseStatus: 'FAILURE', data: null, error: err });
+            });
+        });
+      }
+    }
   });
 });
 
