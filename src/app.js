@@ -34,18 +34,6 @@ async function getCredential () {
 }
 
 let pool;
-function dbConnection () {
-  pool = new Pool({
-    host: dbCredential.host,
-    user: dbCredential.username,
-    password: dbCredential.password,
-    database: dbCredential.dbname,
-    port: dbCredential.port
-  });
-  pool.on('error', (err) => {
-    console.error('unexpected error in postgress connection pool', err);
-  });
-}
 
 app.set('view engine', 'ejs');
 app.engine('.ejs', ejs);
@@ -135,7 +123,16 @@ router.get('/getVeteranId/:userName', (req, res) => {
       if ('SecretString' in data) {
         const secret = data.SecretString;
         dbCredential = JSON.parse(secret);
-        dbConnection();
+        pool = new Pool({
+          host: dbCredential.host,
+          user: dbCredential.username,
+          password: dbCredential.password,
+          database: dbCredential.dbname,
+          port: dbCredential.port
+        });
+        pool.on('error', (err) => {
+          console.error('unexpected error in postgress connection pool', err);
+        });
         pool.on('connect', (client) => {
           client
             .query(QUERIES.UiLayout.getVeteranId, requestObj)
