@@ -29,10 +29,6 @@ const client = new AWS.SecretsManager({
 const { Pool } = require('pg');
 const { QUERIES } = require('./constants');
 
-async function getCredential () {
-  await client.getSecretValue({ SecretId: 'dev/postgres/codelinc/db' }).promise;
-}
-
 let pool;
 
 app.set('view engine', 'ejs');
@@ -103,7 +99,7 @@ router.get('/getDbSecret', (req, res) => {
 // Endpoint
 router.get('/getVeteranId/:userName', (req, res) => {
   const requestObj = [req.params.userName];
-  getCredential().then((err, data) => {
+  client.getSecretValue({ SecretId: 'dev/postgres/codelinc/db' }, function (err, data) {
     if (err) {
       console.log('ERROR');
       console.log(err);
@@ -119,8 +115,8 @@ router.get('/getVeteranId/:userName', (req, res) => {
         throw err;
       }
     } else {
-      console.log('SUCCESS');
-      if ('SecretString' in data) {
+      console.log('SUCCESS:', data);
+      if (data && 'SecretString' in data) {
         const secret = data.SecretString;
         dbCredential = JSON.parse(secret);
         pool = new Pool({
