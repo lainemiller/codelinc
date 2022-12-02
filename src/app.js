@@ -36,7 +36,10 @@ app.engine('.ejs', ejs);
 
 router.use(compression());
 
-router.use(cors());
+router.use(cors({
+  origin: true,
+  methods: 'POST,GET,PUT,OPTIONS,DELETE'
+}));
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: true }));
 
