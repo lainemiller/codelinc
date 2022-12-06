@@ -30,7 +30,7 @@ function getCredential () {
           throw err;
         }
       } else {
-        console.log('SUCCESS');
+        console.log('SUCCESS veteran Event');
         if ('SecretString' in data) {
           const secret = data.SecretString;
           dbCredential = JSON.parse(secret);
