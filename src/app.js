@@ -37,7 +37,6 @@ app.engine('.ejs', ejs);
 router.use(compression());
 
 router.use(cors({
-  origin: true,
   methods: 'POST,GET,PUT,OPTIONS,DELETE'
 }));
 router.use(bodyParser.json());
@@ -118,7 +117,7 @@ router.get('/getVeteranId/:userName', (req, res) => {
         throw err;
       }
     } else {
-      console.log('SUCCESS:', data);
+      console.log('SUCCESS getVeteran:', data);
       if (data && 'SecretString' in data) {
         const secret = data.SecretString;
         dbCredential = JSON.parse(secret);
