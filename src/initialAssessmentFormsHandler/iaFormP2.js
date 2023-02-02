@@ -50,6 +50,7 @@ function dbConnection () {
     database: dbCredential.dbname,
     port: dbCredential.port
   });
+  pool.connect();
 }
 
 const MentalHealth = (mental) => {
