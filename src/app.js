@@ -101,7 +101,7 @@ router.get('/getVeteranId/:userName', (req, res) => {
   const requestObj = [req.params.userName];
   client.getSecretValue({ SecretId: 'dev/postgres/codelinc/db' }, function (err, data) {
     if (err) {
-      console.log('ERROR');
+      console.log('ERROR getVeteran');
       console.log(err);
       if (err.code === 'DecryptionFailureException') {
         throw err;
@@ -116,7 +116,7 @@ router.get('/getVeteranId/:userName', (req, res) => {
       }
     } else {
       console.log('SUCCESS getVeteran:', data);
-      if (data && 'SecretString' in data) {
+      if (data && data.SecretString) {
         const secret = data.SecretString;
         dbCredential = JSON.parse(secret);
         pool = new Pool({
@@ -126,6 +126,7 @@ router.get('/getVeteranId/:userName', (req, res) => {
           database: dbCredential.dbname,
           port: dbCredential.port
         });
+        console.log('data has secret string', dbCredential);
         pool.on('error', (err) => {
           console.error('unexpected error in postgress connection pool', err);
         });
@@ -145,6 +146,7 @@ router.get('/getVeteranId/:userName', (req, res) => {
                 .json({ responseStatus: 'FAILURE', data: null, error: err });
             });
         });
+        pool.connect();
       }
     }
   });
