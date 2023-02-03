@@ -3,7 +3,7 @@ const { QUERIES } = require('../constants');
 
 const AWS = require('aws-sdk');
 const region = 'us-east-1';
-var dbCredential = {};
+let dbCredential = {};
 
 const client = new AWS.SecretsManager({
   region
@@ -11,25 +11,38 @@ const client = new AWS.SecretsManager({
 
 getCredential();
 
-function getCredential() {
-    client.getSecretValue({ SecretId: 'dev/postgres/codelinc/db' }, function (err, data) {
-    if (err) {
-      console.log("ERROR")
-      console.log(err)
-      if (err.code === 'DecryptionFailureException') { throw err; } else if (err.code === 'InternalServiceErrorException') { throw err; } else if (err.code === 'InvalidParameterException') { throw err; } else if (err.code === 'InvalidRequestException') { throw err; } else if (err.code === 'ResourceNotFoundException') { throw err; }
-    } else {
-      console.log("SUCCESS")
-      if ('SecretString' in data) {
-        let secret = data.SecretString;
-        dbCredential = JSON.parse(secret);
-        dbConnection();
+function getCredential () {
+  client.getSecretValue(
+    { SecretId: 'dev/postgres/codelinc/db' },
+    function (err, data) {
+      if (err) {
+        console.log('ERROR');
+        console.log(err);
+        if (err.code === 'DecryptionFailureException') {
+          throw err;
+        } else if (err.code === 'InternalServiceErrorException') {
+          throw err;
+        } else if (err.code === 'InvalidParameterException') {
+          throw err;
+        } else if (err.code === 'InvalidRequestException') {
+          throw err;
+        } else if (err.code === 'ResourceNotFoundException') {
+          throw err;
+        }
+      } else {
+        console.log('SUCCESS iaFormP2');
+        if ('SecretString' in data) {
+          const secret = data.SecretString;
+          dbCredential = JSON.parse(secret);
+          dbConnection();
+        }
       }
     }
-  });
+  );
 }
 
 let pool;
-function dbConnection() {
+function dbConnection () {
   pool = new Pool({
     host: dbCredential.host,
     user: dbCredential.username,
@@ -37,6 +50,7 @@ function dbConnection() {
     database: dbCredential.dbname,
     port: dbCredential.port
   });
+  pool.connect();
 }
 
 const MentalHealth = (mental) => {
@@ -57,7 +71,8 @@ const MentalHealth = (mental) => {
 const EmpAndEdu = (edu) => {
   return new Promise((resolve, reject) => {
     pool.query(
-      QUERIES.InitialAssessment.page2EAEPost, edu,
+      QUERIES.InitialAssessment.page2EAEPost,
+      edu,
       (error, results) => {
         if (error) {
           return reject(error);
