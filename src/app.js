@@ -130,8 +130,8 @@ router.get('/getVeteranId/:userName', (req, res) => {
         pool.on('error', (err) => {
           console.error('unexpected error in postgress connection pool', err);
         });
-        pool.on('connect', (client) => {
-          client
+        pool.connect().then((client) => {
+          return client
             .query(QUERIES.UiLayout.getVeteranId, requestObj)
             .then((resp) => {
               console.log('Sucess on get Veteran Id');
@@ -146,7 +146,7 @@ router.get('/getVeteranId/:userName', (req, res) => {
                 .json({ responseStatus: 'FAILURE', data: null, error: err });
             });
         });
-        pool.connect();
+        // pool.connect();
       }
     }
   });
