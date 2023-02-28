@@ -7,6 +7,7 @@ const app = express();
 const router = express.Router();
 const multer = require('multer');
 const profileImage = require('./imageUploadService/uploadImage.js');
+const miscFileUpload = require('./miscFileUploadService/uploadFile.js');
 
 const sequentialQueries = require('./assessment-handler/assessment.js');
 const saveTreatmentPlan = require('./treatmentPlan-handler/treatmentIssue.js');
@@ -130,8 +131,8 @@ router.get('/getVeteranId/:userName', (req, res) => {
         pool.on('error', (err) => {
           console.error('unexpected error in postgress connection pool', err);
         });
-        pool.on('connect', (client) => {
-          client
+        pool.connect().then((client) => {
+          return client
             .query(QUERIES.UiLayout.getVeteranId, requestObj)
             .then((resp) => {
               console.log('Sucess on get Veteran Id');
@@ -146,7 +147,7 @@ router.get('/getVeteranId/:userName', (req, res) => {
                 .json({ responseStatus: 'FAILURE', data: null, error: err });
             });
         });
-        pool.connect();
+        // pool.connect();
       }
     }
   });
@@ -898,10 +899,47 @@ const upload = multer({
   }
 });
 
+const fileValidator = multer({
+  limits: 1024 * 3,
+  fileFilter: function (req, file, done) {
+    if (
+      file.mimetype === 'image/jpeg' ||
+      file.mimetype === 'image/png' ||
+      file.mimetype === 'image/jpg' ||
+      file.mimetype === 'application/pdf'
+    ) {
+      done(null, true);
+    } else {
+      done(new Error('Wrong file type, only upload JPEG,JPG,PNG or PDF!'), false);
+    }
+  }
+});
+
+
+router.post('/fileUpload', fileValidator.array('image'),(req,res)=>{
+  const imageFile = req.files[0];
+  const imageName = req.body.imageName;
+  console.log("Files===>",req.files)
+  miscFileUpload.uploadToS3(imageFile.buffer,imageName)
+  .then(()=>{
+    res.status(200).json({
+      responseStatus: 'SUCCESS',
+      data: 'File upload success',
+      error: false
+    });
+  })
+  .catch((err) => {
+    console.log(err);
+    res
+      .status(501)
+      .json({ responseStatus: 'FAILURE', data: null, error: err });
+  });
+})
+
 // upload Veteran image end point
 router.post('/uploadImage/:loginId', upload.array('image'), (req, res) => {
   const imageFile = req.files[0];
-  const imageName = req.body.imageName;
+  const imageName = req.body.imageName; 
   const userGroup = req.body.userGroup;
   const requestObj = [req.params.loginId, imageName];
   if (imageFile) {
