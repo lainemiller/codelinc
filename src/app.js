@@ -915,16 +915,18 @@ const fileValidator = multer({
   }
 });
 
-
-router.post('/fileUpload', fileValidator.array('image'),(req,res)=>{
+//misc file upload
+router.post('/fileUpload/:loginId', fileValidator.array('image'),(req,res)=>{
   const imageFile = req.files[0];
-  const imageName = req.body.imageName;
-  console.log("Files===>",req.files)
+  const userGroup = req.body.userGroup;
+  const fileNamePrefix = userGroup + '_' + req.params.loginId + '/';
+  const imageName = fileNamePrefix + req.body.imageName;
+  console.log("image name====> ",imageName)
   miscFileUpload.uploadToS3(imageFile.buffer,imageName)
   .then(()=>{
     res.status(200).json({
       responseStatus: 'SUCCESS',
-      data: 'File upload success',
+      data: { message:'File upload success',fileNamePrefix },
       error: false
     });
   })
