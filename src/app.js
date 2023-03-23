@@ -938,6 +938,25 @@ router.post('/fileUpload/:loginId', fileValidator.array('image'),(req,res)=>{
   });
 })
 
+router.post('/getUploadedFiles', (req,res)=> {
+  const prefix = req.body.prefix;
+  console.log("PREFIX====",prefix);
+  miscFileUpload.getUserFilesFromS3(prefix)
+  .then((data)=>{
+    const successResponse={
+      responseStatus:'SUCCESS',
+      data, 
+      error: false
+    };
+    res.status(200).json(successResponse);
+  }).catch((err)=>{
+    console.log(err);
+    res
+      .status(501)
+      .json({ responseStatus: 'FAILURE', data: null, error: err });
+  })
+})
+
 // upload Veteran image end point
 router.post('/uploadImage/:loginId', upload.array('image'), (req, res) => {
   const imageFile = req.files[0];
