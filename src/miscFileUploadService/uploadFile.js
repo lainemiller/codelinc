@@ -12,14 +12,11 @@ const uploadToS3 = (imageBody, fileName) => {
       Key: fileName,
       Body: imageBody,
     };
-    console.log("files resp", uploadParams);
 
     s3.upload(uploadParams, (err, data) => {
       if (err) {
-        console.log(err);
         reject(err);
       }
-      console.log(data);
       resolve(data);
     });
   });
@@ -32,16 +29,28 @@ const getUserFilesFromS3 = (prefix) => {
       Delimiter: "/",
       Prefix: prefix + "/",
     };
-    console.log(getParams);
     s3.listObjectsV2(getParams, (err, data) => {
       if (err) {
-        console.log(err);
         reject(err);
       }
-      console.log(data);
       resolve(data);
     });
   });
 };
 
-module.exports = { uploadToS3, getUserFilesFromS3 };
+const downloadFilesFromS3 = (key) => {
+  return new Promise((resolve, reject) => {
+    const getParams = {
+      Bucket: "servant-center-miscfile-bucket",
+      Key: key,
+    };
+    s3.getObject(getParams, (err, data) => {
+      if (err) {
+        reject(err);
+      }
+      resolve(data);
+    });
+  });
+};
+
+module.exports = { uploadToS3, getUserFilesFromS3, downloadFilesFromS3 };
