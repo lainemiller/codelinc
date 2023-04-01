@@ -16,8 +16,10 @@ const uploadToS3 = (imgFile, fileName) => {
 
     s3.upload(uploadParams, (err, data) => {
       if (err) {
+        console.log('misc files uploadToS3:', err);
         reject(err);
       }
+      console.log('misc files uploadToS3:', data);
       resolve(data);
     });
   });
@@ -32,8 +34,10 @@ const getUserFilesFromS3 = (prefix) => {
     };
     s3.listObjectsV2(getParams, (err, data) => {
       if (err) {
+        console.log('misc files getUserFilesFromS3:', err);
         reject(err);
       }
+      console.log('misc files getUserFilesFromS3:', data);
       resolve(data);
     });
   });
@@ -47,8 +51,10 @@ const downloadFilesFromS3 = (key) => {
     };
     s3.getObject(getParams, (err, data) => {
       if (err) {
+        console.log('misc files downloadFilesFromS3:', err);
         reject(err);
       }
+      console.log('misc files downloadFilesFromS3:', data);
       resolve(data);
     });
   });
