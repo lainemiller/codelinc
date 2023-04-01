@@ -11,7 +11,7 @@ const uploadToS3 = (imgFile, fileName) => {
       Bucket: 'servant-center-miscfile-bucket',
       Key: fileName,
       Body: imgFile.buffer,
-      'Content-Type': imgFile.mimetype
+      ContentType: imgFile.mimetype
     };
 
     s3.upload(uploadParams, (err, data) => {
