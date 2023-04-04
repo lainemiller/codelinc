@@ -45,10 +45,10 @@ const uploadToS3 = (imageBody, fileName) => {
 
     s3.upload(uploadParams, (err, data) => {
       if (err) {
-        console.log(err);
+        console.log('profile image uploadToS3:', err);
         reject(err);
       }
-      console.log(data);
+      console.log('profile image uploadToS3:', data);
       resolve(data);
     });
   });
@@ -64,10 +64,10 @@ const getImageFromS3 = (fileName) => {
 
     s3.getObject(getParams, (err, data) => {
       if (err) {
-        console.log(err);
+        console.log('profile image getImageFromS3:', err);
         reject(err);
       }
-      console.log(data);
+      console.log('profile image getImageFromS3:', data);
       resolve(data);
     });
   });
