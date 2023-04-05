@@ -49,21 +49,24 @@ const downloadFilesFromS3 = (key) => {
       Bucket: 'servant-center-miscfile-bucket',
       Key: key
     };
-    // s3.getObject(getParams, (err, data) => {
-    //   if (err) {
-    //     console.log('misc files downloadFilesFromS3:', err);
-    //     reject(err);
-    //   }
-    //   console.log('misc files downloadFilesFromS3:', data);
-    //   resolve(data);
-    // });
-    s3.getSignedUrl('getObject', getParams, (err, urlStr) => {
+    s3.getObject(getParams, (err, data) => {
       if (err) {
-        console.log('misc files downloadFilesFromS3:', err);
+        console.log('misc files downloadFilesFromS3 pdf:', err);
         reject(err);
       }
-      console.log('misc files downloadFilesFromS3:', urlStr);
-      resolve(urlStr);
+      console.log('misc files downloadFilesFromS3 pdf:', data);
+      if (data.Body.ContentType.indexOf('pdf') > 0) {
+        resolve(data);
+      } else {
+        s3.getSignedUrl('getObject', getParams, (err, urlStr) => {
+          if (err) {
+            console.log('misc files downloadFilesFromS3 image:', err);
+            reject(err);
+          }
+          console.log('misc files downloadFilesFromS3 image:', data);
+          resolve(urlStr);
+        });
+      }
     });
   });
 };
