@@ -54,8 +54,8 @@ const downloadFilesFromS3 = (key) => {
         console.log('misc files downloadFilesFromS3 pdf:', err);
         reject(err);
       }
-      console.log('misc files downloadFilesFromS3 pdf:', data);
       if (data.ContentType.indexOf('pdf') > 0) {
+        console.log('misc files downloadFilesFromS3 pdf:', data);
         resolve(data);
       } else {
         s3.getSignedUrl('getObject', getParams, (err, urlStr) => {
@@ -63,7 +63,7 @@ const downloadFilesFromS3 = (key) => {
             console.log('misc files downloadFilesFromS3 image:', err);
             reject(err);
           }
-          console.log('misc files downloadFilesFromS3 image:', data);
+          console.log('misc files downloadFilesFromS3 image:', urlStr);
           resolve(urlStr);
         });
       }
