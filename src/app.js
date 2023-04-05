@@ -981,7 +981,6 @@ router.post('/downloadFile', (req, res) => {
       const successResponse = {
         responseStatus: 'SUCCESS',
         data,
-        baseObj: data.Body.toString('base64'),
         error: false
       };
       res.status(200).json(successResponse);
