@@ -49,13 +49,21 @@ const downloadFilesFromS3 = (key) => {
       Bucket: 'servant-center-miscfile-bucket',
       Key: key
     };
-    s3.getObject(getParams, (err, data) => {
+    // s3.getObject(getParams, (err, data) => {
+    //   if (err) {
+    //     console.log('misc files downloadFilesFromS3:', err);
+    //     reject(err);
+    //   }
+    //   console.log('misc files downloadFilesFromS3:', data);
+    //   resolve(data);
+    // });
+    s3.getSignedUrl('getObject', getParams, (err, urlStr) => {
       if (err) {
         console.log('misc files downloadFilesFromS3:', err);
         reject(err);
       }
-      console.log('misc files downloadFilesFromS3:', data);
-      resolve(data);
+      console.log('misc files downloadFilesFromS3:', urlStr);
+      resolve(urlStr);
     });
   });
 };
