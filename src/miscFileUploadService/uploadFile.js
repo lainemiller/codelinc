@@ -50,11 +50,22 @@ const downloadFilesFromS3 = (key) => {
     };
     s3.getObject(getParams, (err, data) => {
       if (err) {
-        console.log("misc files downloadFilesFromS3:", err);
+        console.log('misc files downloadFilesFromS3 pdf:', err);
         reject(err);
       }
-      console.log("misc files downloadFilesFromS3:", data);
-      resolve(data);
+      if (data.ContentType.indexOf('pdf') > 0) {
+        console.log('misc files downloadFilesFromS3 pdf:', data);
+        resolve(data);
+      } else {
+        s3.getSignedUrl('getObject', getParams, (err, urlStr) => {
+          if (err) {
+            console.log('misc files downloadFilesFromS3 image:', err);
+            reject(err);
+          }
+          console.log('misc files downloadFilesFromS3 image:', urlStr);
+          resolve(urlStr);
+        });
+      }
     });
   });
 };
