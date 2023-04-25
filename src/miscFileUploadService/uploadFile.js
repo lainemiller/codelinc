@@ -12,6 +12,7 @@ const uploadToS3 = (imgFile, fileName) => {
       Key: fileName,
       Body: imgFile.buffer,
       ContentType: imgFile.mimetype,
+      ContentEncoding: "base64"
     };
     s3.putObject(uploadParams, (err, data) => {
       if (err) {
