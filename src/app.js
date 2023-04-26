@@ -928,6 +928,7 @@ const fileValidator = multer({
 // misc file upload
 router.post(
   '/fileUpload/:loginId',
+  fileValidator.array('image'),
   (req, res) => {
     const imageFile = req.files[0];
     console.log("image file==>",imageFile);
