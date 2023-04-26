@@ -928,13 +928,12 @@ const fileValidator = multer({
 // misc file upload
 router.post(
   '/fileUpload/:loginId',
-  fileValidator.array('image'),
   (req, res) => {
     const imageFile = req.files[0];
+    console.log("image file==>",imageFile);
     const userGroup = req.body.userGroup;
     const fileNamePrefix = userGroup + '_' + req.params.loginId + '/';
     const imageName = fileNamePrefix + req.body.imageName;
-    console.log('image name====> ', imageFile);
     miscFileUpload
       .uploadToS3(imageFile, imageName)
       .then(() => {
