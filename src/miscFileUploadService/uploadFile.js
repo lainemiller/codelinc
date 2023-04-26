@@ -1,14 +1,43 @@
-const aws = require("aws-sdk");
-const secret = require("../secret");
+const aws = require('aws-sdk');
+const secrets = require('../secret');
+const region = 'us-east-1';
+let fileCredential = {};
+
+const client = new aws.SecretsManager({
+  region
+});
+
+client.getSecretValue({ SecretId: 'photo/s3' }, function (err, data) {
+  if (err) {
+    if (err.code === 'DecryptionFailureException') {
+      throw err;
+    } else if (err.code === 'InternalServiceErrorException') {
+      throw err;
+    } else if (err.code === 'InvalidParameterException') {
+      throw err;
+    } else if (err.code === 'InvalidRequestException') {
+      throw err;
+    } else if (err.code === 'ResourceNotFoundException') {
+      throw err;
+    }
+  } else {
+    if ('SecretString' in data) {
+      const secret = data.SecretString;
+      fileCredential = JSON.parse(secret);
+    }
+  }
+});
 
 const s3 = new aws.S3({
-  region: secret.REGION,
+  secretAccessKey: fileCredential.secretKey,
+  accessKeyId: fileCredential.accessKey,
+  region: secrets.REGION
 });
 
 const uploadToS3 = (imgFile, fileName) => {
   return new Promise((resolve, reject) => {
     const uploadParams = {
-      Bucket: "veteran-misc-files",
+      Bucket: "servant-center-profileph-bucket",
       Key: fileName,
       Body: imgFile.buffer,
       ContentType: imgFile.mimetype,
