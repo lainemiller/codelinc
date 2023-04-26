@@ -8,12 +8,12 @@ const s3 = new aws.S3({
 const uploadToS3 = (imgFile, fileName) => {
   return new Promise((resolve, reject) => {
     const uploadParams = {
-      Bucket: "servant-center-miscfile-bucket",
+      Bucket: "veteran-misc-files",
       Key: fileName,
       Body: imgFile.buffer,
       ContentType: imgFile.mimetype,
-      ContentEncoding: "base64"
     };
+    console.log(uploadParams);
     s3.putObject(uploadParams, (err, data) => {
       if (err) {
         console.log("misc files uploadToS3:", err);
