@@ -1,14 +1,43 @@
 const aws = require('aws-sdk');
+const secrets = require('../secret');
 const region = 'us-east-1';
+let photoCredential = {};
+
+const client = new aws.SecretsManager({
+  region
+});
+
+client.getSecretValue({ SecretId: 'photo/s3' }, function (err, data) {
+  if (err) {
+    if (err.code === 'DecryptionFailureException') {
+      throw err;
+    } else if (err.code === 'InternalServiceErrorException') {
+      throw err;
+    } else if (err.code === 'InvalidParameterException') {
+      throw err;
+    } else if (err.code === 'InvalidRequestException') {
+      throw err;
+    } else if (err.code === 'ResourceNotFoundException') {
+      throw err;
+    }
+  } else {
+    if ('SecretString' in data) {
+      const secret = data.SecretString;
+      photoCredential = JSON.parse(secret);
+    }
+  }
+});
 
 const s3 = new aws.S3({
-  region
+  secretAccessKey: photoCredential.secretKey,
+  accessKeyId: photoCredential.accessKey,
+  region: secrets.REGION
 });
 
 const uploadToS3 = (imgFile, fileName) => {
   return new Promise((resolve, reject) => {
     const uploadParams = {
-      Bucket: "servant-center-miscfile-bucket",
+      Bucket: secrets.BUCKET,
       Key: fileName,
       Body: imgFile.buffer,
     };
@@ -27,7 +56,7 @@ const uploadToS3 = (imgFile, fileName) => {
 const getUserFilesFromS3 = (prefix) => {
   return new Promise((resolve, reject) => {
     const getParams = {
-      Bucket: "servant-center-miscfile-bucket",
+      Bucket: secrets.BUCKET,
       Delimiter: "/",
       Prefix: prefix + "/",
     };
@@ -45,7 +74,7 @@ const getUserFilesFromS3 = (prefix) => {
 const downloadFilesFromS3 = (key) => {
   return new Promise((resolve, reject) => {
     const getParams = {
-      Bucket: "servant-center-miscfile-bucket",
+      Bucket: secrets.BUCKET,
       Key: key,
     };
     s3.getObject(getParams, (err, data) => {
