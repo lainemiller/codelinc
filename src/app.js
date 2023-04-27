@@ -978,7 +978,7 @@ router.post('/downloadFile', (req, res) => {
     .downloadFilesFromS3(key)
     .then((response) => {
       const imageObj = {
-        contentType: response.contentType,
+        contentType: response.ContentType,
         imageBody: response.Body.toString('base64')
       };
       console.log("File reponse before sent to UI",imageObj)
