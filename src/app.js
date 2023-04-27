@@ -931,7 +931,6 @@ router.post(
   fileValidator.array('image'),
   (req, res) => {
     const imageFile = req.files[0];
-    console.log("image file==>",imageFile);
     const userGroup = req.body.userGroup;
     const fileNamePrefix = userGroup + '_' + req.params.loginId + '/';
     const imageName = fileNamePrefix + req.body.imageName;
@@ -977,13 +976,17 @@ router.post('/downloadFile', (req, res) => {
   const key = req.body.key;
   miscFileUpload
     .downloadFilesFromS3(key)
-    .then((data) => {
-      const successResponse = {
-        responseStatus: 'SUCCESS',
-        data,
-        error: false
+    .then((response) => {
+      const imageObj = {
+        contentType: response.contentType,
+        imageBody: response.Body.toString('base64')
       };
-      res.status(200).json(successResponse);
+      console.log("File reponse before sent to UI",imageObj)
+      res.status(200).json({
+        responseStatus: 'SUCCESS',
+        data:imageObj,
+        error:false
+      });
     })
     .catch((err) => {
       console.log(err);
