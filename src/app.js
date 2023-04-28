@@ -6,6 +6,8 @@ const ejs = require('ejs').__express;
 const app = express();
 const router = express.Router();
 const multer = require('multer');
+var multiparty = require('multiparty');
+var fs = require('fs');
 const profileImage = require('./imageUploadService/uploadImage.js');
 const miscFileUpload = require('./miscFileUploadService/uploadFile.js');
 
@@ -928,27 +930,32 @@ const fileValidator = multer({
 // misc file upload
 router.post(
   '/fileUpload/:loginId',
-  fileValidator.array('image'),
   (req, res) => {
-    const imageFile = req.files[0];
-    const userGroup = req.body.userGroup;
-    const fileNamePrefix = userGroup + '_' + req.params.loginId + '/';
-    const imageName = fileNamePrefix + req.body.imageName;
-    miscFileUpload
-      .uploadToS3(imageFile, imageName)
-      .then(() => {
-        res.status(200).json({
-          responseStatus: 'SUCCESS',
-          data: { message: 'File upload success', fileNamePrefix },
-          error: false
-        });
-      })
-      .catch((err) => {
-        console.log(err);
-        res
-          .status(501)
-          .json({ responseStatus: 'FAILURE', data: null, error: err });
+    var form = new multiparty.Form();
+    form.parse(req, function(err, fields, files) {
+      var files_to_upload = files.image;
+      files_to_upload.forEach(function(file) {
+        read_file = fs.readFileSync(file.path);
+    const fileNamePrefix = 'VETERAN_' + req.params.loginId + '/';
+    const imageName = fileNamePrefix + file.originalFilename;
+        miscFileUpload
+          .uploadToS3(read_file, imageName)
+          .then(() => {
+            res.status(200).json({
+              responseStatus: 'SUCCESS',
+              data: { message: 'File upload success', fileNamePrefix },
+              error: false
+            });
+          })
+          .catch((err) => {
+            console.log(err);
+            res
+              .status(501)
+              .json({ responseStatus: 'FAILURE', data: null, error: err });
+          });
       });
+    })
+    
   }
 );
 
