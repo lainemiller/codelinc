@@ -39,7 +39,7 @@ const uploadToS3 = (imgFile, fileName) => {
     const uploadParams = {
       Bucket: secrets.BUCKET,
       Key: fileName,
-      Body: imgFile.buffer,
+      Body: imgFile
     };
     console.log("upload params",uploadParams);
     s3.putObject(uploadParams, (err, data) => {
