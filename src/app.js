@@ -6,8 +6,6 @@ const ejs = require('ejs').__express;
 const app = express();
 const router = express.Router();
 const multer = require('multer');
-var multiparty = require('multiparty');
-var fs = require('fs');
 const profileImage = require('./imageUploadService/uploadImage.js');
 const miscFileUpload = require('./miscFileUploadService/uploadFile.js');
 
@@ -908,38 +906,19 @@ const upload = multer({
   }
 });
 
-const fileValidator = multer({
-  limits: 1024 * 3,
-  fileFilter: function (req, file, done) {
-    if (
-      file.mimetype === 'image/jpeg' ||
-      file.mimetype === 'image/png' ||
-      file.mimetype === 'image/jpg' ||
-      file.mimetype === 'application/pdf'
-    ) {
-      done(null, true);
-    } else {
-      done(
-        new Error('Wrong file type, only upload JPEG,JPG,PNG or PDF!'),
-        false
-      );
-    }
-  }
-});
+const storage = multer.memoryStorage();
+const fileUpload = multer({ storage: storage });
 
 // misc file upload
 router.post(
-  '/fileUpload/:loginId',
+  '/fileUpload/:loginId',fileUpload.single('image'),
   (req, res) => {
-    var form = new multiparty.Form();
-    form.parse(req, function(err, fields, files) {
-      var files_to_upload = files.image;
-      files_to_upload.forEach(function(file) {
-        read_file = fs.readFileSync(file.path);
+    const reqfile = req.file;
+    console.log("request file",reqfile)
     const fileNamePrefix = 'VETERAN_' + req.params.loginId + '/';
-    const imageName = fileNamePrefix + file.originalFilename;
+    const imageName = fileNamePrefix + reqfile.originalname;
         miscFileUpload
-          .uploadToS3(read_file, imageName)
+          .uploadToS3(reqfile, imageName)
           .then(() => {
             res.status(200).json({
               responseStatus: 'SUCCESS',
@@ -954,10 +933,6 @@ router.post(
               .json({ responseStatus: 'FAILURE', data: null, error: err });
           });
       });
-    })
-    
-  }
-);
 
 router.post('/getUploadedFiles', (req, res) => {
   const prefix = req.body.prefix;
@@ -984,14 +959,10 @@ router.post('/downloadFile', (req, res) => {
   miscFileUpload
     .downloadFilesFromS3(key)
     .then((response) => {
-      const imageObj = {
-        contentType: response.ContentType,
-        imageBody: response.Body.toString('base64')
-      };
-      console.log("File reponse before sent to UI",imageObj)
+      console.log("File reponse before sent to UI",response);
       res.status(200).json({
         responseStatus: 'SUCCESS',
-        data:imageObj,
+        data:response,
         error:false
       });
     })
