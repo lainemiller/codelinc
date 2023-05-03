@@ -42,9 +42,9 @@
     "ejs": "^3.1.6",
     "express": "^4.15.2",
     "multer": "^1.4.5-lts.1",
-    "multer-s3": "^2.0.0",
-    "multiparty": "^4.2.3",
-    "pg": "^8.7.1"
+    "pg": "^8.7.1",
+    "@aws-sdk/client-s3": "^3.321.1",
+    "@aws-sdk/s3-request-presigner": "^3.321.1"
   },
   "devDependencies": {
     "babel-core": "^6.26.3",
