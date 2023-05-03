@@ -1,103 +1,71 @@
-const aws = require('aws-sdk');
-const secrets = require('../secret');
-const region = 'us-east-1';
-let photoCredential = {};
+const {
+  S3Client,
+  PutObjectCommand,
+  GetObjectCommand,
+  ListObjectsV2Command,
+} = require(`@aws-sdk/client-s3`);
 
-const client = new aws.SecretsManager({
-  region
+const presigner = require("@aws-sdk/s3-request-presigner");
+const s3 = new S3Client({
+  region: "us-east-1",
 });
-
-client.getSecretValue({ SecretId: 'photo/s3' }, function (err, data) {
-  if (err) {
-    if (err.code === 'DecryptionFailureException') {
-      throw err;
-    } else if (err.code === 'InternalServiceErrorException') {
-      throw err;
-    } else if (err.code === 'InvalidParameterException') {
-      throw err;
-    } else if (err.code === 'InvalidRequestException') {
-      throw err;
-    } else if (err.code === 'ResourceNotFoundException') {
-      throw err;
-    }
-  } else {
-    if ('SecretString' in data) {
-      const secret = data.SecretString;
-      photoCredential = JSON.parse(secret);
-    }
-  }
-});
-
-const s3 = new aws.S3({
-  secretAccessKey: photoCredential.secretKey,
-  accessKeyId: photoCredential.accessKey,
-  region: secrets.REGION
-});
+const bucketName = "servant-center-miscfile-bucket";
 
 const uploadToS3 = (imgFile, fileName) => {
   return new Promise((resolve, reject) => {
-    const uploadParams = {
-      Bucket: secrets.BUCKET,
+    const objectParams = new PutObjectCommand({
+      Bucket: bucketName,
       Key: fileName,
-      Body: imgFile
-    };
-    console.log("upload params",uploadParams);
-    s3.putObject(uploadParams, (err, data) => {
-      if (err) {
-        console.log("misc files uploadToS3:", err);
+      Body: imgFile.buffer,
+      ContentType: imgFile.mimetype,
+    });
+    console.log(objectParams);
+    s3.send(objectParams).then(
+      (data) => {
+        console.log("upload file", data);
+        resolve(data);
+      },
+      (err) => {
+        console.log("upload file err", err);
         reject(err);
       }
-      console.log("misc files uploadToS3:", data);
-      resolve(data);
-    });
+    );
   });
 };
 
 const getUserFilesFromS3 = (prefix) => {
   return new Promise((resolve, reject) => {
-    const getParams = {
-      Bucket: secrets.BUCKET,
+    const command = new ListObjectsV2Command({
+      Bucket: bucketName,
       Delimiter: "/",
       Prefix: prefix + "/",
-    };
-    s3.listObjectsV2(getParams, (err, data) => {
-      if (err) {
-        console.log("misc files getUserFilesFromS3:", err);
+    });
+    s3.send(command).then(
+      (result) => {
+        resolve(result);
+      },
+      (err) => {
         reject(err);
       }
-      console.log("misc files getUserFilesFromS3:", data);
-      resolve(data);
-    });
+    );
   });
 };
 
 const downloadFilesFromS3 = (key) => {
   return new Promise((resolve, reject) => {
-    const getParams = {
-      Bucket: secrets.BUCKET,
+    const command = new GetObjectCommand({
+      Bucket: bucketName,
       Key: key,
-    };
-    s3.getObject(getParams, (err, data) => {
-      if (err) {
-        console.log('misc files downloadFilesFromS3 pdf:', err);
+    });
+    console.log("key==>",key);
+    presigner.getSignedUrl(s3, command, { expiresIn: 3000 }).then(
+      (data) => {
+        resolve(data);
+      },
+      (err) => {
         reject(err);
       }
-      console.log("file download response from s3",data);
-      resolve(data);
-      // if (data.ContentType.indexOf('pdf') > 0) {
-      //   console.log('misc files downloadFilesFromS3 pdf:', data);
-      //   resolve(data);
-      // } else {
-      //   s3.getSignedUrl('getObject', getParams, (err, urlStr) => {
-      //     if (err) {
-      //       console.log('misc files downloadFilesFromS3 image:', err);
-      //       reject(err);
-      //     }
-      //     console.log('misc files downloadFilesFromS3 image:', urlStr);
-      //     resolve(urlStr);
-      //   });
-      // }
-    });
+    );
   });
 };
 
