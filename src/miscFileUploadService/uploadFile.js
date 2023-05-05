@@ -7,6 +7,10 @@ const {
 
 const presigner = require("@aws-sdk/s3-request-presigner");
 const s3 = new S3Client({
+  credentials: {
+    secretAccessKey: "paKdPQslJDLsutN1IOyF9WU3UA9aONFIwmavjOJc",
+    accessKeyId: "AKIASX4D4UGUWN75DF4X",
+  },
   region: "us-east-1",
 });
 const bucketName = "servant-center-miscfile-bucket";
@@ -57,7 +61,7 @@ const downloadFilesFromS3 = (key) => {
       Bucket: bucketName,
       Key: key,
     });
-    console.log("key==>",key);
+    console.log("key==>", key);
     presigner.getSignedUrl(s3, command, { expiresIn: 3000 }).then(
       (data) => {
         resolve(data);
