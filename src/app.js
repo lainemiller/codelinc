@@ -916,7 +916,7 @@ router.post(
     const reqfile = req.file;
     console.log("request file",reqfile)
     const fileNamePrefix = 'VETERAN_' + req.params.loginId + '/';
-    const imageName = reqfile.originalname;
+    const imageName = fileNamePrefix + reqfile.originalname;
         miscFileUpload
           .uploadToS3(reqfile, imageName)
           .then(() => {
